@@ -1,0 +1,221 @@
+package com.example.smatech.ay5edma;
+
+import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.smatech.ay5edma.Models.Modelss.CategoryModel;
+import com.example.smatech.ay5edma.Models.Modelss.StatusModel;
+import com.example.smatech.ay5edma.Models.Modelss.SubCategoryModel;
+import com.example.smatech.ay5edma.Models.Modelss.UserModel;
+import com.example.smatech.ay5edma.Utils.Connectors;
+import com.example.smatech.ay5edma.Utils.Constants;
+import com.google.gson.Gson;
+import com.orhanobut.hawk.Hawk;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+public class BeServiceProvier extends AppCompatActivity {
+    Spinner Spinner1, Spinner2;
+    Button Agree;
+    UserModel userModel;
+
+    List<String> list2, list;
+    List<String> ids2, ids;
+    String category_id = "", subcategory_id = "", subcategory2_id = "";
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_be_service_provier);
+        ImageView back;
+        TextView toolbar_title;
+        toolbar_title = findViewById(R.id.toolbar_title);
+        toolbar_title.setText(getString(R.string.convert_to_service_provider));
+        back = findViewById(R.id.back);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        getCategries();
+        ////
+        userModel = Hawk.get(Constants.userData);
+
+        Agree = findViewById(R.id.Agree);
+        Agree.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (category_id != "" && subcategory_id != "") {
+                    userModel.setRole("2");
+                    userModel.setCategoryId(""+category_id);
+                    userModel.setSubcategoryId(""+subcategory2_id);
+                    Hawk.put(Constants.UserType, "1");
+                    Hawk.put(Constants.userData, userModel);
+                    finish();
+                    Intent intent = new Intent(BeServiceProvier.this, ClientHomeActivity.class);
+                    startActivity(intent);
+                }
+            }
+        });
+
+        Spinner1 = findViewById(R.id.Spinner1);
+        ids2 = new ArrayList<>();
+        ids2.add("0");
+        ids = new ArrayList<>();
+        ids.add("0");
+        list = new ArrayList<String>();
+        list.add(getString(R.string.Main_Service));
+        list2 = new ArrayList<String>();
+        list2.add(getString(R.string.Secondary_service));
+        ArrayAdapter<String> dataAdapter1 = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, list);
+        dataAdapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        Spinner1.setAdapter(dataAdapter1);
+        Spinner1.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                if (position == 0) {
+                } else {
+                    category_id = ids.get(position);
+                    getSubCatg(category_id);
+                }
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        ///Spinner2
+        Spinner2 = findViewById(R.id.Spinner2);
+        list2.add(getString(R.string.Secondary__service));
+        ArrayAdapter<String> dataAdapter2 = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, list2);
+        dataAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        Spinner2.setAdapter(dataAdapter2);
+        Spinner2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                if (position == 0) {
+                } else {
+                    subcategory_id = ids2.get(position);
+
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+
+    }
+
+    private void getCategries() {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Connectors.connectionServices.BaseURL)
+                .addConverterFactory(GsonConverterFactory
+                        .create(new Gson())).build();
+        Connectors.connectionServices connectionService =
+                retrofit.create(Connectors.connectionServices.class);
+
+        connectionService.get_Category().enqueue(new Callback<StatusModel>() {
+            @Override
+            public void onResponse(Call<StatusModel> call, Response<StatusModel> response) {
+                StatusModel statusModel = response.body();
+                if (statusModel.getStatus() == true) {
+                    ArrayList<CategoryModel> categoryModels = statusModel.getCategories();
+                    if (categoryModels.size() > 0) {
+
+                        for (int i = 0; categoryModels.size() > i; i++) {
+                            ids.add(categoryModels.get(i).getId());
+
+                            if (Locale.getDefault().getDisplayLanguage().equals("ar")) {
+                                list.add(categoryModels.get(i).getNameAr());
+                            } else {
+                                list.add(categoryModels.get(i).getName());
+                            }
+                        }
+
+                    }
+
+                } else {
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<StatusModel> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void getSubCatg(String category_id) {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Connectors.connectionServices.BaseURL)
+                .addConverterFactory(GsonConverterFactory
+                        .create(new Gson())).build();
+        Connectors.connectionServices connectionService =
+                retrofit.create(Connectors.connectionServices.class);
+
+        connectionService.get_SubCategory(category_id, "").enqueue(new Callback<StatusModel>() {
+            @Override
+            public void onResponse(Call<StatusModel> call, Response<StatusModel> response) {
+                StatusModel statusModel = response.body();
+                list2.clear();
+                list2.add(getString(R.string.Secondary_service));
+                if (statusModel.getStatus() == true) {
+                    ArrayList<SubCategoryModel> subCategoryModels = statusModel.getSubCategoryModels();
+                    if (subCategoryModels.size() > 0) {
+
+                        for (int i = 0; subCategoryModels.size() > i; i++) {
+                            ids2.add(subCategoryModels.get(i).getId());
+
+                            if (Locale.getDefault().getDisplayLanguage().equals("ar")) {
+                                list2.add(subCategoryModels.get(i).getNameAr() + "");
+                            } else {
+                                list2.add(subCategoryModels.get(i).getName());
+                            }
+                        }
+
+                    }
+
+                } else {
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<StatusModel> call, Throwable t) {
+
+            }
+        });
+
+    }
+
+}

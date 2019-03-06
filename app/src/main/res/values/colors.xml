@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#fcb71e</color>
+    <color name="colorSecondry">#dadada</color>
+    <color name="grey">#a4a4a4</color>
+    <color name="lightgrey">#f3f1f2</color>
+    <color name="nav_grey">#5d5d5d</color>
+    <color name="colorPrimaryDark">#eda401</color>
+    <color name="textcolor">#fcb71b</color>
+    <color name="colorAccent">#fcb71e</color>
+    <color name="Black">#000</color>
+    <color name="White">#fff</color>
+    <color name="green">#2ea20b</color>
+    <color name="litegreen">#D5fD9b</color>
+    <color name="buttonGrey">#6d6d6d</color>
+</resources>

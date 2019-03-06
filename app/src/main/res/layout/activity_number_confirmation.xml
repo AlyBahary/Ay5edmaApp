@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="@drawable/back"
+    tools:context=".RegistrtionTypeActivity">
+
+    <LinearLayout
+        android:paddingTop="50dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="170dp"
+                android:layout_height="170dp"
+                android:src="@drawable/confirmed" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="80dp"
+            android:orientation="vertical"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/orang_button"
+                android:gravity="center"
+                android:text="@string/phone_number_confirmion"
+                android:textAllCaps="false"
+                android:textColor="@color/Black"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginTop="50dp"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:textColor="@color/textcolor"
+                android:text="@string/Confirmation_number"/>
+            <com.chaos.view.PinView
+                android:id="@+id/firstPinView"
+                style="@style/PinWidget.PinView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:cursorVisible="true"
+                android:inputType="text"
+                app:lineColor="@color/colorPrimary"
+                android:textSize="16sp"
+                app:cursorWidth="2dp"
+                android:layout_marginTop="25dp"
+                app:hideLineWhenFilled="true"
+                app:itemCount="4"
+                app:itemWidth="24dp"
+                app:itemHeight="30dp"
+                app:lineWidth="2dp"
+                app:viewType="line" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginTop="20dp"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:textColor="@color/grey"
+                android:text="@string/Resend_confirmation_number"/>
+
+            <cn.iwgang.countdownview.CountdownView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                app:isHideTimeBackground="false"
+                app:isShowMinute="true"
+                app:isShowSecond="true"
+                app:isTimeTextBold="true"
+                app:isSuffixTextBold="true"
+                app:timeTextColor="@color/grey"
+                app:timeTextSize="18sp"
+                app:suffixGravity="center"
+                app:suffixTextSize="12sp"
+                app:timeBgRadius="7dp"
+                app:timeBgBorderRadius="22sp"
+                app:timeBgBorderColor="@color/grey"
+                app:timeBgColor="@color/colorSecondry"/>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="bottom"
+            android:orientation="vertical"
+            android:paddingBottom="20dp"
+            android:layout_gravity="bottom"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp">
+
+
+
+            <Button
+                android:id="@+id/Done"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="30dp"
+                android:background="@drawable/orang_button"
+                android:clickable="false"
+                android:layout_gravity="bottom"
+                android:gravity="center"
+                android:text="@string/Done"
+                android:textAllCaps="false"
+                android:textColor="@color/Black"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>
