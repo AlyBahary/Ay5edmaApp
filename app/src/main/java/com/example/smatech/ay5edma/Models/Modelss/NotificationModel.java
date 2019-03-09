@@ -3,6 +3,8 @@ package com.example.smatech.ay5edma.Models.Modelss;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
+
 public class NotificationModel {
     @SerializedName("id")
     @Expose
@@ -42,8 +44,15 @@ public class NotificationModel {
     private CategoryModel category;
     @SerializedName("subcategory")
     @Expose
-    private CategoryModel subcategory;
-
+    private ArrayList<CategoryModel> subcategory;
+   /* @SerializedName("subcategory")
+    @Expose
+    private CategoryModel subcategory1;
+*/
+  /*  public CategoryModel getSubcategory1() {
+        return subcategory1;
+    }
+*/
     public CategoryModel getCategory() {
         return category;
     }
@@ -52,12 +61,8 @@ public class NotificationModel {
         this.category = category;
     }
 
-    public CategoryModel getSubcategory() {
+    public ArrayList<CategoryModel> getSubcategory() {
         return subcategory;
-    }
-
-    public void setSubcategory(CategoryModel subcategory) {
-        this.subcategory = subcategory;
     }
 
     public String getId() {

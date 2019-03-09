@@ -1,8 +1,10 @@
 package com.example.smatech.ay5edma;
 
+import android.app.ProgressDialog;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -30,11 +32,14 @@ public class ContactUsActivity extends AppCompatActivity {
     Button send;
     View parentLayout;
 
+    ProgressDialog progressDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact_us);
         parentLayout = findViewById(android.R.id.content);
+        progressDialog=new ProgressDialog(this);
+        progressDialog.setMessage(getString(R.string.Loading));
         ImageView back;
         TextView toolbar_title;
         toolbar_title=findViewById(R.id.toolbar_title);
@@ -63,16 +68,17 @@ public class ContactUsActivity extends AppCompatActivity {
         });
     }
     private void sendMsg(String user_id,String comment){
+        progressDialog.show();
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Connectors.connectionServices.BaseURL)
                 .addConverterFactory(GsonConverterFactory
                         .create(new Gson())).build();
         Connectors.connectionServices connectionService =
                 retrofit.create(Connectors.connectionServices.class);
-
         connectionService.send_feedback(user_id,comment).enqueue(new Callback<StatusModel>() {
             @Override
             public void onResponse(Call<StatusModel> call, Response<StatusModel> response) {
+                progressDialog.dismiss();
                 StatusModel statusMode=response.body();
                 if(statusMode.getStatus()){
                     Snackbar.make(parentLayout, "" + getString(R.string.message_had_been_send), Snackbar.LENGTH_LONG)
@@ -83,6 +89,10 @@ public class ContactUsActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<StatusModel> call, Throwable t) {
+                progressDialog.dismiss();
+                Snackbar.make(parentLayout, "" + getString(R.string.noInternetConnecion), Snackbar.LENGTH_LONG)
+                        .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                        .show();
 
             }
         });

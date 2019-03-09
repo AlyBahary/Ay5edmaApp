@@ -5,6 +5,14 @@ import com.google.gson.annotations.SerializedName;
 
 public class UserModelSatus {
 
+    @SerializedName("activated")
+    @Expose
+    private Boolean activated;
+
+    public Boolean getActivated() {
+        return activated;
+    }
+
     @SerializedName("user")
     @Expose
     private UserModel user;

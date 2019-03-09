@@ -2,21 +2,26 @@ package com.example.smatech.ay5edma;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.smatech.ay5edma.Models.Modelss.RequestModel;
 import com.example.smatech.ay5edma.Models.Modelss.StatusModel;
 import com.example.smatech.ay5edma.Models.Modelss.UserModel;
 import com.example.smatech.ay5edma.Utils.Connectors;
 import com.example.smatech.ay5edma.Utils.Constants;
 import com.google.gson.Gson;
 import com.orhanobut.hawk.Hawk;
+import com.squareup.picasso.Picasso;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -28,11 +33,13 @@ public class ClientRequestDetailsActivity extends AppCompatActivity {
     String requestID,requestBody,flag;
     UserModel fromModel,userModel;
     TextView name,type,occupation,b_d,address,about;
-    LinearLayout Reveiws;
+    LinearLayout Reveiws,Location_layout;
     ImageView Accept,Reject;
     me.zhanghai.android.materialratingbar.MaterialRatingBar stars;
     ProgressDialog progressDialog;
     View parentLayout;
+    RequestModel mRequest;
+    CircleImageView profile_image;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,9 +103,11 @@ public class ClientRequestDetailsActivity extends AppCompatActivity {
 
 
         fromModel=Hawk.get(Constants.mRequestFrom);
+
         userModel=Hawk.get(Constants.userData);
         requestID=Hawk.get(Constants.mRequestID);
         requestBody=Hawk.get(Constants.mRequestDesc);
+        mRequest=Hawk.get(Constants.mRequest);
         Accept=findViewById(R.id.Accept);
         Accept.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -114,6 +123,12 @@ public class ClientRequestDetailsActivity extends AppCompatActivity {
                 finish();
             }
         });
+        profile_image=findViewById(R.id.profile_image);
+        if(fromModel.getImage().equals("")){
+
+        }else{
+            Picasso.with(this).load("http://www.anyservice-ksa.com/prod_img/"+fromModel.getImage()).fit().into(profile_image);
+        }
         name=findViewById(R.id.name);
         name.setText(fromModel.getName());
         stars=findViewById(R.id.Stars);
@@ -136,13 +151,39 @@ public class ClientRequestDetailsActivity extends AppCompatActivity {
         b_d=findViewById(R.id.b_d);
         b_d.setText(fromModel.getBirthday());
         address=findViewById(R.id.address);
-        address.setText(fromModel.getAddress());
+        address.setText(mRequest.getAddress());
+        address.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ClientRequestDetailsActivity.this,MapAcvity.class)
+                        .putExtra("address",mRequest.getAddress())
+                        .putExtra("lat",mRequest.getLatitude())
+                        .putExtra("long",mRequest.getLongitude()));
+                Log.d("TTTT", "onMapReady:lat--> "+fromModel.getLatitude());
+                Log.d("TTTT", "onMapReady:long--> "+fromModel.getLongitude());
+
+            }
+        });
         about=findViewById(R.id.about);
         about.setText(requestBody);
+        Location_layout=findViewById(R.id.Location_layout);
+        Location_layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ClientRequestDetailsActivity.this,MapAcvity.class)
+                        .putExtra("address",fromModel.getAddress())
+                        .putExtra("lat",fromModel.getLatitude())
+                        .putExtra("long",fromModel.getLongitude()));
+                Log.d("TTTT", "onMapReady:lat--> "+fromModel.getLatitude());
+                Log.d("TTTT", "onMapReady:long--> "+fromModel.getLongitude());
+            }
+        });
         Reveiws=findViewById(R.id.Reveiws);
         Reveiws.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                startActivity(new Intent(ClientRequestDetailsActivity.this,ClientReviewsActivity.class)
+                        .putExtra("userID",fromModel.getId()));
 
             }
         });
@@ -165,7 +206,10 @@ public class ClientRequestDetailsActivity extends AppCompatActivity {
                 StatusModel statusModel=response.body();
                 if(statusModel.getStatus()){
                     Snackbar.make(parentLayout, "" + getString(R.string.offerhadbeensend), Snackbar.LENGTH_LONG).show();
-
+                    Toast.makeText(ClientRequestDetailsActivity.this
+                            , ""+getString(R.string.offerhadbeensend), Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(ClientRequestDetailsActivity.this,RequestsActivity.class)
+                            .putExtra("stat","1"));
 
                 }else{
 
@@ -176,6 +220,9 @@ public class ClientRequestDetailsActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<StatusModel> call, Throwable t) {
                 progressDialog.dismiss();
+                Snackbar.make(parentLayout, "" + getString(R.string.noInternetConnecion), Snackbar.LENGTH_LONG)
+                        .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                        .show();
             }
         });
 }

@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -47,15 +48,19 @@ public class EditProfileActivity extends AppCompatActivity {
     Button EditInfo;
     ProgressDialog progressDialog;
     CircleImageView profile_image;
+    private View parentLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
-        userModel = Hawk.get(Constants.userData);
-
+        parentLayout = findViewById(android.R.id.content);
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage(getString(R.string.Loading));
+
+        userModel = Hawk.get(Constants.userData);
+        getUserData(userModel.getId());
+
 
         ImageView back;
         TextView toolbar_title;
@@ -77,7 +82,6 @@ public class EditProfileActivity extends AppCompatActivity {
         mainCatgry = findViewById(R.id.mainCatgry);
         subCatgry = findViewById(R.id.subCatgry);
         profile_image = findViewById(R.id.profile_image);
-        getUserData(userModel.getId());
 
 /*
         Spinner Signup_Gender;
@@ -114,7 +118,6 @@ public class EditProfileActivity extends AppCompatActivity {
             birthdateLayout = findViewById(R.id.birthdateLayout);
             spinner1Layout = findViewById(R.id.spinner1Layout);
             spinner2Layout = findViewById(R.id.spinner2Layout);
-            birthdateLayout.setVisibility(View.GONE);
             spinner1Layout.setVisibility(View.GONE);
             spinner2Layout.setVisibility(View.GONE);
         }
@@ -189,6 +192,9 @@ public class EditProfileActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<UserModelSatus> call, Throwable t) {
                 progressDialog.dismiss();
+                Snackbar.make(parentLayout, "" + getString(R.string.noInternetConnecion), Snackbar.LENGTH_LONG)
+                        .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                        .show();
 
             }
         });

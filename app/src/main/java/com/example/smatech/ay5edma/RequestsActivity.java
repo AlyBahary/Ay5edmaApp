@@ -3,6 +3,7 @@ package com.example.smatech.ay5edma;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -42,12 +43,16 @@ public class RequestsActivity extends AppCompatActivity {
     UserModel userModel;
     String userType;
     ProgressDialog progressDialog;
+    private View parentLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_requests);
-        progressDialog=new ProgressDialog(this);
+        parentLayout = findViewById(android.R.id.content);
+        Previous = findViewById(R.id.Previous);
+        Recent = findViewById(R.id.Recent);
+        progressDialog = new ProgressDialog(this);
         progressDialog.setMessage(getString(R.string.Loading));
 
         //
@@ -108,7 +113,7 @@ public class RequestsActivity extends AppCompatActivity {
             requestAdapter = new RequestAdapter(DM, "0", this, RequestsActivity.this, new RequestAdapter.OnItemClick() {
                 @Override
                 public void setOnItemClick(int position) {
-                    if (Hawk.get(Constants.UserType).equals("0")&&DM.get(position).getStatus().equals("0")) {
+                    if (Hawk.get(Constants.UserType).equals("0") && DM.get(position).getStatus().equals("0")) {
                         Intent intent = new Intent(RequestsActivity.this, OffersAcivity.class);
                         Hawk.put(Constants.mRequestID, DM.get(position).getId());
                         startActivity(intent);
@@ -125,8 +130,8 @@ public class RequestsActivity extends AppCompatActivity {
             requestAdapter = new RequestAdapter(DM, "1", this, RequestsActivity.this, new RequestAdapter.OnItemClick() {
                 @Override
                 public void setOnItemClick(int position) {
-                   if(DM.get(position).getStatus().equals("2")) {
-                        Intent intent = new Intent(RequestsActivity.this, ClientRequestDetailsActivity.class).putExtra("flag","1");
+                    if (DM.get(position).getStatus().equals("2")) {
+                        Intent intent = new Intent(RequestsActivity.this, ClientRequestDetailsActivity.class).putExtra("flag", "1");
                         Hawk.put(Constants.mRequestID, DM.get(position).getId());
                         Hawk.put(Constants.mRequestFrom, DM.get(position).getUser());
                         Hawk.put(Constants.mRequestDesc, DM.get(position).getBody());
@@ -138,8 +143,28 @@ public class RequestsActivity extends AppCompatActivity {
                 }
             });
         }
-        getPreviouse();
-        Previous = findViewById(R.id.Previous);
+
+
+        if (getIntent().getStringExtra("stat") != null) {
+            if (getIntent().getStringExtra("stat").equals("0")) {
+                //getPrev
+                getPreviouse();
+                Recent.setBackgroundColor(Color.TRANSPARENT);
+                Previous.setBackground(ContextCompat.getDrawable(RequestsActivity.this, R.drawable.toggle1));
+
+            } else {
+                //getRecent
+                getRecent();
+                Previous.setBackgroundColor(Color.TRANSPARENT);
+                Recent.setBackground(ContextCompat.getDrawable(RequestsActivity.this, R.drawable.toggle2));
+            }
+        }else{
+            getRecent();
+            Previous.setBackgroundColor(Color.TRANSPARENT);
+            Recent.setBackground(ContextCompat.getDrawable(RequestsActivity.this, R.drawable.toggle2));
+
+        }
+
         Previous.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -149,7 +174,6 @@ public class RequestsActivity extends AppCompatActivity {
 
             }
         });
-        Recent = findViewById(R.id.Recent);
         Recent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -162,14 +186,14 @@ public class RequestsActivity extends AppCompatActivity {
     }
 
     public void getPreviouse() {
-        Hawk.put(Constants.Time,"0");
+        Hawk.put(Constants.Time, "0");
         DM.clear();
         if (userType.equals("0")) {
-            getRequestes(userModel.getId() + "", "1", "", "", "","");
+            getRequestes(userModel.getId() + "", "1", "", "", "", "");
             progressDialog.show();
         } else {
-            getRequestes("", "1", ""+userModel.getId(), "" + userModel.getSubcategoryId()
-                    , "" + userModel.getCategoryId(),"");
+            getRequestes("", "1", "" + userModel.getId(), "" + userModel.getSubcategoryId()
+                    , "" + userModel.getCategoryId(), "");
             progressDialog.show();
         }
 
@@ -181,15 +205,15 @@ public class RequestsActivity extends AppCompatActivity {
     }
 
     public void getRecent() {
-        Hawk.put(Constants.Time,"1");
+        Hawk.put(Constants.Time, "1");
 
         DM.clear();
         if (userType.equals("0")) {
-            getRequestes(userModel.getId() + "", "0", "", "", "","");
+            getRequestes(userModel.getId() + "", "0", "", "", "", "");
             progressDialog.show();
         } else {
-            getRequestes("", "0", ""+userModel.getId()
-                    , "" + userModel.getSubcategoryId(), "" + userModel.getCategoryId(),"");
+            getRequestes("", "0", "" + userModel.getId()
+                    , "" + userModel.getSubcategoryId(), "" + userModel.getCategoryId(), "");
             progressDialog.show();
 
             Log.d("TTT", "getRecent:CatgryID " + userModel.getCategoryId());
@@ -204,7 +228,7 @@ public class RequestsActivity extends AppCompatActivity {
 
     }
 
-    private void getRequestes(String user_id, final String status, String shop_id, String subcatgry, String Catgry,String filter_id) {
+    private void getRequestes(String user_id, final String status, String shop_id, String subcatgry, String Catgry, String filter_id) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Connectors.connectionServices.BaseURL)
                 .addConverterFactory(GsonConverterFactory
@@ -212,7 +236,7 @@ public class RequestsActivity extends AppCompatActivity {
         Connectors.connectionServices connectionService =
                 retrofit.create(Connectors.connectionServices.class);
 
-        connectionService.get_Requests(user_id, status, shop_id, "" + subcatgry, "" + Catgry,filter_id)
+        connectionService.get_Requests(user_id, status, shop_id, "" + subcatgry, "" + Catgry, filter_id)
                 .enqueue(new Callback<StatusModel>() {
                     @Override
                     public void onResponse(Call<StatusModel> call, Response<StatusModel> response) {
@@ -231,6 +255,9 @@ public class RequestsActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(Call<StatusModel> call, Throwable t) {
                         progressDialog.dismiss();
+                        Snackbar.make(parentLayout, "" + getString(R.string.noInternetConnecion), Snackbar.LENGTH_LONG)
+                                .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                                .show();
 
                     }
                 });

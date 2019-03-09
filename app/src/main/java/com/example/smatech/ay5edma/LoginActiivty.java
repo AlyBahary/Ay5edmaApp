@@ -26,6 +26,7 @@ import com.nabinbhandari.android.permissions.Permissions;
 import com.orhanobut.hawk.Hawk;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -46,7 +47,14 @@ public class LoginActiivty extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_actiivty);
         Hawk.init(this).build();
-        String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.CALL_PHONE};
+        if (!Hawk.contains(Constants.Language)) {
+            if (Locale.getDefault().getLanguage().equals("English"))
+                Hawk.put(Constants.Language, "en");
+            else
+                Hawk.put(Constants.Language, "ar");
+
+        }
+        String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.CALL_PHONE};
         String rationale = "Please provide Some permission so that will help you to get best service";
         Permissions.Options options = new Permissions.Options()
                 .setRationaleDialogTitle("Info")
@@ -55,9 +63,18 @@ public class LoginActiivty extends AppCompatActivity {
         Permissions.check(this/*context*/, permissions, rationale, options, new PermissionHandler() {
             @Override
             public void onGranted() {
-                if(Hawk.contains(Constants.userData)){
+                if (Hawk.contains(Constants.userData) && Hawk.contains(Constants.STUCK)) {
+                    if (Hawk.get(Constants.STUCK).equals("0")) {
+                        finish();
+                        startActivity(new Intent(LoginActiivty.this, ClientHomeActivity.class));
+                    } else {
+                        finish();
+                        startActivity(new Intent(LoginActiivty.this, NumberConfirmationActivity.class));
+
+                    }
+                } else if (Hawk.contains(Constants.userData)) {
                     finish();
-                    startActivity(new Intent(LoginActiivty.this,ClientHomeActivity.class));
+                    startActivity(new Intent(LoginActiivty.this, ClientHomeActivity.class));
                 }
                 // do your task.
                 //Toast.makeText(RegistrtionTypeActivity.this, "Thank you :)", Toast.LENGTH_SHORT).show();
@@ -70,7 +87,7 @@ public class LoginActiivty extends AppCompatActivity {
             }
         });
 
-        progressDialog=new ProgressDialog(this);
+        progressDialog = new ProgressDialog(this);
         progressDialog.setMessage(getString(R.string.Loading));
 
         Login_Mobile = findViewById(R.id.Login_Mobile);
@@ -87,7 +104,7 @@ public class LoginActiivty extends AppCompatActivity {
         CreateNewAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Hawk.put(Constants.skipe,false);
+                Hawk.put(Constants.skipe, false);
                 Intent i = new Intent(LoginActiivty.this, RegistrtionTypeActivity.class);
                 startActivity(i);
             }
@@ -97,20 +114,20 @@ public class LoginActiivty extends AppCompatActivity {
         Skip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Hawk.put(Constants.skipe,true);
+                Hawk.put(Constants.skipe, true);
                 Intent i = new Intent(LoginActiivty.this, ClientHomeActivity.class);
-                Hawk.put(Constants.UserType,Constants.Client);
+                Hawk.put(Constants.UserType, Constants.Client);
                 startActivity(i);
             }
         });
 
-         parentLayout = findViewById(android.R.id.content);
+        parentLayout = findViewById(android.R.id.content);
 
         Login = findViewById(R.id.Login);
         Login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Hawk.put(Constants.skipe,false);
+                Hawk.put(Constants.skipe, false);
                 if (Login_Mobile.getText().toString().equals("") || Login_Mobile.getText().toString() == null) {
                     Snackbar.make(parentLayout, "" + getString(R.string.Please_fill_empty_fields), Snackbar.LENGTH_LONG)
                             .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
@@ -120,8 +137,8 @@ public class LoginActiivty extends AppCompatActivity {
                     Snackbar.make(parentLayout, "" + getString(R.string.Please_fill_empty_fields), Snackbar.LENGTH_LONG)
                             .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
                             .show();
-                }else{
-                    login(Login_Mobile.getText().toString(),Login_Password.getText().toString(),""+Hawk.get(Constants.TOKEN));
+                } else {
+                    login(Login_Mobile.getText().toString(), Login_Password.getText().toString(), "" + Hawk.get(Constants.TOKEN));
                 }
 
             }
@@ -140,32 +157,43 @@ public class LoginActiivty extends AppCompatActivity {
         connectionService.login(password, mobile, token).enqueue(new Callback<UserModelSatus>() {
             @Override
             public void onResponse(Call<UserModelSatus> call, Response<UserModelSatus> response) {
-                Hawk.put(Constants.password,password);
-                Hawk.put(Constants.username,mobile);
+                Hawk.put(Constants.password, password);
+                Hawk.put(Constants.username, mobile);
                 Log.d("TTTT", "onResponse: Response00");
                 progressDialog.dismiss();
                 UserModelSatus statusModel = response.body();
-                if (statusModel.getStatus() == true) {
+                UserModel userModel = statusModel.getUser();
+
+                if (statusModel.getStatus() == true && userModel.getActivate().equals("1")) {
                     Log.d("TTTT", "onResponse: Response11");
-                    UserModel userModel = statusModel.getUser();
-                    userModel.setAccepted(statusModel.getAccepted()+"");
-                    userModel.setPoints(statusModel.getPoints()+"");
-                    userModel.setPeople(statusModel.getPeople()+"");
-                    userModel.setRejected(statusModel.getRejected()+"");
-                   // Log.d("TTTTTT", "onResponse: "+userModel.getAccepted()+userModel.getPoints()+userModel.getPeople()+userModel.getRejected());
-                    Hawk.put(Constants.userData,userModel);
-                    Hawk.put(Constants.extraauserData1,statusModel.getCategory());
-                    Hawk.put(Constants.extraauserData2,statusModel.getSubcategory());
+                    userModel.setAccepted(statusModel.getAccepted() + "");
+                    userModel.setPoints(statusModel.getPoints() + "");
+                    userModel.setPeople(statusModel.getPeople() + "");
+                    userModel.setRejected(statusModel.getRejected() + "");
+                    // Log.d("TTTTTT", "onResponse: "+userModel.getAccepted()+userModel.getPoints()+userModel.getPeople()+userModel.getRejected());
+                    Hawk.put(Constants.userData, userModel);
+                    Hawk.put(Constants.extraauserData1, statusModel.getCategory());
+                    Hawk.put(Constants.extraauserData2, statusModel.getSubcategory());
                     Intent i = new Intent(LoginActiivty.this, ClientHomeActivity.class);
                     finishAffinity();
                     startActivity(i);
                     Toast.makeText(LoginActiivty.this, "" + userModel.getName(), Toast.LENGTH_SHORT).show();
-                }else{
-                    Log.d("TTTT", "onResponse: Response22");
+                } else if (statusModel.getActivated().equals(false)) {
+                    startActivity(new Intent(LoginActiivty.this, NumberConfirmationActivity.class));
+                } else {
 
-                    Snackbar.make(parentLayout, "" + statusModel.getMessage(), Snackbar.LENGTH_LONG)
-                            .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
-                            .show();
+                }
+                {
+                    Log.d("TTTT", "onResponse: Response22");
+                    if (Hawk.get(Constants.Language).equals("en")) {
+                        Snackbar.make(parentLayout, "" + statusModel.getMessage(), Snackbar.LENGTH_LONG)
+                                .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                                .show();
+                    } else {
+                        Snackbar.make(parentLayout, "" + statusModel.getMessage_ar(), Snackbar.LENGTH_LONG)
+                                .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                                .show();
+                    }
                 }
 
             }
@@ -173,7 +201,10 @@ public class LoginActiivty extends AppCompatActivity {
             @Override
             public void onFailure(Call<UserModelSatus> call, Throwable t) {
                 progressDialog.dismiss();
-                Log.d("TTTT", "onResponse: fail"+t.getMessage());
+                Snackbar.make(parentLayout, "" + getString(R.string.noInternetConnecion), Snackbar.LENGTH_LONG)
+                        .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                        .show();
+                Log.d("TTTT", "onResponse: fail" + t.getMessage());
 
 
             }

@@ -4,6 +4,7 @@ import com.example.smatech.ay5edma.Models.Modelss.ImageUrlModel;
 import com.example.smatech.ay5edma.Models.Modelss.StatusModel;
 import com.example.smatech.ay5edma.Models.Modelss.UserModel;
 import com.example.smatech.ay5edma.Models.Modelss.UserModelSatus;
+import com.example.smatech.ay5edma.Models.Modelss.notficationsModel.Example;
 
 import java.util.ArrayList;
 
@@ -32,7 +33,7 @@ public class Connectors {
                 @Query("password") String password
                 , @Query("role") String role
                 , @Query("mobile") String mobile
-                , @Query("birthdate") String birthdate
+                , @Query("birthday") String birthday
                 , @Query("gender") String gender
                 , @Query("name") String name
                 , @Query("image") String image
@@ -42,7 +43,48 @@ public class Connectors {
                 , @Query("longitude") String longitude
                 , @Query("latitude") String latitude
                 , @Query("address") String address
+                , @Query("about") String about
+
+        ); @GET(Constants.mSignup)
+        Call<UserModelSatus> signup(
+                @Query("password") String password
+                , @Query("role") String role
+                , @Query("mobile") String mobile
+                , @Query("birthday") String birthday
+                , @Query("gender") String gender
+                , @Query("name") String name
+                , @Query("image") String image
+                , @Query("subcategory_id") String subcategory_id
+                , @Query("subcategory_id2") String subcategory2_id
+                , @Query("category_id") String category_id
+                , @Query("longitude") String longitude
+                , @Query("latitude") String latitude
+                , @Query("address") String address
+                , @Query("about") String about
                 , @Query("images") ArrayList<String> images
+
+        );
+ @GET(Constants.mSignup)
+        Call<UserModelSatus> signup(
+                @Query("password") String password
+                , @Query("role") String role
+                , @Query("mobile") String mobile
+                , @Query("birthday") String birthday
+                , @Query("gender") String gender
+                , @Query("name") String name
+                , @Query("image") String image
+                , @Query("subcategory_id") String subcategory_id
+                , @Query("subcategory_id2") String subcategory2_id
+                , @Query("category_id") String category_id
+                , @Query("longitude") String longitude
+                , @Query("latitude") String latitude
+                , @Query("address") String address
+                , @Query("about") String about
+                , @Query("images[0]") String images0
+                , @Query("images[1]") String images1
+                , @Query("images[2]") String images2
+                , @Query("images[3]") String images3
+                , @Query("images[4]") String images4
 
         );
 
@@ -52,6 +94,7 @@ public class Connectors {
                 @Query("search") String search
 
         );
+
         //get All primary Catgry
         @GET(Constants.mGet_Category)
         Call<StatusModel> get_Category(
@@ -91,11 +134,12 @@ public class Connectors {
 
         //Get All Requests with filters favourit
         @GET(Constants.mGet_requests)
-        Call<StatusModel> get_Favourite(
+        Call<com.example.smatech.ay5edma.Models.favModel.Example> get_Favourite(
                 @Query("user_id") String user_id
                 , @Query("favourite") Boolean status
 
         );
+
         //Get All Requests with filters favourit
         @GET(Constants.add_favourite)
         Call<StatusModel> add_favourite(
@@ -103,7 +147,8 @@ public class Connectors {
                 , @Query("request_id") String request_id
 
         );
-  @GET(Constants.send_feedback)
+
+        @GET(Constants.send_feedback)
         Call<StatusModel> send_feedback(
                 @Query("user_id") String user_id
                 , @Query("comment") String comment
@@ -132,12 +177,17 @@ public class Connectors {
                 , @Query("image") String image
                 , @Query("id") String id
                 , @Query("name") String name
+                , @Query("gender") String gender
+                , @Query("category_id") String category_id
+                , @Query("subcategory_id") String subcategory_id
+                , @Query("birthday") String birthday
+                , @Query("role") String role
 
         );
 
         //get Offers
         @GET(Constants.mGet_offers)
-        Call<StatusModel> get_offers(
+        Call<com.example.smatech.ay5edma.Models.offerModel.example.Example> get_offers(
                 @Query("request_id") String request_id
 
         );
@@ -167,14 +217,43 @@ public class Connectors {
         );
 
         @GET(Constants.mGet_notifications)
-        Call<StatusModel> get_notificaions(
+        Call<Example> get_notificaions(
                 @Query("user_id") String user_id
+        );
+
+        @GET(Constants.validateAccount)
+        Call<StatusModel> validateAccount(
+                @Query("verification") String verification
+        );
+
+        @GET(Constants.change_password)
+        Call<StatusModel> change_password(
+                @Query("new_password") String new_password
+                , @Query("vertificaion") String verification
+        );
+
+        @GET(Constants.forget_password)
+        Call<StatusModel> forgetPass(
+                @Query("mobile") String mobile
+        );
+
+        @GET(Constants.add_review)
+        Call<StatusModel> add_review(
+                @Query("rate") String rate
+                ,@Query("comment") String comment
+                ,@Query("user_id") String user_id
+                ,@Query("from_id") String from_id
+                ,@Query("request_id") String request_id
         );
 
         @GET(Constants.mDelete_request)
         Call<StatusModel> delete_request(
                 @Query("user_id") String user_id
                 , @Query("id") String id
+        );
+        @GET(Constants.get_reviews)
+        Call<StatusModel> get_reviews(
+                @Query("user_id") String user_id
         );
 
         @GET(Constants.mGet_chat_messages)

@@ -2,6 +2,7 @@ package com.example.smatech.ay5edma;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -32,14 +33,19 @@ public class PackageActivity extends AppCompatActivity {
     ArrayList<PointsModel> DM;
     PackageAdapter packageAdapter;
     ProgressDialog progressDialog;
-
+    private View parentLayout;
+    TextView points;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_package);
         progressDialog = new ProgressDialog(this);
+        parentLayout = findViewById(android.R.id.content);
         progressDialog.setMessage(getString(R.string.Loading));
         getPoints();
+        points=findViewById(R.id.points);
+        //set here num of points
+        points.setText("0");
         ImageView back;
         TextView toolbar_title;
         toolbar_title = findViewById(R.id.toolbar_title);
@@ -93,7 +99,9 @@ public class PackageActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<StatusModel> call, Throwable t) {
                 progressDialog.dismiss();
-
+                Snackbar.make(parentLayout, "" + getString(R.string.noInternetConnecion), Snackbar.LENGTH_LONG)
+                        .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                        .show();
             }
         });
     }

@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.example.smatech.ay5edma.Models.DummyModel;
 import com.example.smatech.ay5edma.Models.Modelss.OffersModel;
 import com.example.smatech.ay5edma.Models.OffersDummyModel;
+import com.example.smatech.ay5edma.Models.offerModel.example.Offer;
 import com.example.smatech.ay5edma.R;
 import com.github.siyamed.shapeimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
@@ -19,11 +20,11 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder> {
-    private ArrayList<OffersModel> offersModels;
+    private ArrayList<Offer> offersModels;
     private OffersAdapter.OnItemClick mOnItemClick;
     private Context context;
 
-    public OffersAdapter(ArrayList<OffersModel> offersModels, Context context, OffersAdapter.OnItemClick mOnItemClick) {
+    public OffersAdapter(ArrayList<Offer> offersModels, Context context, OffersAdapter.OnItemClick mOnItemClick) {
         this.offersModels = offersModels;
         this.mOnItemClick = mOnItemClick;
         this.context = context;
@@ -41,9 +42,10 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-        OffersModel itemMode = offersModels.get(i);
+        Offer itemMode = offersModels.get(i);
         viewHolder.name.setText("" + itemMode.getFrom().getName());
         viewHolder.distance.setText("20 km");
+        viewHolder.distance.setVisibility(View.GONE);
         viewHolder.Stars.setNumStars(5);
         viewHolder.Stars.setRating(Float.parseFloat(itemMode.getFrom().getRate()));
         if (itemMode.getFrom().getImage().equals("") || itemMode.getFrom().getImage() == null) {

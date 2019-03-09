@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.example.smatech.ay5edma.Models.DummyModel;
 import com.example.smatech.ay5edma.Models.Modelss.NotificationModel;
+import com.example.smatech.ay5edma.Models.Modelss.notficationsModel.Notification;
 import com.example.smatech.ay5edma.R;
 import com.example.smatech.ay5edma.Utils.Constants;
 import com.orhanobut.hawk.Hawk;
@@ -20,11 +21,11 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdapter.ViewHolder> {
-    private ArrayList<NotificationModel> dummyModels;
+    private ArrayList<Notification> dummyModels;
     private NotificationsAdapter.OnItemClick mOnItemClick;
     private Context context;
 
-    public NotificationsAdapter(ArrayList<NotificationModel> dummyModels, Context context, NotificationsAdapter.OnItemClick mOnItemClick) {
+    public NotificationsAdapter(ArrayList<Notification> dummyModels, Context context, NotificationsAdapter.OnItemClick mOnItemClick) {
         this.dummyModels = dummyModels;
         this.mOnItemClick = mOnItemClick;
         this.context = context;
@@ -42,7 +43,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-        NotificationModel itemMode = dummyModels.get(i);
+        Notification itemMode = dummyModels.get(i);
         if (Hawk.get(Constants.Language).equals("ar")) {
             viewHolder.Title.setText(itemMode.getTitleAr());
             viewHolder.ctgry1.setText(""+itemMode.getCategory().getNameAr());
@@ -67,7 +68,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         notifyItemRemoved(Position);
     }
 
-    public void restoreItem(NotificationModel DM, int Position) {
+    public void restoreItem(Notification DM, int Position) {
         dummyModels.add(Position, DM);
         notifyItemRemoved(Position);
     }

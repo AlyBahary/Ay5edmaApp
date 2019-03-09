@@ -76,9 +76,16 @@ public class Constants {
     public final static String get_points="api/get_points";
     public final static String add_favourite="api/add_favourite";
     public final static String send_feedback="api/send_feedback";
+    public final static String validateAccount="api/validateAccount";
+    public final static String forget_password="api/forget_password";
+    public final static String change_password="api/change_password";
+    public final static String add_review="api/add_review";
+    public final static String get_reviews="api/get_reviews";
+    public static final String STUCK ="STUCK" ;
+    public static String mRequest="mRequest";
 
 
-public static void progressDialoge(Context context){
+    public static void progressDialoge(Context context){
     ProgressDialog progressDialog=new ProgressDialog(context);
     progressDialog.setMessage(context.getString(R.string.Loading));
     progressDialog.show();

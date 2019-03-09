@@ -1,39 +1,64 @@
 package com.example.smatech.ay5edma.Adapters;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.smatech.ay5edma.Dialoge.EvaluationDaialoge;
+import com.example.smatech.ay5edma.Models.Modelss.StatusModel;
+import com.example.smatech.ay5edma.Models.Modelss.UserModel;
 import com.example.smatech.ay5edma.Models.RequestModel;
+import com.example.smatech.ay5edma.Models.favModel.Example;
+import com.example.smatech.ay5edma.Models.favModel.Request;
 import com.example.smatech.ay5edma.R;
+import com.example.smatech.ay5edma.RequestDescriptionActivity;
+import com.example.smatech.ay5edma.RequestsActivity;
+import com.example.smatech.ay5edma.Utils.Connectors;
 import com.example.smatech.ay5edma.Utils.Constants;
+import com.google.gson.Gson;
 import com.orhanobut.hawk.Hawk;
 import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+import se.arbitur.geocoding.Constants.LocationTypes;
+import se.arbitur.geocoding.Result;
+import se.arbitur.geocoding.ReverseGeocoding;
+
 public class FavAdapter extends RecyclerView.Adapter<FavAdapter.ViewHolder> {
-    private ArrayList<com.example.smatech.ay5edma.Models.Modelss.RequestModel> requestModels;
+    private ArrayList<Request> requestModels;
     private FavAdapter.OnItemClick mOnItemClick;
     private Context context;
     private Activity a;
+    ProgressDialog progressDialog;
 
-    public FavAdapter(ArrayList<com.example.smatech.ay5edma.Models.Modelss.RequestModel> requestModels, Context context, Activity a, FavAdapter.OnItemClick mOnItemClick) {
+    public FavAdapter(ArrayList<Request> requestModels, Context context, Activity a, FavAdapter.OnItemClick mOnItemClick) {
         this.requestModels = requestModels;
         this.mOnItemClick = mOnItemClick;
         this.context = context;
         this.a = a;
+        progressDialog=new ProgressDialog(context);
     }
 
 
@@ -48,13 +73,14 @@ public class FavAdapter extends RecyclerView.Adapter<FavAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-        com.example.smatech.ay5edma.Models.Modelss.RequestModel itemMode = requestModels.get(i);
-        if(Hawk.get(Constants.Language).equals("ar")){
-            viewHolder.Catgry1.setText("" + itemMode.getCategoryNameAr());
-            viewHolder.Catgry2.setText("" + itemMode.getSubNameAr());
-        }else {
-            viewHolder.Catgry1.setText("" + itemMode.getCategoryName());
-            viewHolder.Catgry2.setText("" + itemMode.getSubName());
+
+        Request itemMode = requestModels.get(i);
+        if (Hawk.get(Constants.Language).equals("ar")) {
+            viewHolder.Catgry1.setText("" + itemMode.getCategory().getNameAr());
+            viewHolder.Catgry2.setText("" + itemMode.getSubcategory().getNameAr());
+        } else {
+            viewHolder.Catgry1.setText("" + itemMode.getCategory().getName());
+            viewHolder.Catgry2.setText("" + itemMode.getCategory().getName());
         }
 
         viewHolder.Date.setText("" + itemMode.getUpdated());
@@ -62,7 +88,9 @@ public class FavAdapter extends RecyclerView.Adapter<FavAdapter.ViewHolder> {
         viewHolder.ReOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                sendRequest(""+itemMode.getBody(),""+itemMode.getAddress());
             }
+
         });
 
     }
@@ -99,4 +127,59 @@ public class FavAdapter extends RecyclerView.Adapter<FavAdapter.ViewHolder> {
     public interface OnItemClick {
         void setOnItemClick(int position);
     }
+
+    private void sendRequest(final String Description,String Address) {
+
+        progressDialog.show();
+        UserModel userModel = Hawk.get(Constants.userData);
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Connectors.connectionServices.BaseURL)
+                .addConverterFactory(GsonConverterFactory
+                        .create(new Gson())).build();
+        Connectors.connectionServices connectionService =
+                retrofit.create(Connectors.connectionServices.class);
+
+        connectionService.add_Request(userModel.getId()
+                , Hawk.get(Constants.mSubCatgrID) + ""
+                , Description + "", userModel.getId()
+                , Hawk.get(Constants.mCatgrID) + ""
+                , Address
+                , Hawk.get(Constants.Addlocationdlong) + ""
+                , Hawk.get(Constants.Addlocationdlat) + ""
+        ).enqueue(new Callback<StatusModel>() {
+            @Override
+            public void onResponse(Call<StatusModel> call, Response<StatusModel> response) {
+                progressDialog.dismiss();
+                StatusModel statusModel = response.body();
+                Log.d("TTTTT", "onResponse: " + response.message());
+                if (statusModel.getStatus()) {
+                    Log.d("TTT", "onResponse: true ");
+                    Hawk.put((Constants.Addlocationdlong), "");
+                    Hawk.put((Constants.Addlocationdlat), "");
+                   a.finish();
+                    Toast.makeText(a, "" + context.getString(R.string.Your_Request_Had_been_sent), Toast.LENGTH_SHORT).show();
+                    a.startActivity(new Intent(a, RequestsActivity.class).putExtra("stat", "1"));
+                } else {
+
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<StatusModel> call, Throwable t) {
+                progressDialog.dismiss();
+                View parentLayout = a.findViewById(android.R.id.content);
+
+                Snackbar.make(parentLayout, "" + context.getString(R.string.noInternetConnecion), Snackbar.LENGTH_LONG)
+                        .setActionTextColor(context.getResources().getColor(android.R.color.holo_red_light))
+                        .show();
+                Log.d("TTT", "fails:  " + t.getMessage());
+
+            }
+        });
+
+
+    }
+
+
 }

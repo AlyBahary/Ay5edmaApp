@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.smatech.ay5edma.Models.Modelss.StatusModel;
 import com.example.smatech.ay5edma.Models.Modelss.UserModel;
@@ -59,6 +60,7 @@ public class RequestDescriptionActivity extends AppCompatActivity {
                 finish();
             }
         });
+
         parentLayout = findViewById(android.R.id.content);
 
         progressDialog=new ProgressDialog(this);
@@ -155,6 +157,7 @@ public class RequestDescriptionActivity extends AppCompatActivity {
                             @Override
                             public void onResponse(Call<StatusModel> call, Response<StatusModel> response) {progressDialog.dismiss();
                                 StatusModel statusModel = response.body();
+                                Log.d("TTTTT", "onResponse: "+response.message());
                                 if (statusModel.getStatus()) {
                                     Log.d("TTT", "onResponse: true ");
                                     Hawk.put((Constants.Addlocationdlong), "");
@@ -162,6 +165,9 @@ public class RequestDescriptionActivity extends AppCompatActivity {
                                     Snackbar.make(parentLayout, "" + getString(R.string.Your_Request_Had_been_sent), Snackbar.LENGTH_LONG)
                                             .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
                                             .show();
+                                    Toast.makeText(RequestDescriptionActivity.this, ""+getString(R.string.Your_Request_Had_been_sent), Toast.LENGTH_SHORT).show();
+                                    finish();
+                                    startActivity(new Intent(RequestDescriptionActivity.this,RequestsActivity.class).putExtra("stat","1"));
                                 } else {
 
                                     Snackbar.make(parentLayout, "" + getString(R.string.Some_thing_went_wrong_Please_try_again), Snackbar.LENGTH_LONG)
@@ -180,6 +186,9 @@ public class RequestDescriptionActivity extends AppCompatActivity {
                             @Override
                             public void onFailure(Call<StatusModel> call, Throwable t) {
                                 progressDialog.dismiss();
+                                Snackbar.make(parentLayout, "" + getString(R.string.noInternetConnecion), Snackbar.LENGTH_LONG)
+                                        .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                                        .show();
                                 Log.d("TTT", "fails:  "+t.getMessage());
 
                             }
@@ -192,6 +201,7 @@ public class RequestDescriptionActivity extends AppCompatActivity {
                     @Override
                     public void onFailed(se.arbitur.geocoding.Response response, IOException e) {
                         progressDialog.dismiss();
+
                         Log.d("TTTTTTT", "onFailed: NO Response" + response.getErrorMessage() + " - " + response.getResults().length);
                     }
                 });

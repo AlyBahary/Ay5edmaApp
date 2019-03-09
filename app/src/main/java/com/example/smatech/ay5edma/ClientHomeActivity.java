@@ -69,6 +69,7 @@ public class ClientHomeActivity extends AppCompatActivity
     HashMap<String, String> url_maps;
     private com.daimajia.slider.library.SliderLayout mDemoSlider, mDemoSlider1;
     DrawerLayout drawer;
+    LinearLayout myPoints,myReje,myAcce;
     ImageView menu;
     ScrollView client_view, Server_view;
     RecyclerView RV, RV2;
@@ -220,6 +221,33 @@ public class ClientHomeActivity extends AppCompatActivity
             }
             client_view.setVisibility(View.GONE);
             Server_view.setVisibility(View.VISIBLE);
+            myPoints=findViewById(R.id.myPoints);
+            myPoints.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(ClientHomeActivity.this,PackageActivity.class));
+
+                }
+            });
+            myReje=findViewById(R.id.myReje);
+            myReje.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(ClientHomeActivity.this,RequestsActivity.class)
+                            .putExtra("stat","0"));
+
+
+                }
+            });
+            myAcce=findViewById(R.id.myAcce);
+            myAcce.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(ClientHomeActivity.this,RequestsActivity.class)
+                            .putExtra("stat","1"));
+
+                }
+            });
             RV2 = findViewById(R.id.RV2);
             DM1 = new ArrayList<>();
             requestAdapter = new RequestAdapter(DM1, "3", this, ClientHomeActivity.this, new RequestAdapter.OnItemClick() {
@@ -229,6 +257,7 @@ public class ClientHomeActivity extends AppCompatActivity
                     Hawk.put(Constants.mRequestID, DM1.get(position).getId());
                     Hawk.put(Constants.mRequestFrom, DM1.get(position).getUser());
                     Hawk.put(Constants.mRequestDesc, DM1.get(position).getBody());
+                    Hawk.put(Constants.mRequest, DM1.get(position));
                     startActivity(intent);
 
                 }
@@ -410,7 +439,7 @@ public class ClientHomeActivity extends AppCompatActivity
                             .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
                             .show();
                 } else {
-                    Intent intent = new Intent(ClientHomeActivity.this, EditProfileActivity.class);
+                    Intent intent = new Intent(ClientHomeActivity.this, SettingActiviy.class);
                     startActivity(intent);
                 }
             }
@@ -463,7 +492,7 @@ public class ClientHomeActivity extends AppCompatActivity
                 finish();
                 Hawk.deleteAll();
                 Hawk.destroy();
-                startActivity(new Intent(ClientHomeActivity.this, RegistrtionTypeActivity.class));
+                startActivity(new Intent(ClientHomeActivity.this, LoginActiivty.class));
             }
         });
         nav_BE_Serv_Client = navigationView.findViewById(R.id.nav_BE_Serv_Client);
@@ -580,6 +609,9 @@ public class ClientHomeActivity extends AppCompatActivity
             @Override
             public void onFailure(Call<StatusModel> call, Throwable t) {
                 progressDialog.dismiss();
+                Snackbar.make(parentLayout, "" + getString(R.string.noInternetConnecion), Snackbar.LENGTH_LONG)
+                        .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                        .show();
 
             }
         });
@@ -630,6 +662,9 @@ public class ClientHomeActivity extends AppCompatActivity
             @Override
             public void onFailure(Call<StatusModel> call, Throwable t) {
                 progressDialog.dismiss();
+                Snackbar.make(parentLayout, "" + getString(R.string.noInternetConnecion), Snackbar.LENGTH_LONG)
+                        .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                        .show();
 
             }
         });
@@ -664,6 +699,9 @@ public class ClientHomeActivity extends AppCompatActivity
                     @Override
                     public void onFailure(Call<StatusModel> call, Throwable t) {
                         progressDialog.dismiss();
+                        Snackbar.make(parentLayout, "" + getString(R.string.noInternetConnecion), Snackbar.LENGTH_LONG)
+                                .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                                .show();
 
                     }
                 });

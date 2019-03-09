@@ -69,6 +69,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/grey_button"
                 android:gravity="start"
+                android:id="@+id/comment"
                 android:inputType="textMultiLine"
                 android:padding="4dp"
                 android:minLines="4"

@@ -38,7 +38,8 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
+                android:gravity="start"
+                android:textAlignment="viewStart"
                 android:id="@+id/Bank_name"
                 android:text="@string/Bank_name"
                 android:textColor="@color/Black"

@@ -43,6 +43,7 @@ import com.thefinestartist.finestwebview.FinestWebView;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -102,6 +103,7 @@ public class SignupAcivity extends AppCompatActivity implements DatePickerDialog
         );
         datePickerDialog = new DatePickerDialog(
                 this, SignupAcivity.this, 1990, 1, 1);
+
         Signup_BD = findViewById(R.id.Signup_BD);
         Signup_BD.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -297,7 +299,9 @@ public class SignupAcivity extends AppCompatActivity implements DatePickerDialog
 
                                 @Override
                                 public void onFailed(se.arbitur.geocoding.Response response, IOException e) {
-
+                                    Snackbar.make(parentLayout, "" + getString(R.string.noInternetConnecion), Snackbar.LENGTH_LONG)
+                                            .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                                            .show();
                                 }
                             });
 
@@ -338,7 +342,7 @@ public class SignupAcivity extends AppCompatActivity implements DatePickerDialog
                         retrofit.create(Connectors.connectionServices.class);
 
                 connectionService.signup(password, role, mobile, birthdate, gender, name, image
-                        , subcategory_id,"", category_id, longitude, latitude, address,strings).enqueue(new Callback<UserModelSatus>() {
+                        , subcategory_id,"", category_id, longitude, latitude, address,"").enqueue(new Callback<UserModelSatus>() {
                     @Override
                     public void onResponse(Call<UserModelSatus> call, Response<UserModelSatus> response) {
                         Hawk.put(Constants.password,password);
@@ -359,14 +363,25 @@ public class SignupAcivity extends AppCompatActivity implements DatePickerDialog
                             startActivity(i);
                             Toast.makeText(SignupAcivity.this, "" + userModel.getName(), Toast.LENGTH_SHORT).show();
                         } else {
-                            Snackbar.make(parentLayout, "" + statusModel.getMessage(), Snackbar.LENGTH_LONG)
-                                    .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
-                                    .show();
+                            Log.d("TTT", "onResponse: "+Locale.getDefault().getDisplayLanguage());
+                            if (Hawk.get(Constants.Language).equals("en")) {
+
+                                Snackbar.make(parentLayout, "" + statusModel.getMessage(), Snackbar.LENGTH_LONG)
+                                        .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                                        .show();
+                            } else {
+                                Snackbar.make(parentLayout, "" + statusModel.getMessage_ar(), Snackbar.LENGTH_LONG)
+                                        .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                                        .show();
+                            }
                         }
                     }
 
                     @Override
                     public void onFailure(Call<UserModelSatus> call, Throwable t) {
+                        Snackbar.make(parentLayout, "" + getString(R.string.noInternetConnecion), Snackbar.LENGTH_LONG)
+                                .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                                .show();
                         progressDialog.dismiss();
 
 

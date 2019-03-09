@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Ay 5edma</string>
-    <string name="name">الاسم :</string>
-    <string name="Occupation">المهنة :</string>
+    <string name="name">الاسم : </string>
+    <string name="Occupation">المهنة : </string>
     <string name="Birthdate">"تاريخ الميلاد : "</string>
     <string name="Evaluation">"التقييم : "</string>
     <string name="Location">"موقعه : "</string>
@@ -59,7 +59,7 @@
     <string name="Client_Reviews">آراء العملاء</string>
     <string name="EditInformation">تحديث البيانات</string>
     <string name="Edit">"تعديل "</string>
-    <string name="EditProfile">تعديل الملف الشخصي</string>
+    <string name="EditProfile"> الملف الشخصي</string>
     <string name="Requestes">الطلبات</string>
     <string name="Previouse">السابقة</string>
     <string name="Recent">الحالية</string>
@@ -81,7 +81,7 @@
     <string name="re_Order">إعادة الطلب</string>
     <string name="Requests_Rejected">مرفوض</string>
     <string name="request_Status">حالة الطلب</string>
-    <string name="Client_name">اسم العميل :</string>
+    <string name="Client_name">اسم العميل : </string>
     <string name="Client_request_details">"تفاصيل طلب العميل "</string>
     <string name="Buy_Points">شراء نقاط</string>
     <string name="convert_to_client">"التحويل الى عميل "</string>
@@ -132,4 +132,15 @@
     <string name="youcanuploadimagesofyourwork">يمكنك اضافة بعض الصو من اعمالك</string>
     <string name="chooseImage">اختر الصور</string>
     <string name="ImageUploaded">"تم اضافة الصور "</string>
+    <string name="noInternetConnecion">برجاء التحقق من الانترنت</string>
+    <string name="message_had_been_send">تم ارسال الرسالة</string>
+    <string name="somethingwentwrong">حدث شئ خاطئ</string>
+    <string name="changePass">تغير كلمة المرور</string>
+    <string name="password_changed">تم تغيير كلمة الرور</string>
+    <string name="pleaseActivateyourAccount">من فضلك قم بتفعيل الحساب</string>
+    <string name="pleaseaddRate">من فضلك اضف تقييم</string>
+    <string name="reviewAddedSuccessfuly">تم اضافة التقيم بنجاح</string>
+    <string name="thereisnoReviews">لا يوجد تقيمات</string>
+    <string name="Aboutyou">نبذة عنك</string>
+    <string name="Requests_finished">تم الانتهاء</string>
 </resources>

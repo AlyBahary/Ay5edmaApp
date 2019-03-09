@@ -3,6 +3,8 @@ package com.example.smatech.ay5edma.Models.Modelss;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
+
 public class UserModel {@SerializedName("id")
 @Expose
 private String id;
@@ -45,7 +47,7 @@ private String id;
     @SerializedName("last_login")
     @Expose
     private String lastLogin;
-    @SerializedName("activate")
+    @SerializedName("activated")
     @Expose
     private String activate;
     @SerializedName("forget")
@@ -114,6 +116,8 @@ private String id;
     @SerializedName("job_ar")
     @Expose
     private Object jobAr;
+
+
 
     public String getRejected() {
         return rejected;

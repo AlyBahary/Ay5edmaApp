@@ -1,8 +1,11 @@
 package com.example.smatech.ay5edma;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -16,6 +19,7 @@ import com.example.smatech.ay5edma.Models.Modelss.CategoryModel;
 import com.example.smatech.ay5edma.Models.Modelss.StatusModel;
 import com.example.smatech.ay5edma.Models.Modelss.SubCategoryModel;
 import com.example.smatech.ay5edma.Models.Modelss.UserModel;
+import com.example.smatech.ay5edma.Models.Modelss.UserModelSatus;
 import com.example.smatech.ay5edma.Utils.Connectors;
 import com.example.smatech.ay5edma.Utils.Constants;
 import com.google.gson.Gson;
@@ -35,17 +39,22 @@ public class BeServiceProvier extends AppCompatActivity {
     Spinner Spinner1, Spinner2;
     Button Agree;
     UserModel userModel;
-
+    View parentLayout;
     List<String> list2, list;
     List<String> ids2, ids;
     String category_id = "", subcategory_id = "", subcategory2_id = "";
 
+    ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_be_service_provier);
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage(getString(R.string.Loading));
         ImageView back;
+
+        parentLayout = findViewById(android.R.id.content);
         TextView toolbar_title;
         toolbar_title = findViewById(R.id.toolbar_title);
         toolbar_title.setText(getString(R.string.convert_to_service_provider));
@@ -65,14 +74,14 @@ public class BeServiceProvier extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (category_id != "" && subcategory_id != "") {
-                    userModel.setRole("2");
-                    userModel.setCategoryId(""+category_id);
-                    userModel.setSubcategoryId(""+subcategory2_id);
-                    Hawk.put(Constants.UserType, "1");
-                    Hawk.put(Constants.userData, userModel);
-                    finish();
-                    Intent intent = new Intent(BeServiceProvier.this, ClientHomeActivity.class);
-                    startActivity(intent);
+                    edit("" + userModel.getMobile()
+                            , "" + userModel.getImage()
+                            , "" + userModel.getId()
+                            , "" + userModel.getName()
+                            , "" + userModel.getGender()
+                            , "" + category_id
+                            , "" + subcategory_id);
+
                 }
             }
         });
@@ -109,7 +118,6 @@ public class BeServiceProvier extends AppCompatActivity {
         });
         ///Spinner2
         Spinner2 = findViewById(R.id.Spinner2);
-        list2.add(getString(R.string.Secondary__service));
         ArrayAdapter<String> dataAdapter2 = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, list2);
         dataAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -131,10 +139,25 @@ public class BeServiceProvier extends AppCompatActivity {
             }
         });
 
+        if (userModel.getCategoryId() != null) {
+            if (userModel.getCategoryId().equals("") || userModel.getCategoryId().equals("0")) {
+
+            } else {
+                edit("" + userModel.getMobile()
+                        , "" + userModel.getImage()
+                        , "" + userModel.getId()
+                        , "" + userModel.getName()
+                        , "" + userModel.getGender()
+                        , "" + userModel.getCategoryId()
+                        , "" + userModel.getSubcategoryId());
+            }
+        }
+
 
     }
 
     private void getCategries() {
+        progressDialog.show();
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Connectors.connectionServices.BaseURL)
                 .addConverterFactory(GsonConverterFactory
@@ -145,6 +168,7 @@ public class BeServiceProvier extends AppCompatActivity {
         connectionService.get_Category().enqueue(new Callback<StatusModel>() {
             @Override
             public void onResponse(Call<StatusModel> call, Response<StatusModel> response) {
+                progressDialog.dismiss();
                 StatusModel statusModel = response.body();
                 if (statusModel.getStatus() == true) {
                     ArrayList<CategoryModel> categoryModels = statusModel.getCategories();
@@ -153,7 +177,7 @@ public class BeServiceProvier extends AppCompatActivity {
                         for (int i = 0; categoryModels.size() > i; i++) {
                             ids.add(categoryModels.get(i).getId());
 
-                            if (Locale.getDefault().getDisplayLanguage().equals("ar")) {
+                            if (Locale.getDefault().getDisplayLanguage().equals("العربية")) {
                                 list.add(categoryModels.get(i).getNameAr());
                             } else {
                                 list.add(categoryModels.get(i).getName());
@@ -169,12 +193,17 @@ public class BeServiceProvier extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<StatusModel> call, Throwable t) {
+                progressDialog.dismiss();
+                Snackbar.make(parentLayout, "" + getString(R.string.noInternetConnecion), Snackbar.LENGTH_LONG)
+                        .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                        .show();
 
             }
         });
     }
 
     private void getSubCatg(String category_id) {
+        progressDialog.show();
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Connectors.connectionServices.BaseURL)
                 .addConverterFactory(GsonConverterFactory
@@ -185,6 +214,7 @@ public class BeServiceProvier extends AppCompatActivity {
         connectionService.get_SubCategory(category_id, "").enqueue(new Callback<StatusModel>() {
             @Override
             public void onResponse(Call<StatusModel> call, Response<StatusModel> response) {
+                progressDialog.dismiss();
                 StatusModel statusModel = response.body();
                 list2.clear();
                 list2.add(getString(R.string.Secondary_service));
@@ -195,7 +225,7 @@ public class BeServiceProvier extends AppCompatActivity {
                         for (int i = 0; subCategoryModels.size() > i; i++) {
                             ids2.add(subCategoryModels.get(i).getId());
 
-                            if (Locale.getDefault().getDisplayLanguage().equals("ar")) {
+                            if (Locale.getDefault().getDisplayLanguage().equals("العربية")) {
                                 list2.add(subCategoryModels.get(i).getNameAr() + "");
                             } else {
                                 list2.add(subCategoryModels.get(i).getName());
@@ -212,10 +242,113 @@ public class BeServiceProvier extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<StatusModel> call, Throwable t) {
+                progressDialog.dismiss();
+                Snackbar.make(parentLayout, "" + getString(R.string.noInternetConnecion), Snackbar.LENGTH_LONG)
+                        .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                        .show();
 
             }
         });
 
+    }
+
+    private void edit(String mobile, String img, String id, String name, String gender, String catgryid, String subcategory_id) {
+        progressDialog.show();
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Connectors.connectionServices.BaseURL)
+                .addConverterFactory(GsonConverterFactory
+                        .create(new Gson())).build();
+        Connectors.connectionServices connectionService =
+                retrofit.create(Connectors.connectionServices.class);
+
+        connectionService.edit(mobile, img, id, name, gender, catgryid, subcategory_id,"","2").enqueue(new Callback<StatusModel>() {
+            @Override
+            public void onResponse(Call<StatusModel> call, Response<StatusModel> response) {
+
+                progressDialog.dismiss();
+                StatusModel statusModel = response.body();
+                if (statusModel.getStatus()) {
+                    login(mobile, Hawk.get(Constants.password), Hawk.get(Constants.TOKEN));
+
+                } else {
+                    Snackbar.make(parentLayout, "" + getString(R.string.somethingwentwrong), Snackbar.LENGTH_LONG)
+                            .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                            .show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<StatusModel> call, Throwable t) {
+                Snackbar.make(parentLayout, "" + getString(R.string.noInternetConnecion), Snackbar.LENGTH_LONG)
+                        .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                        .show();
+                progressDialog.dismiss();
+
+            }
+        });
+    }
+
+    private void login(String mobile, String password, String token) {
+        progressDialog.show();
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Connectors.connectionServices.BaseURL)
+                .addConverterFactory(GsonConverterFactory
+                        .create(new Gson())).build();
+        Connectors.connectionServices connectionService =
+                retrofit.create(Connectors.connectionServices.class);
+
+        connectionService.login(password, mobile, token).enqueue(new Callback<UserModelSatus>() {
+            @Override
+            public void onResponse(Call<UserModelSatus> call, Response<UserModelSatus> response) {
+                Hawk.put(Constants.password, password);
+                Hawk.put(Constants.username, mobile);
+                Log.d("TTTT", "onResponse: Response00");
+                progressDialog.dismiss();
+                UserModelSatus statusModel = response.body();
+                if (statusModel.getStatus() == true) {
+                    Log.d("TTTT", "onResponse: Response11");
+                    UserModel userModel = statusModel.getUser();
+                    userModel.setAccepted(statusModel.getAccepted() + "");
+                    userModel.setPoints(statusModel.getPoints() + "");
+                    userModel.setPeople(statusModel.getPeople() + "");
+                    userModel.setRejected(statusModel.getRejected() + "");
+                    userModel.setRole("2");
+                    Hawk.put(Constants.UserType, "1");
+                    Hawk.put(Constants.userData, userModel);
+                    // Log.d("TTTTTT", "onResponse: "+userModel.getAccepted()+userModel.getPoints()+userModel.getPeople()+userModel.getRejected());
+                    Hawk.put(Constants.userData, userModel);
+                    Hawk.put(Constants.extraauserData1, statusModel.getCategory());
+                    Hawk.put(Constants.extraauserData2, statusModel.getSubcategory());
+                    finish();
+                    Intent intent = new Intent(BeServiceProvier.this, ClientHomeActivity.class);
+                    startActivity(intent);
+                } else {
+                    Log.d("TTTT", "onResponse: Response22");
+
+                    if (Locale.getDefault().getDisplayLanguage().equals("English")) {
+                        Snackbar.make(parentLayout, "" + statusModel.getMessage(), Snackbar.LENGTH_LONG)
+                                .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                                .show();
+                    } else {
+                        Snackbar.make(parentLayout, "" + statusModel.getMessage_ar(), Snackbar.LENGTH_LONG)
+                                .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                                .show();
+                    }
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<UserModelSatus> call, Throwable t) {
+                progressDialog.dismiss();
+                Snackbar.make(parentLayout, "" + getString(R.string.noInternetConnecion), Snackbar.LENGTH_LONG)
+                        .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                        .show();
+                Log.d("TTTT", "onResponse: fail" + t.getMessage());
+
+
+            }
+        });
     }
 
 }

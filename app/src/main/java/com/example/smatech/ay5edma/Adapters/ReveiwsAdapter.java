@@ -17,11 +17,11 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 public class ReveiwsAdapter extends RecyclerView.Adapter<ReveiwsAdapter.ViewHolder> {
-    private ArrayList<ReviewModel> reviewModels;
+    private ArrayList<com.example.smatech.ay5edma.Models.Modelss.ReviewModel> reviewModels;
     private ReveiwsAdapter.OnItemClick mOnItemClick;
     private Context context;
 
-    public ReveiwsAdapter(ArrayList<ReviewModel> reviewModels, Context context, ReveiwsAdapter.OnItemClick mOnItemClick) {
+    public ReveiwsAdapter(ArrayList<com.example.smatech.ay5edma.Models.Modelss.ReviewModel> reviewModels, Context context, ReveiwsAdapter.OnItemClick mOnItemClick) {
         this.reviewModels = reviewModels;
         this.mOnItemClick = mOnItemClick;
         this.context = context;
@@ -39,13 +39,15 @@ public class ReveiwsAdapter extends RecyclerView.Adapter<ReveiwsAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-        ReviewModel itemMode = reviewModels.get(i);
-        viewHolder.Ctgry1.setText(""+itemMode.getCtgry1()+"-"+itemMode.getCtgry2());
-        viewHolder.time.setText(""+itemMode.getTime());
-        viewHolder.Name.setText(""+itemMode.getName());
+        com.example.smatech.ay5edma.Models.Modelss.ReviewModel itemMode = reviewModels.get(i);
+        //viewHolder.Ctgry1.setText(""+itemMode.get()+"-"+itemMode.getCtgry2());
+        viewHolder.Ctgry1.setVisibility(View.GONE);
+        viewHolder.time.setText(""+itemMode.getDate());
+        viewHolder.Name.setText(""+itemMode.getUsername());
         viewHolder.Comment.setText(""+itemMode.getComment());
+
         viewHolder.Stars.setNumStars(5);
-        viewHolder.Stars.setRating(4);
+        viewHolder.Stars.setRating(Float.parseFloat(itemMode.getRate()));
         }
 
     @Override

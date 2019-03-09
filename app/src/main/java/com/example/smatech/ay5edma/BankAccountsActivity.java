@@ -49,6 +49,7 @@ public class BankAccountsActivity extends AppCompatActivity implements DatePicke
         progressDialog=new ProgressDialog(this);
         progressDialog.setMessage(getString(R.string.Loading));
 
+
         userModel = Hawk.get(Constants.userData);
         ImageView back;
         TextView toolbar_title;
@@ -138,6 +139,7 @@ public class BankAccountsActivity extends AppCompatActivity implements DatePicke
             @Override
             public void onFailure(Call<StatusModel> call, Throwable t) {
                 progressDialog.dismiss();
+
                 Snackbar.make(parentLayout, "" + getString(R.string.noInternetConnecion), Snackbar.LENGTH_LONG)
                         .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
                         .show();

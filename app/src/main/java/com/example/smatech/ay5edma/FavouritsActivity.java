@@ -1,10 +1,12 @@
 package com.example.smatech.ay5edma;
 
 import android.app.ProgressDialog;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -13,6 +15,8 @@ import com.example.smatech.ay5edma.Adapters.FavAdapter;
 import com.example.smatech.ay5edma.Models.Modelss.StatusModel;
 import com.example.smatech.ay5edma.Models.Modelss.UserModel;
 import com.example.smatech.ay5edma.Models.RequestModel;
+import com.example.smatech.ay5edma.Models.favModel.Example;
+import com.example.smatech.ay5edma.Models.favModel.Request;
 import com.example.smatech.ay5edma.Utils.Connectors;
 import com.example.smatech.ay5edma.Utils.Constants;
 import com.google.gson.Gson;
@@ -28,14 +32,18 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class FavouritsActivity extends AppCompatActivity {
     RecyclerView RV;
-    ArrayList<com.example.smatech.ay5edma.Models.Modelss.RequestModel> DM;
+    ArrayList<Request> DM;
     FavAdapter favAdapter;
     ProgressDialog progressDialog;
     UserModel userModel;
+    private View parentLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_re_order);
+        parentLayout = findViewById(android.R.id.content);
+
         progressDialog=new ProgressDialog(this);
         progressDialog.setMessage(getString(R.string.Loading));
         ImageView back;
@@ -83,11 +91,11 @@ public class FavouritsActivity extends AppCompatActivity {
         Connectors.connectionServices connectionService =
                 retrofit.create(Connectors.connectionServices.class);
 
-        connectionService.get_Favourite(userID,true).enqueue(new Callback<StatusModel>() {
+        connectionService.get_Favourite(userID,true).enqueue(new Callback<Example>() {
             @Override
-            public void onResponse(Call<StatusModel> call, Response<StatusModel> response) {
+            public void onResponse(Call<Example> call, Response<Example> response) {
                 progressDialog.dismiss();
-                StatusModel statusModel=response.body();
+                Example statusModel=response.body();
                 if(statusModel.getStatus()){
                     DM.addAll(statusModel.getRequests());
                     favAdapter.notifyDataSetChanged();
@@ -95,9 +103,12 @@ public class FavouritsActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<StatusModel> call, Throwable t) {
+            public void onFailure(Call<Example> call, Throwable t) {
                 progressDialog.dismiss();
-
+                Log.d("TTT", "onFailure: "+t.getMessage());
+                Snackbar.make(parentLayout, "" + getString(R.string.noInternetConnecion), Snackbar.LENGTH_LONG)
+                        .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                        .show();
             }
         });
     }

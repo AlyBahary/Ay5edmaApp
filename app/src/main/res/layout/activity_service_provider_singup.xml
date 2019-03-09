@@ -115,6 +115,36 @@
                     android:paddingLeft="20dp"
                     android:paddingRight="20dp"></Spinner>
             </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/grey_button"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_person" />
+
+                <EditText
+                    android:id="@+id/Signup_About"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:gravity="start"
+                    android:hint="@string/Aboutyou"
+                    android:inputType="text"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:textColorHint="@color/Black"
+                    android:textSize="16sp"
+                    android:textAlignment="viewStart"
+                    />
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"

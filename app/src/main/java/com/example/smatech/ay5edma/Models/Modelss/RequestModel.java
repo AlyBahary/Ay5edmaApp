@@ -3,6 +3,8 @@ package com.example.smatech.ay5edma.Models.Modelss;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
+
 public class RequestModel {
 
     @SerializedName("id")
@@ -62,6 +64,31 @@ public class RequestModel {
     @SerializedName("finished")
     @Expose
     private Boolean finished;
+    @SerializedName("favourite")
+    @Expose
+    private Boolean favourite;
+    @SerializedName("Category")
+    @Expose
+    private CategoryModel category;
+    @SerializedName("Subcategory")
+    @Expose
+    private CategoryModel subcategory;
+
+    public CategoryModel getCategory() {
+        return category;
+    }
+
+    public CategoryModel getSubcategory() {
+        return subcategory;
+    }
+
+    public Boolean getFavourite() {
+        return favourite;
+    }
+
+    public void setFavourite(Boolean favourite) {
+        this.favourite = favourite;
+    }
 
     public Boolean getFinished() {
         return finished;

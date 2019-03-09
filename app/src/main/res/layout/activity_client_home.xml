@@ -363,7 +363,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:maxLines="1"
-                        android:text="@string/Buy"
+                        android:text="@string/Buy_Points"
                         android:textAlignment="textStart"
                         android:gravity="start"
                         android:textColor="@color/nav_grey"

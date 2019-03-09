@@ -57,6 +57,7 @@ public class ServiceProviderSingupActivity extends AppCompatActivity {
     String category_id, subcategory_id, subcategory2_id = "";
     CheckBox Agrement_CheckBox;
     Button Signup;
+    EditText Signup_About;
     ProgressDialog progressDialog;
     Button uploadImgs;
     ArrayList<String> urlStrings;
@@ -67,10 +68,11 @@ public class ServiceProviderSingupActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_service_provider_singup);
-        urlStrings=new ArrayList<>();
+        urlStrings = new ArrayList<>();
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage(getString(R.string.Loading));
-        terms_conditions=findViewById(R.id.terms_conditions);
+        terms_conditions = findViewById(R.id.terms_conditions);
+        Signup_About = findViewById(R.id.Signup_About);
         parentLayout = findViewById(android.R.id.content);
         Agrement_CheckBox = findViewById(R.id.Agrement_CheckBox);
         getCategries();
@@ -78,16 +80,16 @@ public class ServiceProviderSingupActivity extends AppCompatActivity {
         terms_conditions.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(Hawk.contains(Constants.Language)){
-                    if(Hawk.get(Constants.Language).equals("ar")){
+                if (Hawk.contains(Constants.Language)) {
+                    if (Hawk.get(Constants.Language).equals("ar")) {
                         new FinestWebView.Builder(ServiceProviderSingupActivity.this).updateTitleFromHtml(false)
                                 .titleDefault(getString(R.string.Aboutus)).show("http://anyservice-ksa.com/api/webview?type=terms_ar");
 
-                    }else{
+                    } else {
                         new FinestWebView.Builder(ServiceProviderSingupActivity.this).updateTitleFromHtml(false)
                                 .titleDefault(getString(R.string.Aboutus)).show("http://anyservice-ksa.com/api/webview?type=terms");
                     }
-                }else{
+                } else {
                     new FinestWebView.Builder(ServiceProviderSingupActivity.this).updateTitleFromHtml(false)
                             .titleDefault(getString(R.string.Aboutus)).show("http://anyservice-ksa.com/api/webview?type=terms");
 
@@ -226,7 +228,8 @@ public class ServiceProviderSingupActivity extends AppCompatActivity {
                             , Hawk.get(Constants.BirthDate)
                             , Hawk.get(Constants.sex) + ""
                             , Hawk.get(Constants.name), "" + "", subcategory_id, category_id, subcategory2_id + "", "" + Hawk.get(Constants.userLong)
-                            , "" + Hawk.get(Constants.userLat), Hawk.get(Constants.userAddress) + "",urlStrings);
+                            , "" + Hawk.get(Constants.userLat), Hawk.get(Constants.userAddress) + ""
+                            ,""+Signup_About.getText().toString(), urlStrings);
                     progressDialog.show();
                 }
             }
@@ -248,8 +251,11 @@ public class ServiceProviderSingupActivity extends AppCompatActivity {
             , String longitude
             , String latitude
             , String address
+            , String About
             , ArrayList<String> images
     ) {
+        Log.d("TTTT", "esssssst: tsssssssst");
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Connectors.connectionServices.BaseURL)
                 .addConverterFactory(GsonConverterFactory
@@ -258,14 +264,20 @@ public class ServiceProviderSingupActivity extends AppCompatActivity {
                 retrofit.create(Connectors.connectionServices.class);
 
         connectionService.signup(password, role, mobile, birthdate, gender, name, image
-                , subcategory_id, subcategory2_id, category_id, longitude, latitude, address,images).enqueue(new Callback<UserModelSatus>() {
+                , subcategory_id, subcategory2_id, category_id, longitude, latitude, address
+                ,About+"",images)
+                .enqueue(new Callback<UserModelSatus>() {
             @Override
             public void onResponse(Call<UserModelSatus> call, Response<UserModelSatus> response) {
-                Hawk.put(Constants.password,password);
-                Hawk.put(Constants.username,mobile);
+                Log.d("TTTT", "onResponse: Response00");
+
+                Hawk.put(Constants.password, password);
+                Hawk.put(Constants.username, mobile);
                 UserModelSatus statusModel = response.body();
                 if (statusModel.getStatus() == true) {
-                    login(mobile, password, "");
+                    Log.d("TTTT", "onResponse: signup Sucess");
+
+                    login(mobile, password, ""+Hawk.get(Constants.TOKEN));
                     UserModel userModel = statusModel.getUser();
                     Hawk.put(Constants.userData, userModel);
                     //  Hawk.put(Constants.extraauserData1,statusModel.getCategory());
@@ -273,14 +285,23 @@ public class ServiceProviderSingupActivity extends AppCompatActivity {
 
                     Toast.makeText(ServiceProviderSingupActivity.this, "" + userModel.getName(), Toast.LENGTH_SHORT).show();
                 } else {
-                    Snackbar.make(parentLayout, "" + statusModel.getMessage(), Snackbar.LENGTH_LONG)
-                            .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
-                            .show();
+                    if (Hawk.get(Constants.Language).equals("en")) {
+                        Snackbar.make(parentLayout, "" + statusModel.getMessage(), Snackbar.LENGTH_LONG)
+                                .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                                .show();
+                    } else {
+                        Snackbar.make(parentLayout, "" + statusModel.getMessage_ar(), Snackbar.LENGTH_LONG)
+                                .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                                .show();
+                    }
                 }
             }
 
             @Override
             public void onFailure(Call<UserModelSatus> call, Throwable t) {
+                Snackbar.make(parentLayout, "" + getString(R.string.noInternetConnecion), Snackbar.LENGTH_LONG)
+                        .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                        .show();
                 progressDialog.dismiss();
 
             }
@@ -308,7 +329,7 @@ public class ServiceProviderSingupActivity extends AppCompatActivity {
                         for (int i = 0; categoryModels.size() > i; i++) {
                             ids.add(categoryModels.get(i).getId());
 
-                            if (Locale.getDefault().getDisplayLanguage().equals("ar")) {
+                            if (Locale.getDefault().getDisplayLanguage().equals("العربية")) {
                                 list.add(categoryModels.get(i).getNameAr());
                             } else {
                                 list.add(categoryModels.get(i).getName());
@@ -324,7 +345,9 @@ public class ServiceProviderSingupActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<StatusModel> call, Throwable t) {
-
+                Snackbar.make(parentLayout, "" + getString(R.string.noInternetConnecion), Snackbar.LENGTH_LONG)
+                        .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                        .show();
             }
         });
     }
@@ -350,7 +373,7 @@ public class ServiceProviderSingupActivity extends AppCompatActivity {
                         for (int i = 0; subCategoryModels.size() > i; i++) {
                             ids2.add(subCategoryModels.get(i).getId());
 
-                            if (Locale.getDefault().getDisplayLanguage().equals("ar")) {
+                            if (Locale.getDefault().getDisplayLanguage().equals("العربية")) {
                                 list2.add(subCategoryModels.get(i).getNameAr() + "");
                             } else {
                                 list2.add(subCategoryModels.get(i).getName());
@@ -367,6 +390,9 @@ public class ServiceProviderSingupActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<StatusModel> call, Throwable t) {
+                Snackbar.make(parentLayout, "" + getString(R.string.noInternetConnecion), Snackbar.LENGTH_LONG)
+                        .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                        .show();
 
             }
         });
@@ -385,31 +411,39 @@ public class ServiceProviderSingupActivity extends AppCompatActivity {
         connectionService.login(password, mobile, token).enqueue(new Callback<UserModelSatus>() {
             @Override
             public void onResponse(Call<UserModelSatus> call, Response<UserModelSatus> response) {
-                Hawk.put(Constants.password,password);
-                Hawk.put(Constants.username,mobile);
+                Hawk.put(Constants.password, password);
+                Hawk.put(Constants.username, mobile);
                 progressDialog.dismiss();
-                Log.d("TTTT", "onResponse: Response00");
+                Log.d("TTTT", "onResponse: Response33");
                 progressDialog.dismiss();
                 UserModelSatus statusModel = response.body();
                 if (statusModel.getStatus() == true) {
-                    Log.d("TTTT", "onResponse: Response11");
+                    Log.d("TTTT", "onResponse: Response22");
                     UserModel userModel = statusModel.getUser();
-                    userModel.setAccepted(statusModel.getAccepted()+"");
-                    userModel.setPoints(statusModel.getPoints()+"");
-                    userModel.setPeople(statusModel.getPeople()+"");
-                    userModel.setRejected(statusModel.getRejected()+"");
+                    userModel.setAccepted(statusModel.getAccepted() + "");
+                    userModel.setPoints(statusModel.getPoints() + "");
+                    userModel.setPeople(statusModel.getPeople() + "");
+                    userModel.setRejected(statusModel.getRejected() + "");
                     Hawk.put(Constants.userData, userModel);
                     Hawk.put(Constants.extraauserData1, statusModel.getCategory());
                     Hawk.put(Constants.extraauserData2, statusModel.getSubcategory());
 
+                    /*Intent i = new Intent(ServiceProviderSingupActivity.this, NumberConfirmationActivity.class);
+                    startActivity(i);*/
+                } else {
                     Intent i = new Intent(ServiceProviderSingupActivity.this, NumberConfirmationActivity.class);
                     startActivity(i);
-                } else {
                     Log.d("TTTT", "onResponse: Response22");
 
-                    Snackbar.make(parentLayout, "" + statusModel.getMessage(), Snackbar.LENGTH_LONG)
-                            .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
-                            .show();
+                    if (Hawk.get(Constants.Language).equals("en")) {
+                        Snackbar.make(parentLayout, "" + statusModel.getMessage(), Snackbar.LENGTH_LONG)
+                                .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                                .show();
+                    } else {
+                        Snackbar.make(parentLayout, "" + statusModel.getMessage_ar(), Snackbar.LENGTH_LONG)
+                                .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                                .show();
+                    }
                 }
 
             }
@@ -418,7 +452,9 @@ public class ServiceProviderSingupActivity extends AppCompatActivity {
             public void onFailure(Call<UserModelSatus> call, Throwable t) {
                 progressDialog.dismiss();
                 Log.d("TTTT", "onResponse: fail" + t.getMessage());
-
+                Snackbar.make(parentLayout, "" + getString(R.string.noInternetConnecion), Snackbar.LENGTH_LONG)
+                        .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                        .show();
                 progressDialog.dismiss();
 
             }
@@ -442,16 +478,19 @@ public class ServiceProviderSingupActivity extends AppCompatActivity {
                 ImageUrlModel imageUrlModel = response.body();
                 if (imageUrlModel.getImages().size() > 0)
                     urlStrings.add(imageUrlModel.getImages().get(0));
-                Log.d("TTTT", "onResponse: Size of array of images "+urlStrings.size());
-                for (int j =0 ;urlStrings.size()>j;j++){
-                    Log.d("TTT", "onResponse: img url : "+urlStrings.get(j));
+                Log.d("TTTT", "onResponse: Size of array of images " + urlStrings.size());
+                for (int j = 0; urlStrings.size() > j; j++) {
+                    Log.d("TTT", "onResponse: img url : " + urlStrings.get(j));
                 }
-                Toast.makeText(ServiceProviderSingupActivity.this, ""+getString(R.string.ImageUploaded), Toast.LENGTH_SHORT).show();
+                Toast.makeText(ServiceProviderSingupActivity.this, "" + getString(R.string.ImageUploaded), Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onFailure(Call<ImageUrlModel> call, Throwable t) {
                 progressDialog.dismiss();
+                Snackbar.make(parentLayout, "" + getString(R.string.noInternetConnecion), Snackbar.LENGTH_LONG)
+                        .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                        .show();
 
             }
         });

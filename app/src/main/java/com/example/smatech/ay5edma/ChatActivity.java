@@ -2,6 +2,8 @@ package com.example.smatech.ay5edma;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,10 +20,16 @@ import com.example.smatech.ay5edma.Models.Modelss.StatusModel;
 import com.example.smatech.ay5edma.Models.Modelss.UserModel;
 import com.example.smatech.ay5edma.Utils.Connectors;
 import com.example.smatech.ay5edma.Utils.Constants;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.orhanobut.hawk.Hawk;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -39,10 +47,21 @@ public class ChatActivity extends AppCompatActivity {
     String to_id;
     ProgressDialog progressDialog;
 
+    //--------------//
+    FirebaseDatabase database;
+    DatabaseReference myRef;
+    private View parentLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+        parentLayout = findViewById(android.R.id.content);
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage(getString(R.string.Loading));
+
+        database = FirebaseDatabase.getInstance();
+        myRef = database.getReference("Chats");
         ImageView back;
         TextView toolbar_title;
         toolbar_title = findViewById(R.id.toolbar_title);
@@ -54,8 +73,6 @@ public class ChatActivity extends AppCompatActivity {
                 finish();
             }
         });
-        progressDialog=new ProgressDialog(this);
-        progressDialog.setMessage(getString(R.string.Loading));
 
         userModel = Hawk.get(Constants.userData);
         DM = new ArrayList<>();
@@ -85,7 +102,7 @@ public class ChatActivity extends AppCompatActivity {
         RV.setLayoutManager(mLayoutManager);
         chatAdapter.notifyDataSetChanged();
         //to edit later
-        getMessages("0", ""+userModel.getId(),to_id);
+        getMessages("0", "" + userModel.getId(), to_id);
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -93,17 +110,43 @@ public class ChatActivity extends AppCompatActivity {
 
                 } else {
                     //to edit
-                    SendMSG(message.getText().toString(), userModel.getId(), ""+to_id, "0");
+                    SendMSG(message.getText().toString(), userModel.getId(), "" + to_id, "0");
 
                 }
 
             }
         });
+        myRef.child(to_id).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                getMessages("0", "" + userModel.getId(), to_id);
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        myRef.child(userModel.getId()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                getMessages("0", "" + userModel.getId(), to_id);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
-    private void getMessages(String chatID, String userID,String to_id) {
-        progressDialog.show();
+    private void getMessages(String chatID, String userID, String to_id) {
+
+        if (isFinishing()) {
+
+        } else {
+            progressDialog.show();
+        }
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Connectors.connectionServices.BaseURL)
                 .addConverterFactory(GsonConverterFactory
@@ -111,14 +154,18 @@ public class ChatActivity extends AppCompatActivity {
         Connectors.connectionServices connectionService =
                 retrofit.create(Connectors.connectionServices.class);
 
-        connectionService.get_chat_messages(chatID, userID,to_id).enqueue(new Callback<StatusModel>() {
+        connectionService.get_chat_messages(chatID, userID, to_id).enqueue(new Callback<StatusModel>() {
             @Override
             public void onResponse(Call<StatusModel> call, Response<StatusModel> response) {
                 progressDialog.dismiss();
                 StatusModel statusModel = response.body();
                 if (statusModel.getStatus()) {
+                    DM.clear();
                     DM.addAll(statusModel.getChats());
                     chatAdapter.notifyDataSetChanged();
+                    if (DM.size() > 0) {
+                        RV.scrollToPosition(DM.size() - 1);
+                    }
                 } else {
 
                 }
@@ -127,6 +174,9 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<StatusModel> call, Throwable t) {
                 progressDialog.dismiss();
+                Snackbar.make(parentLayout, "" + getString(R.string.noInternetConnecion), Snackbar.LENGTH_LONG)
+                        .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                        .show();
 
             }
         });
@@ -134,7 +184,11 @@ public class ChatActivity extends AppCompatActivity {
 
     private void SendMSG(String Message, String userID, String to_id, String Chatid) {
         //send_message
-        progressDialog.show();
+        if (isFinishing()) {
+
+        } else {
+            progressDialog.show();
+        }
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Connectors.connectionServices.BaseURL)
                 .addConverterFactory(GsonConverterFactory
@@ -148,16 +202,25 @@ public class ChatActivity extends AppCompatActivity {
                 progressDialog.dismiss();
                 StatusModel statusModel = response.body();
                 if (statusModel.getStatus()) {
-                    Intent intent = getIntent();
+                    /*Intent intent = getIntent();
                     finish();
-                    startActivity(intent);
+                    startActivity(intent);*/
+                    final int min = 2000;
+                    final int max = 8000;
+                    final int random = new Random().nextInt((max - min) + 1) + min;
+                    myRef.child(userID).setValue(random);
+                    myRef.child(to_id).setValue(random);
+                    message.setText("");
+
                 }
             }
 
             @Override
             public void onFailure(Call<StatusModel> call, Throwable t) {
                 progressDialog.dismiss();
-
+                Snackbar.make(parentLayout, "" + getString(R.string.noInternetConnecion), Snackbar.LENGTH_LONG)
+                        .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                        .show();
             }
         });
     }

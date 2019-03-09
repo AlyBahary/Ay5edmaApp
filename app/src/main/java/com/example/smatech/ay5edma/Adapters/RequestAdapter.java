@@ -14,6 +14,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -90,7 +91,7 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.ViewHold
         com.example.smatech.ay5edma.Models.Modelss.RequestModel itemMode = requestModels.get(i);
 
         String l = Locale.getDefault().getDisplayLanguage();
-
+        Log.d("TTT", "onBindViewHolder: "+l);
 
         if (Hawk.contains(Constants.Time)) {
             if (Hawk.get(Constants.Time).equals("0") && itemMode.getFinished() != null && itemMode.getFinished()) {
@@ -98,7 +99,7 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.ViewHold
 
             }
         }
-        if (l.equals("ar")) {
+        if (Hawk.get(Constants.Language).equals("ar")||l.equals("العربية")) {
             if (itemMode.getCategoryNameAr() != null) {
                 viewHolder.Catgry1.setText("" + itemMode.getCategoryNameAr());
             } else {
@@ -127,7 +128,7 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.ViewHold
 
         viewHolder.Date.setText("" + itemMode.getUpdated());
 
-        if (itemMode.getStatus().equals("0") && (!itemMode.getShopId().equals("0"))) {
+        if ((itemMode.getStatus().equals("0")||itemMode.getStatus().equals("0")||itemMode.getStatus().equals("1"))&& (!itemMode.getShopId().equals("0"))) {
             viewHolder.Call.setBackground(ContextCompat.getDrawable(context, R.drawable.orang_button));
             viewHolder.MSG.setBackground(ContextCompat.getDrawable(context, R.drawable.orang_button));
             viewHolder.evaluate.setBackground(ContextCompat.getDrawable(context, R.drawable.orang_button));
@@ -135,7 +136,16 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.ViewHold
             viewHolder.evaluate.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    EvaluationDaialoge cdd = new EvaluationDaialoge(a);
+                    EvaluationDaialoge cdd;
+                    if (userModel.getId().equals(itemMode.getUserId())) {
+                         cdd = new EvaluationDaialoge(a,""+userModel.getId()
+                                ,""+itemMode.getShop().getId(),itemMode.getId());
+
+                    } else {
+                         cdd = new EvaluationDaialoge(a,""+userModel.getId()
+                                ,""+itemMode.getUserId(),itemMode.getId()+"");
+
+                    }
                     cdd.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                     cdd.show();
                 }
@@ -144,7 +154,7 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.ViewHold
                 @Override
                 public void onClick(View v) {
                     //to edit later
-                    if (itemMode.getShop().getId() == null) {
+                    if (itemMode.getShop().getId() != null) {
                         Intent i = new Intent(context, ChatActivity.class);
                         if (userModel.getId().equals(itemMode.getUserId())) {
                             i.putExtra("to_id", itemMode.getShop().getId() + "");
@@ -163,10 +173,10 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.ViewHold
                     Intent intent = new Intent(Intent.ACTION_CALL);
 
                     if (userModel.getMobile().equals(itemMode.getShop().getMobile())) {
-                        intent.setData(Uri.parse("tel:" + itemMode.getShop().getMobile()));
+                        intent.setData(Uri.parse("tel:" + itemMode.getUser().getMobile()));
 
                     } else {
-                        intent.setData(Uri.parse("tel:" + itemMode.getUser().getMobile()));
+                        intent.setData(Uri.parse("tel:" + itemMode.getShop().getMobile()));
 
                     }
                     if (ActivityCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
@@ -183,7 +193,7 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.ViewHold
                 }
             });
             // if (itemMode.getFavourite().equals("0")) {
-            if (false) {
+            if (!itemMode.getFavourite()) {
                 viewHolder.fav.setVisibility(View.VISIBLE);
                 Picasso.with(context).load(R.drawable.hart_strok_yellow).into(viewHolder.fav);
                 viewHolder.fav.setOnClickListener(new View.OnClickListener() {
@@ -191,6 +201,9 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.ViewHold
                     public void onClick(View v) {
                         Picasso.with(context).load(R.drawable.hart_yellow).into(viewHolder.fav);
                         addFav(itemMode.getUserId(),itemMode.getId());
+                        itemMode.setFavourite(true);
+                        notifyItemChanged(i);
+
                     }
                 });
 
@@ -202,6 +215,8 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.ViewHold
                     public void onClick(View v) {
                         Picasso.with(context).load(R.drawable.hart_strok_yellow).into(viewHolder.fav);
                         addFav(itemMode.getUserId(),itemMode.getId());
+                        itemMode.setFavourite(false);
+                        notifyItemChanged(i);
 
                     }
                 });
@@ -213,14 +228,14 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.ViewHold
         if (userType.equals("1")) {
             viewHolder.name.setText("" + itemMode.getUser().getName());
             viewHolder.fav.setVisibility(View.GONE);
-            if (itemMode.getStatus().equals("2")) {
+            if (itemMode.getStatus().equals("1")) {
                 viewHolder.Status.setText("" + context.getString(R.string.Requests_Accepted));
 
             } else if (itemMode.getStatus().equals("3")) {
                 viewHolder.Status.setText("" + context.getString(R.string.Requests_Rejected));
                 viewHolder.Removable_Section.setVisibility(View.GONE);
-            } else if (itemMode.getStatus().equals("1")) {
-                viewHolder.Status.setText("" + context.getString(R.string.Requests_progress));
+            } else if (itemMode.getStatus().equals("2")) {
+                viewHolder.Status.setText("" + context.getString(R.string.Requests_finished));
             }
 
 
@@ -233,6 +248,7 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.ViewHold
         }
         if (userType.equals("3")) {
             viewHolder.fav.setVisibility(View.GONE);
+            viewHolder.name.setText(itemMode.getUser().getName());
 
 
         }

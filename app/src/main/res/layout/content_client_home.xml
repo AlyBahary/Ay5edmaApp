@@ -176,7 +176,7 @@
                                     android:lines="1"
                                     android:textSize="12sp"
                                     android:id="@+id/name"
-                                    android:text="Aly"
+                                    android:text=""
                                     android:textColor="@color/White" />
                             </LinearLayout>
 
@@ -251,7 +251,7 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="2dp"
-                        android:background="#303030"
+                        android:background="#4b4b4b"
                         android:paddingBottom="5dp"
                         android:paddingTop="5dp" />
 
@@ -265,6 +265,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
+                            android:id="@+id/myPoints"
                             android:gravity="center"
                             android:orientation="vertical">
 
@@ -289,12 +290,15 @@
                             android:layout_width="2dp"
                             android:layout_height="match_parent"
                             android:layout_weight="0"
-                            android:background="#303030" />
+                            android:layout_marginTop="5dp"
+                            android:layout_marginBottom="5dp"
+                            android:background="#4b4b4b" />
                         <!--Accepted-->
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
+                            android:id="@+id/myAcce"
                             android:gravity="center"
                             android:orientation="vertical">
 
@@ -320,13 +324,16 @@
                             android:layout_width="2dp"
                             android:layout_height="match_parent"
                             android:layout_weight="0"
-                            android:background="#303030" />
+                            android:layout_marginTop="5dp"
+                            android:layout_marginBottom="5dp"
+                            android:background="#4b4b4b" />
                         <!--refused-->
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:gravity="center"
+                            android:id="@+id/myReje"
                             android:orientation="vertical">
 
                             <TextView
@@ -351,7 +358,9 @@
                             android:layout_width="2dp"
                             android:layout_height="match_parent"
                             android:layout_weight="0"
-                            android:background="#303030" />
+                            android:layout_marginTop="5dp"
+                            android:layout_marginBottom="5dp"
+                            android:background="#4b4b4b" />
                         <!--Fav-->
                         <LinearLayout
                             android:layout_width="0dp"

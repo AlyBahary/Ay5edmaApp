@@ -1,6 +1,7 @@
 package com.example.smatech.ay5edma;
 
 import android.annotation.SuppressLint;
+import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -18,6 +19,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -54,7 +56,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class SettingActiviy extends AppCompatActivity {
+public class SettingActiviy extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
     // this activiy for editting profile
 
     LinearLayout Secondaryservicelayout, primaryservicelayout, datelayout;
@@ -64,7 +66,7 @@ public class SettingActiviy extends AppCompatActivity {
     EditText Name, mobile, pass, birthdate;
     Spinner primaryservice, Secondaryservice;
     UserModel userModel;
-    String category_id, subcategory_id;
+    String category_id="", subcategory_id="";
     Spinner Signup_Gender;
     List<String> list2, list;
     List<String> ids2, ids;
@@ -74,6 +76,7 @@ public class SettingActiviy extends AppCompatActivity {
     ProgressDialog progressDialog;
     String urlString = "";
     CircleImageView profile_image;
+    private DatePickerDialog datePickerDialog;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -105,7 +108,16 @@ public class SettingActiviy extends AppCompatActivity {
         Name = findViewById(R.id.Name);
         mobile = findViewById(R.id.mobile);
         pass = findViewById(R.id.pass);
+        datePickerDialog = new DatePickerDialog(
+                this, SettingActiviy.this, 1990, 1, 1);
+
         birthdate = findViewById(R.id.birthdate);
+        birthdate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                datePickerDialog.show();
+            }
+        });
         eye = findViewById(R.id.eye);
         profile_image = findViewById(R.id.profile_image);
 
@@ -263,7 +275,7 @@ public class SettingActiviy extends AppCompatActivity {
         if (Hawk.get(Constants.UserType).equals("0")) {
             primaryservicelayout.setVisibility(View.GONE);
             Secondaryservicelayout.setVisibility(View.GONE);
-            datelayout.setVisibility(View.GONE);
+//            datelayout.setVisibility(View.GONE);
         } else {
             primaryservicelayout.setVisibility(View.VISIBLE);
             Secondaryservicelayout.setVisibility(View.VISIBLE);
@@ -284,7 +296,9 @@ public class SettingActiviy extends AppCompatActivity {
                             .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
                             .show();
                 } else {
-                    edit(mobile.getText().toString(), urlString + "", userModel.getId(), Name.getText().toString());
+                    edit(mobile.getText().toString(), urlString + ""
+                            , userModel.getId(), Name.getText().toString()
+                            ,Sex,category_id,subcategory_id,birthdate.getText().toString()+"");
                 }//Primary Catgry Spinner
 
             }
@@ -313,13 +327,15 @@ public class SettingActiviy extends AppCompatActivity {
                     userModel.setPeople(statusModel.getPeople()+"");
                     userModel.setRejected(statusModel.getRejected()+"");
                     Hawk.put(Constants.userData, statusModel.getUser());
+                    if (statusModel.getUser().getImage().equals("")){
+                    }else {
+                        Picasso.with(SettingActiviy.this).load("http://www.anyservice-ksa.com/prod_img/" + statusModel.getUser().getImage()).into(profile_image);
+                    }
+                    birthdate.setText(""+statusModel.getUser().getBirthday());
+
                     if (statusModel.getUser().getRole().equals("2")) {
                         Name.setText(statusModel.getUser().getName());
-                        if (statusModel.getUser().getImage().equals("")){
 
-                        }else {
-                            Picasso.with(SettingActiviy.this).load("http://www.anyservice-ksa.com/prod_img/" + statusModel.getUser().getImage()).into(profile_image);
-                        }
                         Toast.makeText(SettingActiviy.this, "" + statusModel.getUser().getGender(), Toast.LENGTH_SHORT).show();
                         mobile.setText(statusModel.getUser().getMobile());
                         if (statusModel.getUser().getGender().equals("1")) {
@@ -329,7 +345,6 @@ public class SettingActiviy extends AppCompatActivity {
 
                         }
                         pass.setText(statusModel.getUser().getPassword());
-                        birthdate.setText(""+statusModel.getUser().getBirthday());
 
                         primaryservice.setSelection(ids.indexOf(statusModel.getUser().getCategoryId()));
                         getSubCatg(statusModel.getUser().getCategoryId());
@@ -352,6 +367,9 @@ public class SettingActiviy extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<UserModelSatus> call, Throwable t) {
+                Snackbar.make(parentLayout, "" + getString(R.string.noInternetConnecion), Snackbar.LENGTH_LONG)
+                        .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                        .show();
                 progressDialog.dismiss();
 
             }
@@ -360,6 +378,7 @@ public class SettingActiviy extends AppCompatActivity {
     }
 
     private void getCategries() {
+        progressDialog.show();
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Connectors.connectionServices.BaseURL)
                 .addConverterFactory(GsonConverterFactory
@@ -370,6 +389,7 @@ public class SettingActiviy extends AppCompatActivity {
         connectionService.get_Category().enqueue(new Callback<StatusModel>() {
             @Override
             public void onResponse(Call<StatusModel> call, Response<StatusModel> response) {
+                progressDialog.dismiss();
                 getUserData(userModel.getId());
                 StatusModel statusModel2 = response.body();
                 if (statusModel2.getStatus() == true) {
@@ -379,7 +399,7 @@ public class SettingActiviy extends AppCompatActivity {
                         for (int i = 0; categoryModels.size() > i; i++) {
                             ids.add(categoryModels.get(i).getId());
 
-                            if (Locale.getDefault().getDisplayLanguage().equals("ar")) {
+                            if (Locale.getDefault().getDisplayLanguage().equals("العربية")) {
                                 list.add(categoryModels.get(i).getNameAr());
                             } else {
                                 list.add(categoryModels.get(i).getName());
@@ -395,12 +415,17 @@ public class SettingActiviy extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<StatusModel> call, Throwable t) {
+                progressDialog.dismiss();
+                Snackbar.make(parentLayout, "" + getString(R.string.noInternetConnecion), Snackbar.LENGTH_LONG)
+                        .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                        .show();
 
             }
         });
     }
 
     private void getSubCatg(String category_id) {
+        progressDialog.show();
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Connectors.connectionServices.BaseURL)
                 .addConverterFactory(GsonConverterFactory
@@ -411,6 +436,7 @@ public class SettingActiviy extends AppCompatActivity {
         connectionService.get_SubCategory(category_id, "").enqueue(new Callback<StatusModel>() {
             @Override
             public void onResponse(Call<StatusModel> call, Response<StatusModel> response) {
+                progressDialog.dismiss();
                 StatusModel statusModel1 = response.body();
                 list2.clear();
                 list2.add(getString(R.string.Secondary_service));
@@ -441,13 +467,17 @@ public class SettingActiviy extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<StatusModel> call, Throwable t) {
+                progressDialog.dismiss();
+                Snackbar.make(parentLayout, "" + getString(R.string.noInternetConnecion), Snackbar.LENGTH_LONG)
+                        .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                        .show();
 
             }
         });
 
     }
 
-    private void edit(String mobile, String img, String id, String name) {
+    private void edit(String mobile, String img, String id, String name,String gender,String catgryid,String subcategory_id,String bd) {
         progressDialog.show();
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Connectors.connectionServices.BaseURL)
@@ -456,22 +486,34 @@ public class SettingActiviy extends AppCompatActivity {
         Connectors.connectionServices connectionService =
                 retrofit.create(Connectors.connectionServices.class);
 
-        connectionService.edit(mobile, img, id, name).enqueue(new Callback<StatusModel>() {
+        connectionService.edit(mobile, img, id, name,gender,catgryid,subcategory_id,bd,"").enqueue(new Callback<StatusModel>() {
             @Override
             public void onResponse(Call<StatusModel> call, Response<StatusModel> response) {
+
                 progressDialog.dismiss();
                 StatusModel statusModel = response.body();
                 if (statusModel.getStatus()) {
-
+                    userModel = Hawk.get(Constants.userData);
+                    userModel.setMobile(mobile);
+                    userModel.setImage(img);
+                    userModel.setName(name);
+                    userModel.setGender(gender);
+                    Hawk.put(Constants.userData,userModel);
                     Snackbar.make(parentLayout, "" + getString(R.string.Informaion_Updated), Snackbar.LENGTH_LONG)
                             .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
                             .show();
                 } else {
+                    Snackbar.make(parentLayout, "" + getString(R.string.somethingwentwrong), Snackbar.LENGTH_LONG)
+                            .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                            .show();
                 }
             }
 
             @Override
             public void onFailure(Call<StatusModel> call, Throwable t) {
+                Snackbar.make(parentLayout, "" + getString(R.string.noInternetConnecion), Snackbar.LENGTH_LONG)
+                        .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                        .show();
                 progressDialog.dismiss();
 
             }
@@ -520,6 +562,12 @@ public class SettingActiviy extends AppCompatActivity {
             uploadPhotoService(body);
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+        birthdate.setText(dayOfMonth + "/" + month + "/" + year);
+
     }
 }
 

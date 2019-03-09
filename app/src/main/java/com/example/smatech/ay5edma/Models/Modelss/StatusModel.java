@@ -49,6 +49,9 @@ public class StatusModel {
     @SerializedName("points")
     @Expose
     private ArrayList<PointsModel> points = null;
+    @SerializedName("review")
+    @Expose
+    private ArrayList<ReviewModel> review = null;
     @SerializedName("category")
     @Expose
     private CategoryModel category;
@@ -56,6 +59,9 @@ public class StatusModel {
     @Expose
     private CategoryModel subcategory;
 
+    public ArrayList<ReviewModel> getReview() {
+        return review;
+    }
 
     public CategoryModel getCategory() {
         return category;

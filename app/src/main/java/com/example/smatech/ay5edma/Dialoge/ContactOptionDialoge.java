@@ -21,14 +21,15 @@ public class ContactOptionDialoge extends Dialog {
 
     public Activity c;
     public Dialog d;
-    String num;
+    String num,to_id;
     CardView Call, Chat;
 
-    public ContactOptionDialoge(Activity a, String num) {
+    public ContactOptionDialoge(Activity a, String num,String to_id) {
         super(a);
         // TODO Auto-generated constructor stub
         this.c = a;
         this.num = num;
+        this.to_id = to_id;
     }
 
     @Override
@@ -60,7 +61,7 @@ public class ContactOptionDialoge extends Dialog {
         Chat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(c, ChatActivity.class);
+                Intent intent=new Intent(c, ChatActivity.class).putExtra("to_id",to_id);
                 c.startActivity(intent);
             }
         });

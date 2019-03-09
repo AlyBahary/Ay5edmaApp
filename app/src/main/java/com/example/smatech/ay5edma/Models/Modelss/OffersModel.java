@@ -45,7 +45,7 @@ public class OffersModel {
     private RequestModel request;
     @SerializedName("user")
     @Expose
-    private SpecialUserModel user;
+    private UserModel user;
     @SerializedName("from")
     @Expose
     private UserModel from;
@@ -154,11 +154,11 @@ public class OffersModel {
         this.request = request;
     }
 
-    public SpecialUserModel getUser() {
+    public UserModel getUser() {
         return user;
     }
 
-    public void setUser(SpecialUserModel user) {
+    public void setUser(UserModel user) {
         this.user = user;
     }
 

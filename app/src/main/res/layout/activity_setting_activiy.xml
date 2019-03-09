@@ -217,6 +217,7 @@
                     android:layout_height="wrap_content"
                     android:background="@null"
                     android:gravity="start"
+                    android:focusable="false"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
                     android:text="1/1/1990"

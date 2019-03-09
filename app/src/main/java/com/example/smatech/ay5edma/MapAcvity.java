@@ -114,7 +114,28 @@ public class MapAcvity extends FragmentActivity implements OnMapReadyCallback , 
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
+
         mMap = googleMap;
+        if(getIntent().getStringExtra("lat")!=null){
+
+            CameraPosition cameraPosition1 = new CameraPosition.Builder()
+                    .target(new LatLng(Double.parseDouble(getIntent().getStringExtra("lat"))
+                            ,Double.parseDouble(getIntent().getStringExtra("long")))).zoom(12).build();
+            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition1));
+            marker = mMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(Double.parseDouble(getIntent().getStringExtra("lat"))
+                    ,Double.parseDouble(getIntent().getStringExtra("long"))))
+                    .title(getIntent().getStringExtra("address")).icon(icon));
+            Log.d("TTTT", "onMapReady:lat--> "+getIntent().getStringExtra("lat"));
+            Log.d("TTTT", "onMapReady:long--> "+getIntent().getStringExtra("long"));
+
+            marker.showInfoWindow();
+           /* ZoomIn.setVisibility(View.GONE);
+            ZoomOut.setVisibility(View.GONE);
+          */
+           Save.setVisibility(View.GONE);
+
+        }
         //prepare to get location
         mFusedLocationProviderClient = LocationServices
                 .getFusedLocationProviderClient(MapAcvity.this);

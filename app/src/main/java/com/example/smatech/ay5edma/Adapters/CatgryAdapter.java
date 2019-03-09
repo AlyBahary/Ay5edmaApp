@@ -41,7 +41,7 @@ public class CatgryAdapter extends RecyclerView.Adapter<CatgryAdapter.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
         CategoryModel itemMode = categoryModels.get(i);
-        if (Locale.getDefault().getDisplayLanguage().equals("ar")) {
+        if (Locale.getDefault().getDisplayLanguage().equals("العربية")) {
             viewHolder.TextTitle.setText(""+itemMode.getNameAr());
         } else {
             viewHolder.TextTitle.setText(""+itemMode.getName());

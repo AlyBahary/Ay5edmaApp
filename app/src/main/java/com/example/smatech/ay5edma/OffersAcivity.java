@@ -2,6 +2,7 @@ package com.example.smatech.ay5edma;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,6 +19,8 @@ import com.example.smatech.ay5edma.Models.DummyModel;
 import com.example.smatech.ay5edma.Models.Modelss.OffersModel;
 import com.example.smatech.ay5edma.Models.Modelss.StatusModel;
 import com.example.smatech.ay5edma.Models.OffersDummyModel;
+import com.example.smatech.ay5edma.Models.offerModel.example.Example;
+import com.example.smatech.ay5edma.Models.offerModel.example.Offer;
 import com.example.smatech.ay5edma.Utils.Connectors;
 import com.example.smatech.ay5edma.Utils.Constants;
 import com.google.gson.Gson;
@@ -33,13 +36,17 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class OffersAcivity extends AppCompatActivity {
     RecyclerView RV;
-    ArrayList<OffersModel> DM;
+    ArrayList<Offer> DM;
     OffersAdapter offersAdapter;
     ProgressDialog progressDialog;
+    private View parentLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_offers_acivity);
+        parentLayout = findViewById(android.R.id.content);
+
         ImageView back;
         TextView toolbar_title;
         toolbar_title=findViewById(R.id.toolbar_title);
@@ -127,11 +134,11 @@ public class OffersAcivity extends AppCompatActivity {
         Connectors.connectionServices connectionService =
                 retrofit.create(Connectors.connectionServices.class);
 
-        connectionService.get_offers(requestId).enqueue(new Callback<StatusModel>() {
+        connectionService.get_offers(requestId).enqueue(new Callback<Example>() {
             @Override
-            public void onResponse(Call<StatusModel> call, Response<StatusModel> response) {
+            public void onResponse(Call<Example> call, Response<Example> response) {
                 progressDialog.dismiss();
-                StatusModel statusModel=response.body();
+                Example statusModel=response.body();
                 Log.d("TTTT", "id : "+requestId+statusModel.getStatus());
 
                 if (statusModel.getStatus()){
@@ -144,8 +151,11 @@ public class OffersAcivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<StatusModel> call, Throwable t) {
+            public void onFailure(Call<Example> call, Throwable t) {
                 progressDialog.dismiss();
+                Snackbar.make(parentLayout, "" + getString(R.string.noInternetConnecion), Snackbar.LENGTH_LONG)
+                        .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                        .show();
                 Log.d("TTT", "onFailure: "+t.getMessage());
 
             }

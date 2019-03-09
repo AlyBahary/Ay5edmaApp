@@ -2,6 +2,7 @@ package com.example.smatech.ay5edma;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -30,13 +31,15 @@ public class BankAccountsRVAcivity extends AppCompatActivity {
     ArrayList<BankModel> DM;
     BankAdapter bankAdapter;
     ProgressDialog progressDialog;
+    View parentLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bank_accounts_rvacivity);
         progressDialog=new ProgressDialog(this);
         progressDialog.setMessage(getString(R.string.Loading));
-
+        View parentLayout;
+        parentLayout = findViewById(android.R.id.content);
         ImageView back;
         TextView toolbar_title;
         toolbar_title = findViewById(R.id.toolbar_title);
@@ -91,6 +94,9 @@ public class BankAccountsRVAcivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<StatusModel> call, Throwable t) {
+              /*  Snackbar.make(parentLayout, "" + getString(R.string.noInternetConnecion), Snackbar.LENGTH_LONG)
+                        .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                        .show();*/
                 Snackbar.make(parentLayout, "" + getString(R.string.noInternetConnecion), Snackbar.LENGTH_LONG)
                         .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
                         .show();
