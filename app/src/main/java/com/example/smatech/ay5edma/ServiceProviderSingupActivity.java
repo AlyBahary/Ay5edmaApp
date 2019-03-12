@@ -37,8 +37,10 @@ import com.thefinestartist.finestwebview.FinestWebView;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -62,12 +64,14 @@ public class ServiceProviderSingupActivity extends AppCompatActivity {
     Button uploadImgs;
     ArrayList<String> urlStrings;
     LinearLayout terms_conditions;
+    Map imagesMap;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_service_provider_singup);
+        imagesMap=new HashMap();
         urlStrings = new ArrayList<>();
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage(getString(R.string.Loading));
@@ -256,6 +260,11 @@ public class ServiceProviderSingupActivity extends AppCompatActivity {
     ) {
         Log.d("TTTT", "esssssst: tsssssssst");
 
+        if(images.size()>0){
+            for(int ii=0;ii<images.size();ii++){
+                imagesMap.put("images[" + ii + "]",images.get(ii));
+            }
+        }
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Connectors.connectionServices.BaseURL)
                 .addConverterFactory(GsonConverterFactory
@@ -265,7 +274,7 @@ public class ServiceProviderSingupActivity extends AppCompatActivity {
 
         connectionService.signup(password, role, mobile, birthdate, gender, name, image
                 , subcategory_id, subcategory2_id, category_id, longitude, latitude, address
-                ,About+"",images)
+                ,About+"",imagesMap)
                 .enqueue(new Callback<UserModelSatus>() {
             @Override
             public void onResponse(Call<UserModelSatus> call, Response<UserModelSatus> response) {

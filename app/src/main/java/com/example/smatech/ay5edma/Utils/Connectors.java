@@ -7,6 +7,7 @@ import com.example.smatech.ay5edma.Models.Modelss.UserModelSatus;
 import com.example.smatech.ay5edma.Models.Modelss.notficationsModel.Example;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import okhttp3.MultipartBody;
 import retrofit2.Call;
@@ -15,6 +16,7 @@ import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
 import retrofit2.http.Query;
+import retrofit2.http.QueryMap;
 
 public class Connectors {
     public interface connectionServices {
@@ -45,7 +47,28 @@ public class Connectors {
                 , @Query("address") String address
                 , @Query("about") String about
 
-        ); @GET(Constants.mSignup)
+        );
+        //Signnup
+        @GET(Constants.mSignup)
+        Call<UserModelSatus> signup(
+                @Query("password") String password
+                , @Query("role") String role
+                , @Query("mobile") String mobile
+                , @Query("birthday") String birthday
+                , @Query("gender") String gender
+                , @Query("name") String name
+                , @Query("image") String image
+                , @Query("subcategory_id") String subcategory_id
+                , @Query("subcategory_id2") String subcategory2_id
+                , @Query("category_id") String category_id
+                , @Query("longitude") String longitude
+                , @Query("latitude") String latitude
+                , @Query("address") String address
+                , @Query("about") String about
+                , @QueryMap Map<String,String> images
+
+        );
+        @GET(Constants.mSignup)
         Call<UserModelSatus> signup(
                 @Query("password") String password
                 , @Query("role") String role

@@ -65,7 +65,6 @@ public class ServiceProviderDescription extends AppCompatActivity {
         mDemoSlider = (SliderLayout) findViewById(R.id.slider);
         pagerIndicator = findViewById(R.id.custom_indicator);
         url_maps = new HashMap<String, String>();
-        get_home_sliders();
         ImageView back;
         TextView toolbar_title;
         toolbar_title = findViewById(R.id.toolbar_title);
@@ -78,6 +77,8 @@ public class ServiceProviderDescription extends AppCompatActivity {
             }
         });
         offersModel = Hawk.get(Constants.mOfferModel);
+        get_home_sliders();
+
         ///
         // bottom nav
         LinearLayout homeLayout, requestLayout, notificationLayout, settingLayout;
@@ -223,7 +224,8 @@ public class ServiceProviderDescription extends AppCompatActivity {
     }
 
     private void get_home_sliders() {
-        if (offersModel.getFrom().getImages().size() > 0) {
+        Log.d("TTT", "get_home_sliders: "+offersModel.getFrom().getName());
+        if (offersModel.getFrom().getImages()!=null&&offersModel.getFrom().getImages().size() > 0) {
             ArrayList<String> Title = new ArrayList<>();
             for (int i = 0; i < offersModel.getFrom().getImages().size(); i++) {
                 T = i + "";

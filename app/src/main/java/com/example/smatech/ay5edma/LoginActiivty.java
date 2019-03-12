@@ -1,9 +1,11 @@
 package com.example.smatech.ay5edma;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Paint;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -47,12 +49,15 @@ public class LoginActiivty extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_actiivty);
         Hawk.init(this).build();
-        if (!Hawk.contains(Constants.Language)) {
-            if (Locale.getDefault().getLanguage().equals("English"))
+        if (!Hawk.contains(Constants.Set)) {
+            if (Locale.getDefault().getLanguage().equals("English")) {
                 Hawk.put(Constants.Language, "en");
-            else
+                languageChange("en", LoginActiivty.this, "");
+            } else {
                 Hawk.put(Constants.Language, "ar");
+                languageChange("ar", LoginActiivty.this, "");
 
+            }
         }
         String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.CALL_PHONE};
         String rationale = "Please provide Some permission so that will help you to get best service";
@@ -178,22 +183,22 @@ public class LoginActiivty extends AppCompatActivity {
                     finishAffinity();
                     startActivity(i);
                     Toast.makeText(LoginActiivty.this, "" + userModel.getName(), Toast.LENGTH_SHORT).show();
-                } else if (statusModel.getActivated().equals(false)) {
+                } else if (statusModel.getActivated()!=null&&statusModel.getActivated().equals(false)) {
                     startActivity(new Intent(LoginActiivty.this, NumberConfirmationActivity.class));
                 } else {
-
-                }
-                {
-                    Log.d("TTTT", "onResponse: Response22");
-                    if (Hawk.get(Constants.Language).equals("en")) {
-                        Snackbar.make(parentLayout, "" + statusModel.getMessage(), Snackbar.LENGTH_LONG)
-                                .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
-                                .show();
-                    } else {
-                        Snackbar.make(parentLayout, "" + statusModel.getMessage_ar(), Snackbar.LENGTH_LONG)
-                                .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
-                                .show();
+                    {
+                        Log.d("TTTT", "onResponse: Response22");
+                        if (Hawk.get(Constants.Language).equals("en")) {
+                            Snackbar.make(parentLayout, "" + statusModel.getMessage(), Snackbar.LENGTH_LONG)
+                                    .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                                    .show();
+                        } else {
+                            Snackbar.make(parentLayout, "" + statusModel.getMessage_ar(), Snackbar.LENGTH_LONG)
+                                    .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                                    .show();
+                        }
                     }
+
                 }
 
             }
@@ -210,4 +215,21 @@ public class LoginActiivty extends AppCompatActivity {
             }
         });
     }
+
+    public static final void languageChange(String L, Activity context, String flag) {
+        String languageToLoad = L; // your language
+        Locale locale = new Locale(languageToLoad);
+        Locale.setDefault(locale);
+        Configuration config = new Configuration();
+        config.locale = locale;
+        context.getBaseContext().getResources().updateConfiguration(config,
+                context.getBaseContext().getResources().getDisplayMetrics());
+        Intent intent = new Intent(context, ClientHomeActivity.class);
+        //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        context.finishAffinity();
+        context.startActivity(intent);
+
+
+    }
+
 }

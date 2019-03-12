@@ -18,6 +18,7 @@ public class Constants {
     public final static String TOKEN="TOKEN";
     public final static String Time="1";
     public final static String Language="Language";
+    public final static String Set="Set";
     public final static String Arabic="ar";
     public final static String English="en";
     public final static String Addlocationdlat="Addlocationdlat";

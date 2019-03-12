@@ -208,6 +208,8 @@ public class ClientRequestDetailsActivity extends AppCompatActivity {
                     Snackbar.make(parentLayout, "" + getString(R.string.offerhadbeensend), Snackbar.LENGTH_LONG).show();
                     Toast.makeText(ClientRequestDetailsActivity.this
                             , ""+getString(R.string.offerhadbeensend), Toast.LENGTH_SHORT).show();
+                    finishAffinity();
+                    startActivity(new Intent(ClientRequestDetailsActivity.this,ClientHomeActivity.class));
                     startActivity(new Intent(ClientRequestDetailsActivity.this,RequestsActivity.class)
                             .putExtra("stat","1"));
 

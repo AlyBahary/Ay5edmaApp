@@ -99,7 +99,8 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.ViewHold
 
             }
         }
-        if (Hawk.get(Constants.Language).equals("ar")||l.equals("العربية")) {
+        if(Hawk.contains(Constants.Set)){
+        if (Hawk.get(Constants.Language).equals("ar")) {
             if (itemMode.getCategoryNameAr() != null) {
                 viewHolder.Catgry1.setText("" + itemMode.getCategoryNameAr());
             } else {
@@ -124,6 +125,33 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.ViewHold
                 viewHolder.Catgry2.setText("");
 
 
+        }
+    }else{
+            if(l.equals("العربية")){
+                if (itemMode.getCategoryNameAr() != null) {
+                    viewHolder.Catgry1.setText("" + itemMode.getCategoryNameAr());
+                } else {
+                    viewHolder.Catgry1.setText("");
+
+                }
+                if (itemMode.getSubNameAr() != null)
+                    viewHolder.Catgry2.setText("" + itemMode.getSubNameAr());
+                else
+                    viewHolder.Catgry2.setText("");
+            }else {
+                if (itemMode.getCategoryName() != null) {
+                    viewHolder.Catgry1.setText("" + itemMode.getCategoryName());
+                } else {
+                    viewHolder.Catgry1.setText("");
+
+                }
+                if (itemMode.getSubName() != null)
+                    viewHolder.Catgry2.setText("" + itemMode.getSubName());
+                else
+                    viewHolder.Catgry2.setText("");
+
+
+            }
         }
 
         viewHolder.Date.setText("" + itemMode.getUpdated());

@@ -44,6 +44,7 @@ public class LanguageDialoge extends Dialog {
             public void onClick(View v) {
 
                 Hawk.put(Constants.Language,"en");
+                Hawk.put(Constants.Set,"1");
                 languageChange("en",c,"");
             }
         });
@@ -53,6 +54,7 @@ public class LanguageDialoge extends Dialog {
             public void onClick(View v) {
 
                 Hawk.put(Constants.Language,"ar");
+                Hawk.put(Constants.Set,"1");
                 languageChange("ar",c,"");
 
             }

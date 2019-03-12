@@ -35,6 +35,7 @@ public class PackageActivity extends AppCompatActivity {
     ProgressDialog progressDialog;
     private View parentLayout;
     TextView points;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
