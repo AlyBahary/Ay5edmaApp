@@ -21,6 +21,7 @@ public class Constants {
     public final static String Set="Set";
     public final static String Arabic="ar";
     public final static String English="en";
+    public final static String reload="reload";
     public final static String Addlocationdlat="Addlocationdlat";
     public final static String Addlocationdlong="Addlocationdlong";
 

@@ -50,6 +50,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import se.arbitur.geocoding.Constants.AddressTypes;
 import se.arbitur.geocoding.Constants.LocationTypes;
 import se.arbitur.geocoding.Result;
 import se.arbitur.geocoding.ReverseGeocoding;
@@ -78,7 +79,7 @@ public class SignupAcivity extends AppCompatActivity implements DatePickerDialog
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
-        strings=new ArrayList<>();
+        strings = new ArrayList<>();
         mFusedLocationProviderClient = LocationServices
                 .getFusedLocationProviderClient(SignupAcivity.this);
         locationManager = (LocationManager) getSystemService(this.LOCATION_SERVICE);
@@ -118,16 +119,16 @@ public class SignupAcivity extends AppCompatActivity implements DatePickerDialog
         terms_conditions.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(Hawk.contains(Constants.Language)){
-                    if(Hawk.get(Constants.Language).equals("ar")){
+                if (Hawk.contains(Constants.Language)) {
+                    if (Hawk.get(Constants.Language).equals("ar")) {
                         new FinestWebView.Builder(SignupAcivity.this).updateTitleFromHtml(false)
                                 .titleDefault(getString(R.string.Aboutus)).show("http://anyservice-ksa.com/api/webview?type=terms_ar");
 
-                    }else{
+                    } else {
                         new FinestWebView.Builder(SignupAcivity.this).updateTitleFromHtml(false)
                                 .titleDefault(getString(R.string.Aboutus)).show("http://anyservice-ksa.com/api/webview?type=terms");
                     }
-                }else{
+                } else {
                     new FinestWebView.Builder(SignupAcivity.this).updateTitleFromHtml(false)
                             .titleDefault(getString(R.string.Aboutus)).show("http://anyservice-ksa.com/api/webview?type=terms");
 
@@ -236,7 +237,7 @@ public class SignupAcivity extends AppCompatActivity implements DatePickerDialog
 
 
     protected void showCurrentLocation() {
-
+        progressDialog.show();
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -257,162 +258,177 @@ public class SignupAcivity extends AppCompatActivity implements DatePickerDialog
                     location1 = task.getResult();
 
                 }
-            }});
-                if (location1 != null) {
-                    Hawk.put(Constants.userLat, location1.getLatitude());
-                    Hawk.put(Constants.userLong, location1.getLongitude());
-
-                    new ReverseGeocoding(Double.parseDouble(Hawk.get(Constants.userLat) + "")
-                            , Double.parseDouble(Hawk.get(Constants.userLong) + ""), Constants.API_KEY)
-                            .setLanguage("sv")
-                            .setResultTypes()
-                            .setLocationTypes(LocationTypes.ROOFTOP)
-                            .isSensor(true)
-                            .fetch(new se.arbitur.geocoding.Callback() {
-                                @Override
-                                public void onResponse(se.arbitur.geocoding.Response response) {
-                                    for (Result result : response.getResults()) {
-                                        Log.d("TTTTTTT", "Complete" + result.getFormattedAddress());
-                                        Address = result.getFormattedAddress() + "";
-                                        Hawk.put(Constants.userAddress, Address);
-                                        break;
-                                    }
-                                    if (Hawk.get(Constants.UserType).equals("0")) {
-                                        signup(password, "1", mobile, Signup_BD.getText().toString(), Sex, name, ""
-                                                , "", "", Hawk.get(Constants.userLong)+"", Hawk.get(Constants.userLat)+"", Address);
-                                        progressDialog.show();
-
-                                        //  signup(password, "1", mobile, "", Sex, name, "", "");
-                                    } else {
-                                        Hawk.put(Constants.name, name);
-                                        Hawk.put(Constants.pass, password);
-                                        Hawk.put(Constants.mobile, mobile);
-                                        Hawk.put(Constants.sex, Sex);
-                                        Hawk.put(Constants.BirthDate, Signup_BD.getText().toString());
-
-                                        Intent i = new Intent(SignupAcivity.this, ServiceProviderSingupActivity.class);
-                                        startActivity(i);
-
-                                    }
-
-                                }
-
-                                @Override
-                                public void onFailed(se.arbitur.geocoding.Response response, IOException e) {
-                                    Snackbar.make(parentLayout, "" + getString(R.string.noInternetConnecion), Snackbar.LENGTH_LONG)
-                                            .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
-                                            .show();
-                                }
-                            });
-
-                } else {
-                    Snackbar.make(parentLayout, "" + getString(R.string.Please_open_GPS), Snackbar.LENGTH_LONG)
-                            .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
-                            .setAction(getString(R.string.open), new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    Intent I = new Intent(
-                                            android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                                    startActivity(I);
-                                }
-                            })
-                            .show();
-
-                }
             }
+        });
+        if (location1 != null) {
+            Hawk.put(Constants.userLat, location1.getLatitude());
+            Hawk.put(Constants.userLong, location1.getLongitude());
 
-            private void signup(String password
-                    , String role
-                    , String mobile
-                    , String birthdate
-                    , String gender
-                    , String name
-                    , String image
-                    , String subcategory_id
-                    , String category_id
-                    , String longitude
-                    , String latitude
-                    , String address
-            ) {
-                Retrofit retrofit = new Retrofit.Builder()
-                        .baseUrl(Connectors.connectionServices.BaseURL)
-                        .addConverterFactory(GsonConverterFactory
-                                .create(new Gson())).build();
-                Connectors.connectionServices connectionService =
-                        retrofit.create(Connectors.connectionServices.class);
+            new ReverseGeocoding(Double.parseDouble(Hawk.get(Constants.userLat) + "")
+                    , Double.parseDouble(Hawk.get(Constants.userLong) + ""), Constants.API_KEY)
+                    .setLanguage("sv")
+                    .setResultTypes()
+                    .setLocationTypes(LocationTypes.ROOFTOP)
+                    .isSensor(true)
+                    .fetch(new se.arbitur.geocoding.Callback() {
+                        @Override
+                        public void onResponse(se.arbitur.geocoding.Response response) {
+                            for (Result result : response.getResults()) {
+                                Result.AddressComponent[] component = result.getAddressComponents();
 
-                connectionService.signup(password, role, mobile, birthdate, gender, name, image
-                        , subcategory_id,"", category_id, longitude, latitude, address,"").enqueue(new Callback<UserModelSatus>() {
-                    @Override
-                    public void onResponse(Call<UserModelSatus> call, Response<UserModelSatus> response) {
-                        Hawk.put(Constants.password,password);
-                        Hawk.put(Constants.username,mobile);
-                        progressDialog.dismiss();
-                        UserModelSatus statusModel = response.body();
-                        if (statusModel.getStatus() == true) {
-                            UserModel userModel = statusModel.getUser();
-                            userModel.setAccepted(statusModel.getAccepted()+"");
-                            userModel.setPoints(statusModel.getPoints()+"");
-                            userModel.setPeople(statusModel.getPeople()+"");
-                            userModel.setRejected(statusModel.getRejected()+"");
-                            Hawk.put(Constants.userData, userModel);
-                            Hawk.put(Constants.extraauserData1, statusModel.getCategory());
-                            Hawk.put(Constants.extraauserData2, statusModel.getSubcategory());
 
-                            Intent i = new Intent(SignupAcivity.this, NumberConfirmationActivity.class);
-                            startActivity(i);
-                            Toast.makeText(SignupAcivity.this, "" + userModel.getName(), Toast.LENGTH_SHORT).show();
-                        } else {
-                            Log.d("TTT", "onResponse: "+Locale.getDefault().getDisplayLanguage());
-                            if (Hawk.get(Constants.Language).equals("en")) {
-
-                                Snackbar.make(parentLayout, "" + statusModel.getMessage(), Snackbar.LENGTH_LONG)
-                                        .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
-                                        .show();
-                            } else {
-                                Snackbar.make(parentLayout, "" + statusModel.getMessage_ar(), Snackbar.LENGTH_LONG)
-                                        .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
-                                        .show();
+                                Log.d("TTTTTTT", "not Complete" + response.getResults(AddressTypes.STREET_ADDRESS));
+                                Address = component[0].getShortName()
+                                        + component[1].getShortName()
+                                        + component[2].getShortName()
+                                        + component[3].getShortName() + "";
+                                Hawk.put(Constants.userAddress, Address);
+                                break;
                             }
-                        }
-                    }
+                            if (Hawk.get(Constants.UserType).equals("0")) {
+                                signup(password, "1", mobile, Signup_BD.getText().toString()
+                                        , Sex, name, ""
+                                        , "", ""
+                                        , Hawk.get(Constants.userLong) + ""
+                                        , Hawk.get(Constants.userLat) + "", Address);
 
-                    @Override
-                    public void onFailure(Call<UserModelSatus> call, Throwable t) {
-                        Snackbar.make(parentLayout, "" + getString(R.string.noInternetConnecion), Snackbar.LENGTH_LONG)
+
+                                //  signup(password, "1", mobile, "", Sex, name, "", "");
+                            } else {
+                                progressDialog.dismiss();
+                                Hawk.put(Constants.name, name);
+                                Hawk.put(Constants.pass, password);
+                                Hawk.put(Constants.mobile, mobile);
+                                Hawk.put(Constants.sex, Sex);
+                                Hawk.put(Constants.BirthDate, Signup_BD.getText().toString());
+
+                                Intent i = new Intent(SignupAcivity.this, ServiceProviderSingupActivity.class);
+                                startActivity(i);
+
+                            }
+
+                        }
+
+                        @Override
+                        public void onFailed(se.arbitur.geocoding.Response response, IOException e) {
+                            progressDialog.dismiss();
+                            Snackbar.make(parentLayout, "" + getString(R.string.noInternetConnecion), Snackbar.LENGTH_LONG)
+                                    .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                                    .show();
+                        }
+                    });
+
+        } else {
+            progressDialog.dismiss();
+            Snackbar.make(parentLayout, "" + getString(R.string.Please_open_GPS), Snackbar.LENGTH_LONG)
+                    .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                    .setAction(getString(R.string.open), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent I = new Intent(
+                                    android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                            startActivity(I);
+                        }
+                    })
+                    .show();
+
+        }
+    }
+
+    private void signup(String password
+            , String role
+            , String mobile
+            , String birthdate
+            , String gender
+            , String name
+            , String image
+            , String subcategory_id
+            , String category_id
+            , String longitude
+            , String latitude
+            , String address
+    ) {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Connectors.connectionServices.BaseURL)
+                .addConverterFactory(GsonConverterFactory
+                        .create(new Gson())).build();
+        Connectors.connectionServices connectionService =
+                retrofit.create(Connectors.connectionServices.class);
+
+        connectionService.signup(password, role, mobile, birthdate, gender, name, image
+                , subcategory_id, "", category_id, longitude, latitude, address, "").enqueue(new Callback<UserModelSatus>() {
+            @Override
+            public void onResponse(Call<UserModelSatus> call, Response<UserModelSatus> response) {
+                Hawk.put(Constants.password, password);
+                Hawk.put(Constants.username, mobile);
+                progressDialog.dismiss();
+                UserModelSatus statusModel = response.body();
+                if (statusModel.getStatus() == true) {
+                    Log.d("TTTTT", "onResponse: locaion"+statusModel.getUser().getLatitude());
+                    Log.d("TTTTT", "onResponse: locaion"+statusModel.getUser().getLongitude());
+                    UserModel userModel = statusModel.getUser();
+                    userModel.setAccepted(statusModel.getAccepted() + "");
+                    userModel.setPoints(statusModel.getPoints() + "");
+                    userModel.setPeople(statusModel.getPeople() + "");
+                    userModel.setRejected(statusModel.getRejected() + "");
+                    Hawk.put(Constants.userData, userModel);
+                    Hawk.put(Constants.extraauserData1, statusModel.getCategory());
+                    Hawk.put(Constants.extraauserData2, statusModel.getSubcategory());
+
+                    Intent i = new Intent(SignupAcivity.this, NumberConfirmationActivity.class);
+                    startActivity(i);
+                    Toast.makeText(SignupAcivity.this, "" + userModel.getName(), Toast.LENGTH_SHORT).show();
+                } else {
+                    Log.d("TTT", "onResponse: " + Locale.getDefault().getDisplayLanguage());
+                    if (Hawk.get(Constants.Language).equals("en")) {
+
+                        Snackbar.make(parentLayout, "" + statusModel.getMessage(), Snackbar.LENGTH_LONG)
                                 .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
                                 .show();
-                        progressDialog.dismiss();
-
-
+                    } else {
+                        Snackbar.make(parentLayout, "" + statusModel.getMessage_ar(), Snackbar.LENGTH_LONG)
+                                .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                                .show();
                     }
-                });
-
+                }
             }
 
             @Override
-            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                Signup_BD.setText(dayOfMonth + "/" + month + "/" + year);
+            public void onFailure(Call<UserModelSatus> call, Throwable t) {
+                Snackbar.make(parentLayout, "" + getString(R.string.noInternetConnecion), Snackbar.LENGTH_LONG)
+                        .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                        .show();
+                progressDialog.dismiss();
+
 
             }
+        });
+
+    }
+
+    @Override
+    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+        Signup_BD.setText(dayOfMonth + "/" + month + "/" + year);
+
+    }
 
 
-            private class MyLocationListener implements LocationListener {
+    private class MyLocationListener implements LocationListener {
 
-                public void onLocationChanged(Location location) {
-                }
+        public void onLocationChanged(Location location) {
+        }
 
-                public void onStatusChanged(String s, int i, Bundle b) {
-                }
+        public void onStatusChanged(String s, int i, Bundle b) {
+        }
 
-                public void onProviderDisabled(String s) {
-                }
+        public void onProviderDisabled(String s) {
+        }
 
-                public void onProviderEnabled(String s) {
-
-                }
-
-            }
-
+        public void onProviderEnabled(String s) {
 
         }
+
+    }
+
+
+}

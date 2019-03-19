@@ -86,6 +86,9 @@ private String id;
     @SerializedName("subcategory_id")
     @Expose
     private String subcategoryId;
+    @SerializedName("subcategory_id2")
+    @Expose
+    private String subcategory_id2;
     @SerializedName("badge")
     @Expose
     private String badge;
@@ -110,6 +113,9 @@ private String id;
     @SerializedName("Subcategory")
     @Expose
     private CategoryModel subcategory;
+    @SerializedName("subcategory2")
+    @Expose
+    private CategoryModel subcategory2;
     @SerializedName("job")
     @Expose
     private String job;
@@ -118,6 +124,9 @@ private String id;
     private Object jobAr;
 
 
+    public String getSubcategory_id2() {
+        return subcategory_id2;
+    }
 
     public String getRejected() {
         return rejected;

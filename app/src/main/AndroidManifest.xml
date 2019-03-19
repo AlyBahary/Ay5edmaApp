@@ -28,7 +28,8 @@
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
-        <service android:name=".MyFirebaseMessagingService">
+
+        <service android:name=".Notifications.MyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
@@ -37,9 +38,7 @@
         <activity
             android:name=".RegistrtionTypeActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Launcher">
-
-        </activity>
+            android:theme="@style/AppTheme.Launcher" />
         <activity
             android:name=".LoginActiivty"
             android:screenOrientation="portrait">
@@ -132,11 +131,12 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="sensor"
             android:theme="@style/FinestWebViewTheme.Light" />
-
         <activity
             android:name=".PackageActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".ClientRequestDetailsActivity"></activity>
+        <activity android:name=".ClientRequestDetailsActivity" />
+        <activity android:name=".ChangePasswordActivity" />
+        <activity android:name=".SliderAcivity"></activity>
     </application>
 
 </manifest>

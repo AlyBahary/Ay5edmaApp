@@ -30,9 +30,6 @@ public class Notification {
     @SerializedName("created")
     @Expose
     private String created;
-    @SerializedName("user")
-    @Expose
-    private User user;
     @SerializedName("from")
     @Expose
     private From from;
@@ -110,13 +107,8 @@ public class Notification {
         this.created = created;
     }
 
-    public User getUser() {
-        return user;
-    }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
+
 
     public From getFrom() {
         return from;

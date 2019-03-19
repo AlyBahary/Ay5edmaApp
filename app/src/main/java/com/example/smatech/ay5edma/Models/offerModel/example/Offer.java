@@ -45,9 +45,9 @@ public class Offer {
     @SerializedName("request")
     @Expose
     private Request request;
-    @SerializedName("user")
+    /*@SerializedName("user")
     @Expose
-    private User_ user;
+    private User_ user;*/
     @SerializedName("from")
     @Expose
     private From from;
@@ -156,13 +156,6 @@ public class Offer {
         this.request = request;
     }
 
-    public User_ getUser() {
-        return user;
-    }
-
-    public void setUser(User_ user) {
-        this.user = user;
-    }
 
     public From getFrom() {
         return from;

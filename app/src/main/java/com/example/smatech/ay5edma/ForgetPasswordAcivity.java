@@ -82,22 +82,28 @@ public class ForgetPasswordAcivity extends AppCompatActivity {
             public void onResponse(Call<StatusModel> call, Response<StatusModel> response) {
                 StatusModel statusModel = response.body();
                 if (statusModel.getStatus()) {
-                    Hawk.put(Constants.password,num);
+                    Hawk.put(Constants.password, num);
                     Toast.makeText(ForgetPasswordAcivity.this, "" + getString(R.string.password_changed)
                             , Toast.LENGTH_SHORT).show();
                     finishAffinity();
                     startActivity(new Intent(ForgetPasswordAcivity.this, LoginActiivty.class));
                 } else {
 
-                    if (Locale.getDefault().getDisplayLanguage().equals("English")) {
+                    if (Hawk.get(Constants.Language).equals("en")) {
 
                         Snackbar.make(parentLayout, "" + statusModel.getMessage(), Snackbar.LENGTH_LONG)
                                 .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
                                 .show();
                     } else {
-                        Snackbar.make(parentLayout, "" + statusModel.getMessage_ar(), Snackbar.LENGTH_LONG)
-                                .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
-                                .show();
+                        if (statusModel.getMessage_ar() != null) {
+                            Snackbar.make(parentLayout, "" + statusModel.getMessage_ar(), Snackbar.LENGTH_LONG)
+                                    .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                                    .show();
+                        }else{
+                            Snackbar.make(parentLayout, "" + statusModel.getMessage(), Snackbar.LENGTH_LONG)
+                                    .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                                    .show();
+                        }
                     }
 
                 }
@@ -132,7 +138,7 @@ public class ForgetPasswordAcivity extends AppCompatActivity {
                    /* startActivity(new Intent(ForgetPasswordAcivity.this,NumberConfirmationActivity.class)
                             .putExtra("mob","num"));*/
                 } else {
-                    if (Locale.getDefault().getDisplayLanguage().equals("English")) {
+                    if (Hawk.get(Constants.Language).equals("en")) {
 
                         Snackbar.make(parentLayout, "" + statusModel.getMessage(), Snackbar.LENGTH_LONG)
                                 .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))

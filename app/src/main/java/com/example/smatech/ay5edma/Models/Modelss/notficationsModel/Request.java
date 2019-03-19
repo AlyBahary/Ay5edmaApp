@@ -54,9 +54,7 @@ public class Request {
     @SerializedName("User")
     @Expose
     private User_ user;
-    @SerializedName("Shop")
-    @Expose
-    private Shop shop;
+
     @SerializedName("Category")
     @Expose
     private Category__ category;
@@ -192,13 +190,6 @@ public class Request {
         this.user = user;
     }
 
-    public Shop getShop() {
-        return shop;
-    }
-
-    public void setShop(Shop shop) {
-        this.shop = shop;
-    }
 
     public Category__ getCategory() {
         return category;

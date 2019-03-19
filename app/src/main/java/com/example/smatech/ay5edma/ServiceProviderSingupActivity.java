@@ -196,18 +196,6 @@ public class ServiceProviderSingupActivity extends AppCompatActivity {
                         .enableLog(false) // disabling log
                         .start(); // start image picker activity with request code
 
-
-                //
-               /* ImagePicker.create(getActivity())
-                        .folderMode(true) // folder mode (false by default)
-                        .toolbarImageTitle("Tap to select") // image selection title
-                        .toolbarArrowColor(Color.BLACK) // Toolbar 'up' arrow color
-                        .returnMode(ReturnMode.ALL) // set whether pick action or camera action should return immediate result or not. Only works in single mode for image picker
-                        .single() // single mode
-                        .showCamera(true) // show camera or not (true by default)
-                        .imageDirectory("Rahma") // directory name for captured image  ("Camera" folder by default)
-                        .start(); // start image picker activity with request code
-*/
             }
         });
         //
@@ -338,7 +326,7 @@ public class ServiceProviderSingupActivity extends AppCompatActivity {
                         for (int i = 0; categoryModels.size() > i; i++) {
                             ids.add(categoryModels.get(i).getId());
 
-                            if (Locale.getDefault().getDisplayLanguage().equals("العربية")) {
+                            if (Hawk.get(Constants.Language).equals("العربية")) {
                                 list.add(categoryModels.get(i).getNameAr());
                             } else {
                                 list.add(categoryModels.get(i).getName());
@@ -382,7 +370,7 @@ public class ServiceProviderSingupActivity extends AppCompatActivity {
                         for (int i = 0; subCategoryModels.size() > i; i++) {
                             ids2.add(subCategoryModels.get(i).getId());
 
-                            if (Locale.getDefault().getDisplayLanguage().equals("العربية")) {
+                            if (Hawk.get(Constants.Language).equals("ar")) {
                                 list2.add(subCategoryModels.get(i).getNameAr() + "");
                             } else {
                                 list2.add(subCategoryModels.get(i).getName());

@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -26,6 +28,8 @@ import com.orhanobut.hawk.Hawk;
 
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -42,6 +46,7 @@ public class SpecificCatgryActivity extends AppCompatActivity {
     View parentLayout;
     ProgressDialog progressDialog;
     LinearLayout Go;
+    int temp=0;
     EditText Search;
 
 
@@ -61,18 +66,66 @@ public class SpecificCatgryActivity extends AppCompatActivity {
             }
         });
         parentLayout = findViewById(android.R.id.content);
-        progressDialog=new ProgressDialog(this);
+        progressDialog = new ProgressDialog(this);
         progressDialog.setMessage(getString(R.string.Loading));
 
-        Search=findViewById(R.id.Search);
-        Go=findViewById(R.id.Go);
+        Search = findViewById(R.id.Search);
+        Search.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            private Timer timer = new Timer();
+            private final long DELAY = 1000; // milliseconds
+
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+                timer.cancel();
+                timer = new Timer();
+                if (s.toString().equals("")&&temp==1) {
+                    timer.schedule(
+                            new TimerTask() {
+                                @Override
+                                public void run() {
+                                    // TODO: do what you need here (refresh list)
+                                    SpecificCatgryActivity.this.runOnUiThread(new Runnable() {
+
+                                        public void run() {
+                                            DM.clear();
+                                            catgryAdapter.notifyDataSetChanged();
+                                            getSubCatg(Hawk.get(Constants.mCatgrID) + "", "");
+                                            temp=0;
+                                        }
+                                    });
+                                }
+
+
+                            },
+                            DELAY
+                    );
+                } else {
+
+                }
+
+
+            }
+        });
+        Go = findViewById(R.id.Go);
 
         //initialization
         Hawk.put((Constants.Addlocationdlong), "");
         Hawk.put((Constants.Addlocationdlat), "");
 
         // bottom nav
-        LinearLayout homeLayout,requestLayout,notificationLayout,settingLayout ;
+        LinearLayout homeLayout, requestLayout, notificationLayout, settingLayout;
         homeLayout = findViewById(R.id.homeLayout);
         homeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,7 +143,7 @@ public class SpecificCatgryActivity extends AppCompatActivity {
                             .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
                             .show();
                 } else {
-                    startActivity(new Intent(SpecificCatgryActivity.this,RequestsActivity.class));
+                    startActivity(new Intent(SpecificCatgryActivity.this, RequestsActivity.class));
 
                 }
             }
@@ -104,7 +157,7 @@ public class SpecificCatgryActivity extends AppCompatActivity {
                             .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
                             .show();
                 } else {
-                    startActivity(new Intent(SpecificCatgryActivity.this,NotificationsActivity.class));
+                    startActivity(new Intent(SpecificCatgryActivity.this, NotificationsActivity.class));
 
                 }
 
@@ -119,7 +172,7 @@ public class SpecificCatgryActivity extends AppCompatActivity {
                             .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
                             .show();
                 } else {
-                    startActivity(new Intent(SpecificCatgryActivity.this,SettingActiviy.class));
+                    startActivity(new Intent(SpecificCatgryActivity.this, SettingActiviy.class));
 
                 }
 
@@ -133,7 +186,13 @@ public class SpecificCatgryActivity extends AppCompatActivity {
         catgryAdapter = new CatgryAdapter(DM, this, new CatgryAdapter.OnItemClick() {
             @Override
             public void setOnItemClick(int position) {
-                Hawk.put(Constants.SubCat2, DM.get(position).getName());
+                if (Hawk.get(Constants.Language).equals("en")) {
+
+                    Hawk.put(Constants.SubCat2, DM.get(position).getName());
+                } else {
+                    Hawk.put(Constants.SubCat2, DM.get(position).getNameAr());
+
+                }
                 Hawk.put(Constants.mSubCatgrID, DM.get(position).getId());
                 // Log.d("TTT", "setOnItemClick: "+DM.get(position).getDesc()+"----"+Hawk.get(Constants.SubCat2)+"");
                 Intent intent = new Intent(SpecificCatgryActivity.this, RequestDescriptionActivity.class);
@@ -143,7 +202,7 @@ public class SpecificCatgryActivity extends AppCompatActivity {
         RV.setAdapter(catgryAdapter);
         RV.setLayoutManager(new GridLayoutManager(this, 3));
         catgryAdapter.notifyDataSetChanged();
-        getSubCatg(Hawk.get(Constants.mCatgrID) + "","");
+        getSubCatg(Hawk.get(Constants.mCatgrID) + "", "");
         progressDialog.show();
         Go.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -151,14 +210,15 @@ public class SpecificCatgryActivity extends AppCompatActivity {
 
                 if (!Search.getText().toString().equals("")) {
                     DM.clear();
+                    temp=1;
                     catgryAdapter.notifyDataSetChanged();
-                    getSubCatg(Hawk.get(Constants.mCatgrID)+"",Search.getText().toString());
+                    getSubCatg(Hawk.get(Constants.mCatgrID) + "", Search.getText().toString());
                 }
             }
         });
     }
 
-    private void getSubCatg(String category_id,String search) {
+    private void getSubCatg(String category_id, String search) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Connectors.connectionServices.BaseURL)
                 .addConverterFactory(GsonConverterFactory
@@ -166,7 +226,7 @@ public class SpecificCatgryActivity extends AppCompatActivity {
         Connectors.connectionServices connectionService =
                 retrofit.create(Connectors.connectionServices.class);
 
-        connectionService.get_SubCategory(category_id, ""+search).enqueue(new Callback<StatusModel>() {
+        connectionService.get_SubCategory(category_id, "" + search).enqueue(new Callback<StatusModel>() {
             @Override
             public void onResponse(Call<StatusModel> call, Response<StatusModel> response) {
                 progressDialog.dismiss();

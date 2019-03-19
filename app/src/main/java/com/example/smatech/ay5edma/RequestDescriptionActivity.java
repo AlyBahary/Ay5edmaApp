@@ -29,13 +29,14 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import se.arbitur.geocoding.Constants.AddressTypes;
 import se.arbitur.geocoding.Constants.LocationTypes;
 import se.arbitur.geocoding.Result;
 import se.arbitur.geocoding.ReverseGeocoding;
 
 public class RequestDescriptionActivity extends AppCompatActivity {
 
-    TextView catg1, catg2;
+    TextView catg1, catg2,locatioText;
     CardView Location;
     Button Send;
     EditText Descrption;
@@ -75,6 +76,7 @@ public class RequestDescriptionActivity extends AppCompatActivity {
 
         Descrption = findViewById(R.id.Descrption);
         //
+        locatioText = findViewById(R.id.locatioText);
         Location = findViewById(R.id.Location);
         Location.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -129,7 +131,14 @@ public class RequestDescriptionActivity extends AppCompatActivity {
                     public void onResponse(se.arbitur.geocoding.Response response) {
                         for (Result result : response.getResults()) {
                             Log.d("TTTTTTT","Complete"+ result.getFormattedAddress());
-                            Address=result.getFormattedAddress()+"";
+                            Result.AddressComponent[] component=result.getAddressComponents();
+
+                            Log.d("TTTTTTTTTT", "tesst" + component.length);
+                            Log.d("TTTTTTTT", "not Complete" + result.getAddressComponents());
+                            Address=component[0].getShortName()
+                                    +component[1].getShortName()
+                                    +component[2].getShortName()
+                                    +component[3].getShortName()+"";
                             break;
                         }
                         UserModel userModel = Hawk.get(Constants.userData);
@@ -205,5 +214,19 @@ public class RequestDescriptionActivity extends AppCompatActivity {
                         Log.d("TTTTTTT", "onFailed: NO Response" + response.getErrorMessage() + " - " + response.getResults().length);
                     }
                 });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(Hawk.contains(Constants.Addlocationdlat)&&!Hawk.get(Constants.Addlocationdlat).equals("")){
+            locatioText.setText(getString(R.string.locationPicked));
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Hawk.put(Constants.Addlocationdlat,"");
     }
 }

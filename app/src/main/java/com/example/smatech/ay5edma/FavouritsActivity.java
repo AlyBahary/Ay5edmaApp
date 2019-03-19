@@ -96,6 +96,7 @@ public class FavouritsActivity extends AppCompatActivity {
             public void onResponse(Call<Example> call, Response<Example> response) {
                 progressDialog.dismiss();
                 Example statusModel=response.body();
+                Log.d("TTT-->Fav", "onResponse: "+response.raw());
                 if(statusModel.getStatus()){
                     DM.addAll(statusModel.getRequests());
                     favAdapter.notifyDataSetChanged();

@@ -105,7 +105,7 @@ public class RequestsActivity extends AppCompatActivity {
         //
 
         userType = Hawk.get(Constants.UserType);
-        Log.d("TTTT", "onCreate:UserType " + userType);
+        Log.d("TTTT", "onCreate:UserType " + userType+"--- userID ->"+userModel.getId());
 
         DM = new ArrayList<>();
         RV = findViewById(R.id.RV);
@@ -187,6 +187,7 @@ public class RequestsActivity extends AppCompatActivity {
 
     //
     public void getPreviouse() {
+        Log.d("TTT", "getPreviouse: onMethod");
         Hawk.put(Constants.Time, "0");
         DM.clear();
         if (userType.equals("0")) {
@@ -207,9 +208,9 @@ public class RequestsActivity extends AppCompatActivity {
 
     public void getRecent() {
         Hawk.put(Constants.Time, "1");
-
         DM.clear();
         if (userType.equals("0")) {
+
             getRequestes(userModel.getId() + "", "0", "", "", "", "");
             progressDialog.show();
         } else {
@@ -229,7 +230,12 @@ public class RequestsActivity extends AppCompatActivity {
 
     }
 
-    private void getRequestes(String user_id, final String status, String shop_id, String subcatgry, String Catgry, String filter_id) {
+    private void getRequestes(String user_id
+            , final String status
+            , String shop_id
+            , String subcatgry
+            , String Catgry
+            , String filter_id) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Connectors.connectionServices.BaseURL)
                 .addConverterFactory(GsonConverterFactory
@@ -241,6 +247,8 @@ public class RequestsActivity extends AppCompatActivity {
                 .enqueue(new Callback<StatusModel>() {
                     @Override
                     public void onResponse(Call<StatusModel> call, Response<StatusModel> response) {
+                        Log.d("TTT", "onResponse:"+response.raw());
+
                         progressDialog.dismiss();
                         StatusModel statusModel = response.body();
                         if (statusModel.getStatus()) {
@@ -249,12 +257,14 @@ public class RequestsActivity extends AppCompatActivity {
                             requestAdapter.notifyDataSetChanged();
                         } else {
 
+                            Log.d("TTT", "onResponse: false"+response.raw());
                         }
 
                     }
 
                     @Override
                     public void onFailure(Call<StatusModel> call, Throwable t) {
+                        Log.d("TTT", "onFailure: "+t.getMessage());
                         progressDialog.dismiss();
                         Snackbar.make(parentLayout, "" + getString(R.string.noInternetConnecion), Snackbar.LENGTH_LONG)
                                 .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))

@@ -148,4 +148,8 @@
     <string name="thereisnoReviews">There is no reviews</string>
     <string name="Aboutyou">About you</string>
     <string name="Requests_finished">Finished</string>
+    <string name="locationPicked">Location picked</string>
+    <string name="changePassword">Change password</string>
+    <string name="Transaction_Date">Transaction Date</string>
+    <string name="Show_Location_on_Map">Show location on map</string>
 </resources>

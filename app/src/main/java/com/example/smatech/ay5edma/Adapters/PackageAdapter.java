@@ -15,6 +15,8 @@ import android.widget.TextView;
 import com.example.smatech.ay5edma.Models.Modelss.PointsModel;
 import com.example.smatech.ay5edma.Models.RequestModel;
 import com.example.smatech.ay5edma.R;
+import com.example.smatech.ay5edma.Utils.Constants;
+import com.orhanobut.hawk.Hawk;
 
 import java.util.ArrayList;
 
@@ -44,6 +46,12 @@ public class PackageAdapter extends RecyclerView.Adapter<PackageAdapter.ViewHold
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
         PointsModel itemMode = requestModels.get(i);
+        if(Hawk.get(Constants.Language).equals("ar")){
+            viewHolder.packageName.setText(itemMode.getNameAr());
+        }else {
+            viewHolder.packageName.setText(itemMode.getName());
+
+        }
         viewHolder.price.setText(itemMode.getPrice());
         viewHolder.points.setText(itemMode.getPoints());
 
@@ -56,15 +64,15 @@ public class PackageAdapter extends RecyclerView.Adapter<PackageAdapter.ViewHold
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        TextView points, price;
+        TextView points, price,packageName;
         Button buy;
 
-        ImageView fav;
 
         public ViewHolder(View itemView) {
             super(itemView);
             price = itemView.findViewById(R.id.price);
             points = itemView.findViewById(R.id.points);
+            packageName = itemView.findViewById(R.id.packageName);
             buy = itemView.findViewById(R.id.buy);
             buy.setOnClickListener(this);
         }

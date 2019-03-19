@@ -137,7 +137,7 @@
                     android:background="@null"
                     android:focusable="false"
                     android:gravity="start"
-                    android:hint="1/1/1990"
+                    android:hint="@string/Transaction_Date"
                     android:inputType="text"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
@@ -159,7 +159,7 @@
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:src="@drawable/date" />
+                    android:src="@drawable/ic_person" />
 
                 <EditText
                     android:id="@+id/Sender"

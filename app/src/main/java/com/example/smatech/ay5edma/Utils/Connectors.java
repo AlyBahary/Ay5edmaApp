@@ -203,9 +203,27 @@ public class Connectors {
                 , @Query("gender") String gender
                 , @Query("category_id") String category_id
                 , @Query("subcategory_id") String subcategory_id
+                , @Query("subcategory_id2") String subcategory_id2
                 , @Query("birthday") String birthday
                 , @Query("role") String role
+                , @Query("about") String about
 
+        );
+//Edit UserData
+        @GET(Constants.mUser_edit)
+        Call<StatusModel> edit(
+                @Query("mobile") String mobile
+                , @Query("image") String image
+                , @Query("id") String id
+                , @Query("name") String name
+                , @Query("gender") String gender
+                , @Query("category_id") String category_id
+                , @Query("subcategory_id") String subcategory_id
+                , @Query("subcategory_id2") String subcategory_id2
+                , @Query("birthday") String birthday
+                , @Query("role") String role
+                , @Query("about") String about
+                , @QueryMap Map<String,String> images
         );
 
         //get Offers
@@ -242,6 +260,7 @@ public class Connectors {
         @GET(Constants.mGet_notifications)
         Call<Example> get_notificaions(
                 @Query("user_id") String user_id
+                ,@Query("role") String role
         );
 
         @GET(Constants.validateAccount)
@@ -253,6 +272,12 @@ public class Connectors {
         Call<StatusModel> change_password(
                 @Query("new_password") String new_password
                 , @Query("vertificaion") String verification
+        );
+
+        @GET(Constants.change_password)
+        Call<StatusModel> change_password1(
+                @Query("id") String id
+                , @Query("new_password") String new_password
         );
 
         @GET(Constants.forget_password)

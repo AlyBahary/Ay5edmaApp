@@ -43,8 +43,10 @@ import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.MediaType;
@@ -59,14 +61,14 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class SettingActiviy extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
     // this activiy for editting profile
 
-    LinearLayout Secondaryservicelayout, primaryservicelayout, datelayout;
-    Button Edit;
+    LinearLayout Secondaryservicelayout, primaryservicelayout, Secondaryservicelayout2, datelayout, uploadImgsLinear;
+    Button Edit, uploadImgs;
     String Sex = "";
     ImageView eye;
     EditText Name, mobile, pass, birthdate;
-    Spinner primaryservice, Secondaryservice;
+    Spinner primaryservice, Secondaryservice, Secondaryservice2;
     UserModel userModel;
-    String category_id="", subcategory_id="";
+    String category_id = "", subcategory_id = "", subcategory_id2 = "";
     Spinner Signup_Gender;
     List<String> list2, list;
     List<String> ids2, ids;
@@ -75,6 +77,9 @@ public class SettingActiviy extends AppCompatActivity implements DatePickerDialo
     LinearLayout changeImage;
     ProgressDialog progressDialog;
     String urlString = "";
+    ArrayList<String> urlStrings;
+    Map imagesMap;
+    int flag;
     CircleImageView profile_image;
     private DatePickerDialog datePickerDialog;
 
@@ -83,6 +88,8 @@ public class SettingActiviy extends AppCompatActivity implements DatePickerDialo
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting_activiy);
+        urlStrings = new ArrayList<>();
+        imagesMap=new HashMap();
         parentLayout = findViewById(android.R.id.content);
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage(getString(R.string.Loading));
@@ -101,8 +108,10 @@ public class SettingActiviy extends AppCompatActivity implements DatePickerDialo
         //
 
         userModel = Hawk.get(Constants.userData);
+        uploadImgsLinear = findViewById(R.id.uploadImgsLinear);
         Secondaryservicelayout = findViewById(R.id.Secondaryservicelayout);
         primaryservicelayout = findViewById(R.id.primaryservicelayout);
+        Secondaryservicelayout2 = findViewById(R.id.Secondaryservicelayout2);
         datelayout = findViewById(R.id.datelayout);
         //textViews  Declaration
         Name = findViewById(R.id.Name);
@@ -126,6 +135,7 @@ public class SettingActiviy extends AppCompatActivity implements DatePickerDialo
             @Override
             public void onClick(View v) {
 
+                flag = 1;
                 ImagePicker.create(SettingActiviy.this)
                         .folderMode(true) // folder mode (false by default)
                         .toolbarFolderTitle("Folder") // folder selection title
@@ -174,6 +184,7 @@ public class SettingActiviy extends AppCompatActivity implements DatePickerDialo
 
 
         Secondaryservice = findViewById(R.id.Secondaryservice);
+        Secondaryservice2 = findViewById(R.id.Secondaryservice2);
 
         list2 = new ArrayList<String>();
         list2.add(getString(R.string.Secondary__service));
@@ -200,6 +211,22 @@ public class SettingActiviy extends AppCompatActivity implements DatePickerDialo
             }
         });
 
+        Secondaryservice2.setAdapter(dataAdapter2);
+        Secondaryservice2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position == 0) {
+
+                } else {
+                    subcategory_id2 = ids2.get(position);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
 ////////
 
@@ -275,12 +302,38 @@ public class SettingActiviy extends AppCompatActivity implements DatePickerDialo
         if (Hawk.get(Constants.UserType).equals("0")) {
             primaryservicelayout.setVisibility(View.GONE);
             Secondaryservicelayout.setVisibility(View.GONE);
+            Secondaryservicelayout2.setVisibility(View.GONE);
+            uploadImgsLinear.setVisibility(View.GONE);
 //            datelayout.setVisibility(View.GONE);
         } else {
             primaryservicelayout.setVisibility(View.VISIBLE);
             Secondaryservicelayout.setVisibility(View.VISIBLE);
+            Secondaryservicelayout2.setVisibility(View.VISIBLE);
+            uploadImgsLinear.setVisibility(View.VISIBLE);
+
             datelayout.setVisibility(View.VISIBLE);
         }
+
+        uploadImgs = findViewById(R.id.uploadImgs);
+        uploadImgs.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                flag = 2;
+                ImagePicker.create(SettingActiviy.this)
+                        .folderMode(true) // folder mode (false by default)
+                        .toolbarFolderTitle("Folder") // folder selection title
+                        .toolbarImageTitle("Tap to select") // image selection title
+                        .toolbarArrowColor(Color.BLACK) // Toolbar 'up' arrow color
+                        .includeVideo(false) // Show video on image picker
+                        .multi() // multi mode (default mode)
+                        .limit(5) // max images can be selected (99 by default)
+                        .showCamera(true) // show camera or not (true by default)
+                        .imageDirectory("Camera") // directory name for captured image  ("Camera" folder by default)
+                        .enableLog(false) // disabling log
+                        .start(); // start image picker activity with request code
+
+            }
+        });
 
 
         //
@@ -298,7 +351,7 @@ public class SettingActiviy extends AppCompatActivity implements DatePickerDialo
                 } else {
                     edit(mobile.getText().toString(), urlString + ""
                             , userModel.getId(), Name.getText().toString()
-                            ,Sex,category_id,subcategory_id,birthdate.getText().toString()+"");
+                            , Sex, category_id, subcategory_id, subcategory_id2, birthdate.getText().toString() + "",urlStrings);
                 }//Primary Catgry Spinner
 
             }
@@ -308,7 +361,6 @@ public class SettingActiviy extends AppCompatActivity implements DatePickerDialo
     }
 
     private void getUserData(String id) {
-        progressDialog.show();
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Connectors.connectionServices.BaseURL)
                 .addConverterFactory(GsonConverterFactory
@@ -316,27 +368,26 @@ public class SettingActiviy extends AppCompatActivity implements DatePickerDialo
         Connectors.connectionServices connectionService =
                 retrofit.create(Connectors.connectionServices.class);
 
-        connectionService.login(Hawk.get(Constants.password)+"",Hawk.get(Constants.username)+"",Hawk.get(Constants.TOKEN)+"").enqueue(new Callback<UserModelSatus>() {
+        connectionService.login(Hawk.get(Constants.password) + "", Hawk.get(Constants.username) + "", Hawk.get(Constants.TOKEN) + "").enqueue(new Callback<UserModelSatus>() {
             @Override
             public void onResponse(Call<UserModelSatus> call, Response<UserModelSatus> response) {
                 progressDialog.dismiss();
                 statusModel = response.body();
                 if (statusModel.getStatus()) {
-                    userModel.setAccepted(statusModel.getAccepted()+"");
-                    userModel.setPoints(statusModel.getPoints()+"");
-                    userModel.setPeople(statusModel.getPeople()+"");
-                    userModel.setRejected(statusModel.getRejected()+"");
+                    userModel.setAccepted(statusModel.getAccepted() + "");
+                    userModel.setPoints(statusModel.getPoints() + "");
+                    userModel.setPeople(statusModel.getPeople() + "");
+                    userModel.setRejected(statusModel.getRejected() + "");
                     Hawk.put(Constants.userData, statusModel.getUser());
-                    if (statusModel.getUser().getImage().equals("")){
-                    }else {
+                    if (statusModel.getUser().getImage().equals("")) {
+                    } else {
                         Picasso.with(SettingActiviy.this).load("http://www.anyservice-ksa.com/prod_img/" + statusModel.getUser().getImage()).into(profile_image);
                     }
-                    birthdate.setText(""+statusModel.getUser().getBirthday());
+                    birthdate.setText("" + statusModel.getUser().getBirthday());
 
                     if (statusModel.getUser().getRole().equals("2")) {
                         Name.setText(statusModel.getUser().getName());
 
-                        Toast.makeText(SettingActiviy.this, "" + statusModel.getUser().getGender(), Toast.LENGTH_SHORT).show();
                         mobile.setText(statusModel.getUser().getMobile());
                         if (statusModel.getUser().getGender().equals("1")) {
                             Signup_Gender.setSelection(1);
@@ -389,7 +440,6 @@ public class SettingActiviy extends AppCompatActivity implements DatePickerDialo
         connectionService.get_Category().enqueue(new Callback<StatusModel>() {
             @Override
             public void onResponse(Call<StatusModel> call, Response<StatusModel> response) {
-                progressDialog.dismiss();
                 getUserData(userModel.getId());
                 StatusModel statusModel2 = response.body();
                 if (statusModel2.getStatus() == true) {
@@ -399,7 +449,7 @@ public class SettingActiviy extends AppCompatActivity implements DatePickerDialo
                         for (int i = 0; categoryModels.size() > i; i++) {
                             ids.add(categoryModels.get(i).getId());
 
-                            if (Locale.getDefault().getDisplayLanguage().equals("العربية")) {
+                            if (Hawk.get(Constants.Language).equals("ar")) {
                                 list.add(categoryModels.get(i).getNameAr());
                             } else {
                                 list.add(categoryModels.get(i).getName());
@@ -447,7 +497,7 @@ public class SettingActiviy extends AppCompatActivity implements DatePickerDialo
                         for (int i = 0; subCategoryModels.size() > i; i++) {
                             ids2.add(subCategoryModels.get(i).getId());
 
-                            if (Locale.getDefault().getDisplayLanguage().equals("ar")) {
+                            if (Hawk.get(Constants.Language).equals("ar")) {
                                 list2.add(subCategoryModels.get(i).getNameAr() + "");
                             } else {
                                 list2.add(subCategoryModels.get(i).getName());
@@ -456,6 +506,7 @@ public class SettingActiviy extends AppCompatActivity implements DatePickerDialo
 
                         Log.d("TTT", "onResponse: " + statusModel.getUser().getSubcategoryId());
                         Secondaryservice.setSelection(ids2.indexOf(statusModel.getUser().getSubcategoryId()));
+                        Secondaryservice2.setSelection(ids2.indexOf(statusModel.getUser().getSubcategory_id2()));
 
                     }
 
@@ -477,8 +528,14 @@ public class SettingActiviy extends AppCompatActivity implements DatePickerDialo
 
     }
 
-    private void edit(String mobile, String img, String id, String name,String gender,String catgryid,String subcategory_id,String bd) {
+    private void edit(String mobile, String img, String id, String name, String gender
+            , String catgryid, String subcategory_id, String subcatgry_id2, String bd,ArrayList<String> images) {
         progressDialog.show();
+        if(images.size()>0){
+            for(int ii=0;ii<images.size();ii++){
+                imagesMap.put("images[" + ii + "]",images.get(ii));
+            }
+        }
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Connectors.connectionServices.BaseURL)
                 .addConverterFactory(GsonConverterFactory
@@ -486,7 +543,8 @@ public class SettingActiviy extends AppCompatActivity implements DatePickerDialo
         Connectors.connectionServices connectionService =
                 retrofit.create(Connectors.connectionServices.class);
 
-        connectionService.edit(mobile, img, id, name,gender,catgryid,subcategory_id,bd,"").enqueue(new Callback<StatusModel>() {
+        connectionService.edit(mobile, img, id, name, gender, catgryid, subcategory_id
+                , subcatgry_id2 + "", bd, "", "",imagesMap).enqueue(new Callback<StatusModel>() {
             @Override
             public void onResponse(Call<StatusModel> call, Response<StatusModel> response) {
 
@@ -498,7 +556,7 @@ public class SettingActiviy extends AppCompatActivity implements DatePickerDialo
                     userModel.setImage(img);
                     userModel.setName(name);
                     userModel.setGender(gender);
-                    Hawk.put(Constants.userData,userModel);
+                    Hawk.put(Constants.userData, userModel);
                     Snackbar.make(parentLayout, "" + getString(R.string.Informaion_Updated), Snackbar.LENGTH_LONG)
                             .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
                             .show();
@@ -542,6 +600,9 @@ public class SettingActiviy extends AppCompatActivity implements DatePickerDialo
 
             @Override
             public void onFailure(Call<ImageUrlModel> call, Throwable t) {
+                Snackbar.make(parentLayout, "" + getString(R.string.noInternetConnecion), Snackbar.LENGTH_LONG)
+                        .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                        .show();
                 progressDialog.dismiss();
 
             }
@@ -553,15 +614,27 @@ public class SettingActiviy extends AppCompatActivity implements DatePickerDialo
         if (ImagePicker.shouldHandle(requestCode, resultCode, data)) {
             // Get a list of picked images
             // or get a single image only
-            Image image = ImagePicker.getFirstImageOrNull(data);
-            Bitmap myBitmap = BitmapFactory.decodeFile(image.getPath());
-            profile_image.setImageBitmap(myBitmap);
-            File file = new File(image.getPath());
-            RequestBody reqFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
-            MultipartBody.Part body = MultipartBody.Part.createFormData("parameters[0]", file.getName(), reqFile);
-            uploadPhotoService(body);
+            if (flag == 1) {
+                Image image = ImagePicker.getFirstImageOrNull(data);
+                Bitmap myBitmap = BitmapFactory.decodeFile(image.getPath());
+                profile_image.setImageBitmap(myBitmap);
+                File file = new File(image.getPath());
+                RequestBody reqFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+                MultipartBody.Part body = MultipartBody.Part.createFormData("parameters[0]", file.getName(), reqFile);
+                uploadPhotoService(body);
+            } else {
+                urlStrings = new ArrayList<>();
+                List<Image> images = ImagePicker.getImages(data);
+                for (int i = 0; i < images.size(); i++) {
+                    File file = new File(images.get(i).getPath());
+                    RequestBody reqFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+                    MultipartBody.Part body = MultipartBody.Part.createFormData("parameters[0]", file.getName(), reqFile);
+                    uploadPhotoService1(body);
+
+                }
+            }
+            super.onActivityResult(requestCode, resultCode, data);
         }
-        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -569,5 +642,40 @@ public class SettingActiviy extends AppCompatActivity implements DatePickerDialo
         birthdate.setText(dayOfMonth + "/" + month + "/" + year);
 
     }
+    public void uploadPhotoService1(MultipartBody.Part body) {
+        progressDialog.show();
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Connectors.connectionServices.BaseURL)
+                .addConverterFactory(GsonConverterFactory
+                        .create(new Gson())).build();
+
+        Connectors.connectionServices getRegistrationsConnectionServices =
+                retrofit.create(Connectors.connectionServices.class);
+        getRegistrationsConnectionServices
+                .Upload_Img(body).enqueue(new Callback<ImageUrlModel>() {
+            @Override
+            public void onResponse(Call<ImageUrlModel> call, Response<ImageUrlModel> response) {
+                progressDialog.dismiss();
+                ImageUrlModel imageUrlModel = response.body();
+                if (imageUrlModel.getImages().size() > 0)
+                    urlStrings.add(imageUrlModel.getImages().get(0));
+                Log.d("TTTT", "onResponse: Size of array of images " + urlStrings.size());
+                for (int j = 0; urlStrings.size() > j; j++) {
+                    Log.d("TTT", "onResponse: img url : " + urlStrings.get(j));
+                }
+                Toast.makeText(SettingActiviy.this, "" + getString(R.string.ImageUploaded), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(Call<ImageUrlModel> call, Throwable t) {
+                progressDialog.dismiss();
+                Snackbar.make(parentLayout, "" + getString(R.string.noInternetConnecion), Snackbar.LENGTH_LONG)
+                        .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                        .show();
+
+            }
+        });
+    }
+
 }
 

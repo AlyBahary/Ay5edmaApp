@@ -12,6 +12,8 @@ import android.widget.TextView;
 import com.example.smatech.ay5edma.Models.DummyModel;
 import com.example.smatech.ay5edma.Models.Modelss.CategoryModel;
 import com.example.smatech.ay5edma.R;
+import com.example.smatech.ay5edma.Utils.Constants;
+import com.orhanobut.hawk.Hawk;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -41,7 +43,7 @@ public class CatgryAdapter extends RecyclerView.Adapter<CatgryAdapter.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
         CategoryModel itemMode = categoryModels.get(i);
-        if (Locale.getDefault().getDisplayLanguage().equals("العربية")) {
+        if (Hawk.get(Constants.Language).equals("ar")) {
             viewHolder.TextTitle.setText(""+itemMode.getNameAr());
         } else {
             viewHolder.TextTitle.setText(""+itemMode.getName());

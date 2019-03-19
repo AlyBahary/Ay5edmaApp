@@ -75,6 +75,7 @@ public class FavAdapter extends RecyclerView.Adapter<FavAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
 
         Request itemMode = requestModels.get(i);
+       // Log.d("TTT", "onBindViewHolder: item:  "i);
         if (Hawk.get(Constants.Language).equals("ar")) {
             viewHolder.Catgry1.setText("" + itemMode.getCategory().getNameAr());
             viewHolder.Catgry2.setText("" + itemMode.getSubcategory().getNameAr());
@@ -85,10 +86,19 @@ public class FavAdapter extends RecyclerView.Adapter<FavAdapter.ViewHolder> {
 
         viewHolder.Date.setText("" + itemMode.getUpdated());
         viewHolder.name.setText("" + itemMode.getShop().getName());
+        viewHolder.fav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addFav(""+itemMode.getUserId(),""+itemMode.getId());
+                requestModels.remove(i);
+                notifyItemRemoved(i);
+            }
+        });
         viewHolder.ReOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendRequest(""+itemMode.getBody(),""+itemMode.getAddress());
+                sendRequest(""+itemMode.getBody(),""+itemMode.getAddress(),""+itemMode.getLatitude()
+                ,""+itemMode.getLongitude(),""+itemMode.getCategoryId(),itemMode.getSubcategoryId());
             }
 
         });
@@ -113,6 +123,7 @@ public class FavAdapter extends RecyclerView.Adapter<FavAdapter.ViewHolder> {
             Catgry2 = itemView.findViewById(R.id.catgr2);
             Date = itemView.findViewById(R.id.Date);
             name = itemView.findViewById(R.id.Name);
+            fav = itemView.findViewById(R.id.fav);
             ReOrder = itemView.findViewById(R.id.ReOrder);
 
             itemView.setOnClickListener(this);
@@ -128,7 +139,7 @@ public class FavAdapter extends RecyclerView.Adapter<FavAdapter.ViewHolder> {
         void setOnItemClick(int position);
     }
 
-    private void sendRequest(final String Description,String Address) {
+    private void sendRequest(final String Description,String Address,String lat,String longt,String catgry,String subctgry) {
 
         progressDialog.show();
         UserModel userModel = Hawk.get(Constants.userData);
@@ -140,12 +151,12 @@ public class FavAdapter extends RecyclerView.Adapter<FavAdapter.ViewHolder> {
                 retrofit.create(Connectors.connectionServices.class);
 
         connectionService.add_Request(userModel.getId()
-                , Hawk.get(Constants.mSubCatgrID) + ""
+                , subctgry + ""
                 , Description + "", userModel.getId()
-                , Hawk.get(Constants.mCatgrID) + ""
+                , catgry + ""
                 , Address
-                , Hawk.get(Constants.Addlocationdlong) + ""
-                , Hawk.get(Constants.Addlocationdlat) + ""
+                ,longt + ""
+                , lat + ""
         ).enqueue(new Callback<StatusModel>() {
             @Override
             public void onResponse(Call<StatusModel> call, Response<StatusModel> response) {
@@ -181,5 +192,34 @@ public class FavAdapter extends RecyclerView.Adapter<FavAdapter.ViewHolder> {
 
     }
 
+    private void addFav(String userID, String ReqID) {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Connectors.connectionServices.BaseURL)
+                .addConverterFactory(GsonConverterFactory
+                        .create(new Gson())).build();
+        Connectors.connectionServices connectionService =
+                retrofit.create(Connectors.connectionServices.class);
+
+        connectionService.add_favourite(userID, ReqID).enqueue(new Callback<StatusModel>() {
+            @Override
+            public void onResponse(Call<StatusModel> call, Response<StatusModel> response) {
+                StatusModel statusModel = response.body();
+                if (statusModel.getStatus()) {
+                    if (Hawk.get(Constants.Language).equals("ar")) {
+                        Toast.makeText(context, "" + statusModel.getMessage_ar(), Toast.LENGTH_SHORT).show();
+
+                    } else {
+                        Toast.makeText(context, "" + statusModel.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<StatusModel> call, Throwable t) {
+
+            }
+        });
+
+    }
 
 }

@@ -9,7 +9,6 @@
     tools:context=".EditProfileActivity">
 
     <include layout="@layout/custom_toolbar" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -205,6 +204,40 @@
 
             <TextView
                 android:id="@+id/subCatgry"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:focusable="false"
+                android:gravity="start"
+                android:hint="@string/Secondary__service"
+                android:inputType="text"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:textAlignment="viewStart"
+                android:textColorHint="@color/Black"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/spinner22Layout"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/grey_button"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/help" />
+
+            <TextView
+                android:id="@+id/subCatgry2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@null"

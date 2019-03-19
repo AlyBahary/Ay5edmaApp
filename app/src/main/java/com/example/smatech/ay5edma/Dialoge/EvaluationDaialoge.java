@@ -52,6 +52,7 @@ public class EvaluationDaialoge extends Dialog {
         progressDialog=new ProgressDialog(c);
         progressDialog.setMessage(c.getString(R.string.Loading));
 
+        d=this;
         Stars=findViewById(R.id.Stars);
         comment=findViewById(R.id.comment);
         Signup=findViewById(R.id.Signup);
@@ -80,13 +81,13 @@ public class EvaluationDaialoge extends Dialog {
             @Override
             public void onResponse(Call<StatusModel> call, Response<StatusModel> response) {
                 progressDialog.dismiss();
-                Log.d("TTTT", "onResponse: "+rate+"--"+Comment+"--"+userID+""+fromID);
                 Log.d("TTTT", "onResponse: "+response.toString());
                 Log.d("TTTT", "onResponse: "+call.toString());
                 Log.d("TTTT", "onResponse: "+response.message());
                 StatusModel statusModel=response.body();
                 if(statusModel.getStatus()){
                     d.dismiss();
+                    Log.d("TTTT", "onResponse: status"+statusModel.getStatus());
                     Toast.makeText(c, ""+c.getString(R.string.reviewAddedSuccessfuly), Toast.LENGTH_SHORT).show();
                 }else{
                     Toast.makeText(c, ""+statusModel.getMessage(), Toast.LENGTH_SHORT).show();

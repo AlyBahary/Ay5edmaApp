@@ -72,14 +72,16 @@ public class NumberConfirmationActivity extends AppCompatActivity {
         connectionService.validateAccount(code).enqueue(new Callback<StatusModel>() {
             @Override
             public void onResponse(Call<StatusModel> call, Response<StatusModel> response) {
+                Log.d("TTTT", "onResponse: "+response.raw());
+                Log.d("TTTT", "onResponse: "+response.message());
                 progressDialog.dismiss();
                 StatusModel statusModel = response.body();
                 if (statusModel.getStatus()) {
-                    login(Hawk.get(Constants.mobile),Hawk.get(Constants.password),Hawk.get(Constants.TOKEN));
+                    login(Hawk.get(Constants.username),Hawk.get(Constants.password),Hawk.get(Constants.TOKEN));
                     Hawk.put(Constants.STUCK, "0");
 
                 } else {
-                    if (Locale.getDefault().getDisplayLanguage().equals("English")) {
+                    if (Hawk.get(Constants.Language).equals("en")) {
                         Snackbar.make(parentLayout, "" + statusModel.getMessage(), Snackbar.LENGTH_LONG)
                                 .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
                                 .show();
@@ -140,8 +142,8 @@ public class NumberConfirmationActivity extends AppCompatActivity {
 
                 } else {
                     Log.d("TTTT", "onResponse: Response22");
-                    Hawk.put(Constants.STUCK, "1");
-                    if (Locale.getDefault().getDisplayLanguage().equals("English")) {
+                    Hawk.put(Constants.STUCK, "0");
+                    if (Hawk.get(Constants.Language).equals("English")) {
                         Snackbar.make(parentLayout, "" + statusModel.getMessage(), Snackbar.LENGTH_LONG)
                                 .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
                                 .show();

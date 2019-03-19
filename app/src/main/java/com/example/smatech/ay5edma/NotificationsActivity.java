@@ -125,7 +125,7 @@ public class NotificationsActivity extends AppCompatActivity implements Recycler
         new ItemTouchHelper(itemTouchHelperR).attachToRecyclerView(RV);
         new ItemTouchHelper(itemTouchHelperL).attachToRecyclerView(RV);
         notificationsAdapter.notifyDataSetChanged();
-        getNotificaions(userModel.getId());
+        getNotificaions(userModel.getId(),userModel.getRole());
 
 
     }
@@ -152,7 +152,7 @@ public class NotificationsActivity extends AppCompatActivity implements Recycler
 
     }
 
-    private void getNotificaions(String userID) {
+    private void getNotificaions(String userID,String role) {
         progressDialog.show();
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Connectors.connectionServices.BaseURL)
@@ -161,9 +161,10 @@ public class NotificationsActivity extends AppCompatActivity implements Recycler
         Connectors.connectionServices connectionService =
                 retrofit.create(Connectors.connectionServices.class);
 
-        connectionService.get_notificaions(userID).enqueue(new Callback<Example>() {
+        connectionService.get_notificaions(userID,role).enqueue(new Callback<Example>() {
             @Override
             public void onResponse(Call<Example> call, Response<Example> response) {
+                Log.d("TTTTT", "onResponse: "+response.raw());
                 progressDialog.dismiss();
                 Example statusModel = response.body();
                 if (statusModel.getStatus()) {
@@ -176,6 +177,7 @@ public class NotificationsActivity extends AppCompatActivity implements Recycler
             public void onFailure(Call<Example> call, Throwable t) {
                 progressDialog.dismiss();
                 Log.d("TTTT", "onFailure: "+t.getMessage());
+
                 Snackbar.make(parentLayout, "" + getString(R.string.noInternetConnecion)+"12", Snackbar.LENGTH_LONG)
                         .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
                         .show();

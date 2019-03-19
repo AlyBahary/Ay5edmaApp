@@ -16,9 +16,12 @@ import com.example.smatech.ay5edma.Adapters.PackageAdapter;
 import com.example.smatech.ay5edma.Adapters.RequestAdapter;
 import com.example.smatech.ay5edma.Models.Modelss.PointsModel;
 import com.example.smatech.ay5edma.Models.Modelss.StatusModel;
+import com.example.smatech.ay5edma.Models.Modelss.UserModel;
 import com.example.smatech.ay5edma.Models.RequestModel;
 import com.example.smatech.ay5edma.Utils.Connectors;
+import com.example.smatech.ay5edma.Utils.Constants;
 import com.google.gson.Gson;
+import com.orhanobut.hawk.Hawk;
 
 import java.util.ArrayList;
 
@@ -35,6 +38,7 @@ public class PackageActivity extends AppCompatActivity {
     ProgressDialog progressDialog;
     private View parentLayout;
     TextView points;
+    UserModel userModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +49,9 @@ public class PackageActivity extends AppCompatActivity {
         progressDialog.setMessage(getString(R.string.Loading));
         getPoints();
         points=findViewById(R.id.points);
+        userModel= Hawk.get(Constants.userData);
         //set here num of points
-        points.setText("0");
+        points.setText(""+userModel.getPoints());
         ImageView back;
         TextView toolbar_title;
         toolbar_title = findViewById(R.id.toolbar_title);

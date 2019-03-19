@@ -11,6 +11,8 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -52,6 +54,8 @@ import com.thefinestartist.finestwebview.FinestWebView;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
@@ -64,8 +68,9 @@ public class ClientHomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     //Navigation Views' Views
     LinearLayout ProfileLayout, RequestsLayout, Go, nav_home, nav_Notifications, nav_ContactUs, nav_Language,
-            nav_Fav, nav_BE_Serv_provider, nav_Setting, aboutUs, nav_BE_Serv_Client, nav_Buy_Poins, logOut;
+            nav_Fav, nav_BE_Serv_provider, nav_Setting, aboutUs, nav_BE_Serv_Client, nav_Buy_Poins, changePassword, logOut;
     //
+    LinearLayout reviewLayout;
     String T;
     PagerIndicator pagerIndicator, pagerIndicator1;
     HashMap<String, String> url_maps;
@@ -79,6 +84,7 @@ public class ClientHomeActivity extends AppCompatActivity
     CatgryAdapter catgryAdapter, catgryAdapterSrearch;
     View parentLayout;
     EditText Search;
+    int temp = 0;
     RequestAdapter requestAdapter;
     ArrayList<com.example.smatech.ay5edma.Models.Modelss.RequestModel> DM1;
     UserModel userModel;
@@ -103,7 +109,7 @@ public class ClientHomeActivity extends AppCompatActivity
         favTo = findViewById(R.id.favTo);
         occupation = findViewById(R.id.occupation);
 
-        login(Hawk.get(Constants.mobile)+"",Hawk.get(Constants.password)+"",Hawk.get(Constants.TOKEN)+"");
+        login(Hawk.get(Constants.username) + "", Hawk.get(Constants.password) + "", Hawk.get(Constants.TOKEN) + "");
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         parentLayout = findViewById(android.R.id.content);
@@ -175,12 +181,57 @@ public class ClientHomeActivity extends AppCompatActivity
         client_view = findViewById(R.id.client_view);
         Server_view = findViewById(R.id.Server_view);
         Search = findViewById(R.id.Search);
+        Search.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            private Timer timer = new Timer();
+            private final long DELAY = 1000; // milliseconds
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                timer.cancel();
+                timer = new Timer();
+                if (s.toString().equals("") && temp == 1) {
+                    timer.schedule(
+                            new TimerTask() {
+                                @Override
+                                public void run() {
+                                    // TODO: do what you need here (refresh list)
+                                    ClientHomeActivity.this.runOnUiThread(new Runnable() {
+
+                                        public void run() {
+                                            DM.clear();
+                                            catgryAdapter.notifyDataSetChanged();
+                                            getCategries("");
+                                            temp = 0;
+                                        }
+                                    });
+                                }
+
+
+                            },
+                            DELAY
+                    );
+                } else {
+
+                }
+
+            }
+        });
         Go = findViewById(R.id.Go);
         if (!Hawk.contains(Constants.Language)) {
             Hawk.put(Constants.Language, "en");
         }
-       // if (Hawk.get(Constants.UserType).equals("0")) {
-        if (true) {
+        if (Hawk.get(Constants.UserType).equals("0")) {
+
             client_view.setVisibility(View.VISIBLE);
             Server_view.setVisibility(View.GONE);
             DM = new ArrayList<>();
@@ -190,7 +241,13 @@ public class ClientHomeActivity extends AppCompatActivity
                 public void setOnItemClick(int position) {
                     Intent intent = new Intent(ClientHomeActivity.this, SpecificCatgryActivity.class);
                     startActivity(intent);
-                    Hawk.put(Constants.SubCat1, DM.get(position).getName());
+                    if (Hawk.get(Constants.Language).equals("en")) {
+                        Hawk.put(Constants.SubCat1, DM.get(position).getName());
+
+                    } else {
+                        Hawk.put(Constants.SubCat1, DM.get(position).getNameAr());
+
+                    }
                     Hawk.put(Constants.mCatgrID, DM.get(position).getId());
 
                 }
@@ -202,23 +259,11 @@ public class ClientHomeActivity extends AppCompatActivity
             Go.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    DM.clear();
-                    catgryAdapter.notifyDataSetChanged();
-                  /*  catgryAdapterSrearch = new CatgryAdapter(DM, ClientHomeActivity.this, new CatgryAdapter.OnItemClick() {
-                        @Override
-                        public void setOnItemClick(int position) {
-                            Hawk.put(Constants.SubCat1, DM.get(position).getName());
-                            Hawk.put(Constants.mCatgrID, DM.get(position).getId());
-                            Hawk.put(Constants.SubCat2, DM.get(position).getName());
-                            Hawk.put(Constants.mSubCatgrID, DM.get(position).getId());
-                            // Log.d("TTT", "setOnItemClick: "+DM.get(position).getDesc()+"----"+Hawk.get(Constants.SubCat2)+"");
-                            Intent intent = new Intent(ClientHomeActivity.this, RequestDescriptionActivity.class);
-                            startActivity(intent);
-                            RV.setAdapter(catgryAdapterSrearch);
 
-                        }
-                    });*/
                     if (!Search.getText().toString().equals("")) {
+                        DM.clear();
+                        temp = 1;
+                        catgryAdapter.notifyDataSetChanged();
                         getCategries(Search.getText().toString());
                     }
                 }
@@ -226,6 +271,14 @@ public class ClientHomeActivity extends AppCompatActivity
         } else {
             /* Drawable drawable = ratingBar.getProgressDrawable();
     drawable.setColorFilter(Color.parseColor("#FFFDEC00"), PorterDuff.Mode.SRC_ATOP);*/
+            reviewLayout = findViewById(R.id.reviewLayout);
+            reviewLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(ClientHomeActivity.this, ClientReviewsActivity.class)
+                            .putExtra("userID", userModel.getId()));
+                }
+            });
             profile_image = findViewById(R.id.profile_image);
             if (!userModel.getImage().equals("")) {
                 Log.d("yyyy", "onCreate: " + userModel.getImage());
@@ -285,7 +338,7 @@ public class ClientHomeActivity extends AppCompatActivity
             name.setText(userModel.getName());
             Stars.setRating(Float.parseFloat(userModel.getRate()));
             rate.setText(userModel.getRate());
-            points.setText(userModel.getPoints());
+                points.setText(userModel.getPoints());
             requestesApproved.setText(userModel.getAccepted());
             requestRej.setText(userModel.getRejected());
             favTo.setText(userModel.getPeople());
@@ -429,10 +482,22 @@ public class ClientHomeActivity extends AppCompatActivity
                             .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
                             .show();
                 } else {
-                    finish();
-                    ClientHomeActivity.this.finishActivity(1);
-                    Intent intent = new Intent(ClientHomeActivity.this, BeServiceProvier.class);
-                    startActivity(intent);
+                    if (userModel.getCategoryId() == null || userModel.getCategoryId().equals("")) {
+                        // finish();
+                        //ClientHomeActivity.this.finishActivity(1);
+                        Intent intent = new Intent(ClientHomeActivity.this, BeServiceProvier.class);
+                        startActivity(intent);
+
+                    } else {
+                        edit("" + userModel.getMobile()
+                                , "" + userModel.getImage()
+                                , "" + userModel.getId()
+                                , "" + userModel.getName()
+                                , "" + userModel.getGender()
+                                , ""
+                                , ""
+                                , "2");
+                    }
                 }
             }
         });
@@ -501,6 +566,20 @@ public class ClientHomeActivity extends AppCompatActivity
                 startActivity(new Intent(ClientHomeActivity.this, LoginActiivty.class));
             }
         });
+
+        changePassword = navigationView.findViewById(R.id.changePassword);
+        changePassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (Hawk.get(Constants.skipe).equals(true)) {
+                    Snackbar.make(parentLayout, "" + getString(R.string.you_have_to_login_to_use_all_app), Snackbar.LENGTH_LONG)
+                            .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                            .show();
+                } else {
+                    startActivity(new Intent(ClientHomeActivity.this, ChangePasswordActivity.class));
+                }
+            }
+        });
         nav_BE_Serv_Client = navigationView.findViewById(R.id.nav_BE_Serv_Client);
         nav_BE_Serv_Client.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -510,17 +589,18 @@ public class ClientHomeActivity extends AppCompatActivity
                             .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
                             .show();
                 } else {
-                    userModel.setRole("1");
-                    Hawk.put(Constants.userData, userModel);
-                    Hawk.put(Constants.UserType, "0");
-                    Intent intent = new Intent(ClientHomeActivity.this, ClientHomeActivity.class);
-                    finish();
-                    startActivity(intent);
+                    edit("" + userModel.getMobile()
+                            , "" + userModel.getImage()
+                            , "" + userModel.getId()
+                            , "" + userModel.getName()
+                            , "" + userModel.getGender()
+                            , ""
+                            , "", "1");
+
                 }
             }
         });
-       // if (Hawk.get(Constants.UserType).equals("0")) {
-        if (false) {
+        if (Hawk.get(Constants.UserType).equals("0")) {
             nav_BE_Serv_Client.setVisibility(View.GONE);
             nav_Buy_Poins.setVisibility(View.GONE);
             nav_BE_Serv_provider.setVisibility(View.VISIBLE);
@@ -532,7 +612,7 @@ public class ClientHomeActivity extends AppCompatActivity
         /* */
         ////////
         navigationView.setNavigationItemSelectedListener(this);
-        login(Hawk.get(Constants.mobile)+"",Hawk.get(Constants.password)+"",Hawk.get(Constants.TOKEN)+"");
+        login(Hawk.get(Constants.username) + "", Hawk.get(Constants.password) + "", Hawk.get(Constants.TOKEN) + "");
 
     }
 
@@ -693,6 +773,7 @@ public class ClientHomeActivity extends AppCompatActivity
                 .enqueue(new Callback<StatusModel>() {
                     @Override
                     public void onResponse(Call<StatusModel> call, Response<StatusModel> response) {
+                        Log.d("TTT", "Call: "+response.toString());
                         progressDialog.dismiss();
                         StatusModel statusModel = response.body();
                         if (statusModel.getStatus()) {
@@ -794,6 +875,7 @@ public class ClientHomeActivity extends AppCompatActivity
     }
 
     private void login(String mobile, String password, String token) {
+        Log.d("TTT", "login: 22" + mobile + password + token);
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Connectors.connectionServices.BaseURL)
                 .addConverterFactory(GsonConverterFactory
@@ -823,7 +905,13 @@ public class ClientHomeActivity extends AppCompatActivity
                     Hawk.put(Constants.extraauserData2, statusModel.getSubcategory());
                     name.setText(userModel.getName());
                     Stars.setRating(Float.parseFloat(userModel.getRate()));
-                    rate.setText(userModel.getRate());
+                    if(userModel.getRate().length()==1){
+                        rate.setText(userModel.getRate()+".0");
+
+                    }else {
+                        rate.setText(userModel.getRate());
+
+                    }
                     points.setText(userModel.getPoints());
                     requestesApproved.setText(userModel.getAccepted());
                     requestRej.setText(userModel.getRejected());
@@ -852,4 +940,75 @@ public class ClientHomeActivity extends AppCompatActivity
         });
     }
 
+    private void edit(String mobile
+            , String img
+            , String id
+            , String name
+            , String gender
+            , String catgryid
+            , String subcategory_id
+            , String role) {
+        progressDialog.show();
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Connectors.connectionServices.BaseURL)
+                .addConverterFactory(GsonConverterFactory
+                        .create(new Gson())).build();
+        Connectors.connectionServices connectionService =
+                retrofit.create(Connectors.connectionServices.class);
+
+        connectionService.edit(mobile, img, id, name, gender, catgryid, subcategory_id, "", "", "" + role, "").enqueue(new Callback<StatusModel>() {
+            @Override
+            public void onResponse(Call<StatusModel> call, Response<StatusModel> response) {
+
+                progressDialog.dismiss();
+                StatusModel statusModel = response.body();
+                if (statusModel.getStatus()) {
+                    //login(mobile, Hawk.get(Constants.password), Hawk.get(Constants.TOKEN));
+                    if (role.equals("1")) {
+                        userModel.setRole("1");
+                        Hawk.put(Constants.userData, userModel);
+                        Hawk.put(Constants.UserType, "0");
+                        Intent intent = new Intent(ClientHomeActivity.this, ClientHomeActivity.class);
+                        finishAffinity();
+                        startActivity(intent);
+
+                    } else {
+                        userModel.setRole("2");
+                        Hawk.put(Constants.userData, userModel);
+                        Hawk.put(Constants.UserType, "1");
+                        Intent intent = new Intent(ClientHomeActivity.this, ClientHomeActivity.class);
+                        finishAffinity();
+                        startActivity(intent);
+                    }
+
+                } else {
+                    Snackbar.make(parentLayout, "" + getString(R.string.somethingwentwrong), Snackbar.LENGTH_LONG)
+                            .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                            .show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<StatusModel> call, Throwable t) {
+                Snackbar.make(parentLayout, "" + getString(R.string.noInternetConnecion), Snackbar.LENGTH_LONG)
+                        .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                        .show();
+                progressDialog.dismiss();
+
+            }
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (Hawk.contains(Constants.reload)) {
+            if (Hawk.get(Constants.reload).equals("1")) {
+                Hawk.put(Constants.reload, "0");
+                getRequestes("", "1", "", "" + userModel.getSubcategoryId()
+                        , "" + userModel.getCategoryId(), "" + userModel.getId());
+
+            }
+        }
+    }
 }

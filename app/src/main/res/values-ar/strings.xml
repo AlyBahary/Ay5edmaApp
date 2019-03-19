@@ -31,7 +31,7 @@
     <string name="Name">الاسم</string>
     <string name="Agreementtext">"الموافقة على الشروط و الاحكام "</string>
     <string name="Signup">التسجيل</string>
-    <string name="type">النوع</string>
+    <string name="type">النوع : &#032;</string>
     <string name="male">ذكر</string>
     <string name="female">انثى</string>
     <string name="phone_number_confirmion">التحقق من كلمة المرور</string>
@@ -85,7 +85,7 @@
     <string name="Client_request_details">"تفاصيل طلب العميل "</string>
     <string name="Buy_Points">شراء نقاط</string>
     <string name="convert_to_client">"التحويل الى عميل "</string>
-    <string name="yourcurrentPoints">"تقاطك الحالية : &#032;"</string>
+    <string name="yourcurrentPoints">"نقاطك الحالية : &#032;"</string>
     <string name="Buy">"شراء "</string>
     <string name="S_R">ر.س</string>
     <string name="Price">السعر</string>
@@ -125,7 +125,7 @@
     <string name="Some_thing_went_wrong_Please_try_again">حدث شئ خاطئ من فضلك اعد المحاولة</string>
     <string name="Your_Request_Had_been_sent">تم ارسال طلبك</string>
     <string name="Please_Add_Location_Description">من فضلك اضف وصف العنوان</string>
-    <string name="Please_Add_marker_on_the_map">من فضلك ضع المؤشر على الخرطة</string>
+    <string name="Please_Add_marker_on_the_map">من فضلك ضع المؤشر على الخريطة</string>
     <string name="Please_Agree_terms_Conditions">من فضلك قم بالموافقة على الشروط و الاحكام</string>
     <string name="Please_fill_empty_fields">من فضلك املئ الحقول</string>
     <string name="Be_Service_Provider">التحويل الى مزود خدمة</string>
@@ -136,11 +136,15 @@
     <string name="message_had_been_send">تم ارسال الرسالة</string>
     <string name="somethingwentwrong">حدث شئ خاطئ</string>
     <string name="changePass">تغير كلمة المرور</string>
-    <string name="password_changed">تم تغيير كلمة الرور</string>
+    <string name="password_changed">تم تغيير كلمة المرور</string>
     <string name="pleaseActivateyourAccount">من فضلك قم بتفعيل الحساب</string>
     <string name="pleaseaddRate">من فضلك اضف تقييم</string>
     <string name="reviewAddedSuccessfuly">تم اضافة التقيم بنجاح</string>
-    <string name="thereisnoReviews">لا يوجد تقيمات</string>
+    <string name="thereisnoReviews">لا يوجد تقييمات</string>
     <string name="Aboutyou">نبذة عنك</string>
     <string name="Requests_finished">تم الانتهاء</string>
+    <string name="locationPicked">تم تحديد الموقع</string>
+    <string name="changePassword">تعديل كلمة المرور</string>
+    <string name="Transaction_Date">تاريخ التحويل</string>
+    <string name="Show_Location_on_Map">أظهر العنوان على الخريطة</string>
 </resources>

@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -40,10 +41,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class EditProfileActivity extends AppCompatActivity {
     String Sex = "";
-    LinearLayout birthdateLayout, spinner1Layout, spinner2Layout;
+    LinearLayout birthdateLayout, spinner1Layout, spinner2Layout,spinner22Layout;
     DatePickerDialog datePickerDialog;
     // Spinner Spinner1,Spinner2;
-    TextView name, Login_Mobile, Signup_Gender, Birthdate, mainCatgry, subCatgry;
+    TextView name, Login_Mobile, Signup_Gender, Birthdate, mainCatgry, subCatgry,subCatgry2;
     UserModel userModel;
     Button EditInfo;
     ProgressDialog progressDialog;
@@ -81,6 +82,7 @@ public class EditProfileActivity extends AppCompatActivity {
         Birthdate = findViewById(R.id.Birthdate);
         mainCatgry = findViewById(R.id.mainCatgry);
         subCatgry = findViewById(R.id.subCatgry);
+        subCatgry2 = findViewById(R.id.subCatgry2);
         profile_image = findViewById(R.id.profile_image);
 
 /*
@@ -118,8 +120,10 @@ public class EditProfileActivity extends AppCompatActivity {
             birthdateLayout = findViewById(R.id.birthdateLayout);
             spinner1Layout = findViewById(R.id.spinner1Layout);
             spinner2Layout = findViewById(R.id.spinner2Layout);
+            spinner22Layout = findViewById(R.id.spinner22Layout);
             spinner1Layout.setVisibility(View.GONE);
             spinner2Layout.setVisibility(View.GONE);
+            spinner22Layout.setVisibility(View.GONE);
         }
         EditInfo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -173,14 +177,17 @@ public class EditProfileActivity extends AppCompatActivity {
                             if(Hawk.get(Constants.Language).equals("ar")){
                                 mainCatgry.setText(statusModel.getCategory().getNameAr());
                                 subCatgry.setText(statusModel.getSubcategory().getNameAr());
+                                subCatgry2.setText(statusModel.getSubcategory2().getNameAr());
                             }else{
                                 mainCatgry.setText(statusModel.getCategory().getName());
                                 subCatgry.setText(statusModel.getSubcategory().getName());
+                                subCatgry2.setText(statusModel.getSubcategory2().getName());
                             }
 
                         }else{
                             mainCatgry.setText(statusModel.getCategory().getName());
                             subCatgry.setText(statusModel.getSubcategory().getName());
+                            subCatgry2.setText(statusModel.getSubcategory2().getName());
                         }
 
                     } else {
@@ -191,6 +198,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<UserModelSatus> call, Throwable t) {
+                Log.d("TTT", "onFailure: profile -->"+t.getMessage());
                 progressDialog.dismiss();
                 Snackbar.make(parentLayout, "" + getString(R.string.noInternetConnecion), Snackbar.LENGTH_LONG)
                         .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))

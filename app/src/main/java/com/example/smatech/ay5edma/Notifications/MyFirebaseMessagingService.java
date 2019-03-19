@@ -1,4 +1,4 @@
-package com.example.smatech.ay5edma;
+package com.example.smatech.ay5edma.Notifications;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -10,6 +10,7 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import com.example.smatech.ay5edma.R;
 import com.example.smatech.ay5edma.Utils.Constants;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessagingService;

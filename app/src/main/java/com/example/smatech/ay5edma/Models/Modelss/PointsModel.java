@@ -4,6 +4,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class PointsModel {
+
     @SerializedName("id")
     @Expose
     private String id;
@@ -13,9 +14,23 @@ public class PointsModel {
     @SerializedName("price")
     @Expose
     private String price;
+    @SerializedName("name")
+    @Expose
+    private String name;
+    @SerializedName("name_ar")
+    @Expose
+    private String nameAr;
     @SerializedName("created")
     @Expose
     private String created;
+
+    public String getName() {
+        return name;
+    }
+
+    public String getNameAr() {
+        return nameAr;
+    }
 
     public String getId() {
         return id;

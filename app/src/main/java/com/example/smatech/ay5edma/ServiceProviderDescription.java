@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 import com.example.smatech.ay5edma.Dialoge.ContactOptionDialoge;
 import com.example.smatech.ay5edma.Models.Modelss.OffersModel;
 import com.example.smatech.ay5edma.Models.Modelss.StatusModel;
+import com.example.smatech.ay5edma.Models.Modelss.UserModel;
 import com.example.smatech.ay5edma.Models.offerModel.example.Offer;
 import com.example.smatech.ay5edma.Utils.Connectors;
 import com.example.smatech.ay5edma.Utils.Constants;
@@ -31,6 +33,7 @@ import com.orhanobut.hawk.Hawk;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -51,6 +54,7 @@ public class ServiceProviderDescription extends AppCompatActivity {
     ProgressDialog progressDialog;
     String T;
     PagerIndicator pagerIndicator;
+    UserModel userModel;
     HashMap<String, String> url_maps;
     private com.daimajia.slider.library.SliderLayout mDemoSlider;
 
@@ -63,9 +67,11 @@ public class ServiceProviderDescription extends AppCompatActivity {
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage(getString(R.string.Loading));
         mDemoSlider = (SliderLayout) findViewById(R.id.slider);
+
         pagerIndicator = findViewById(R.id.custom_indicator);
         url_maps = new HashMap<String, String>();
         ImageView back;
+        userModel = Hawk.get(Constants.userData);
         TextView toolbar_title;
         toolbar_title = findViewById(R.id.toolbar_title);
         toolbar_title.setText(this.getString(R.string.Service_Provider_Details) + "");
@@ -120,43 +126,51 @@ public class ServiceProviderDescription extends AppCompatActivity {
         Birthday = findViewById(R.id.Birthday);
         Location = findViewById(R.id.Location);
         About = findViewById(R.id.About);
+        Stars = findViewById(R.id.Stars);
         //
-        name.setText(offersModel.getFrom().getName());
+        name.setText(" " + offersModel.getFrom().getName());
         if (offersModel.getFrom().getGender().equals("1")) {
-            gender.setText(getString(R.string.male));
+            gender.setText(" " + getString(R.string.male));
         } else {
-            gender.setText(getString(R.string.female));
+            gender.setText(" " + getString(R.string.female));
 
         }
         if (Hawk.get(Constants.Language).equals("ar")) {
-            Occupaion.setText(offersModel.getFrom().getSubcategory().getNameAr());
+            Occupaion.setText(" " + offersModel.getFrom().getSubcategory().getNameAr());
 
         } else {
-            Occupaion.setText(offersModel.getFrom().getSubcategory().getName());
+            Occupaion.setText(" " + offersModel.getFrom().getSubcategory().getName());
 
         }
-        Birthday.setText(offersModel.getFrom().getBirthday() + "");
-        Location.setText(offersModel.getFrom().getAddress() + "  ");
+        Birthday.setText(" " + offersModel.getFrom().getBirthday() + "");
+        //Location.setText(" " + offersModel.getFrom().getAddress() + "  ");
+        Location.setText(" " + getString(R.string.Show_Location_on_Map));
+        Stars.setRating(Float.parseFloat(offersModel.getFrom().getRate()));
         Location_layout = findViewById(R.id.Location_layout);
         Location_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(ServiceProviderDescription.this, MapAcvity.class)
+                String uri = String.format(Locale.ENGLISH, "geo:%f,%f", Double.parseDouble(offersModel.getFrom().getLatitude())
+                        , Double.parseDouble(offersModel.getFrom().getLongitude()));
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                startActivity(intent);
+               /* startActivity(new Intent(ServiceProviderDescription.this, MapAcvity.class)
                         .putExtra("address", offersModel.getFrom().getAddress())
                         .putExtra("lat", offersModel.getFrom().getLatitude())
                         .putExtra("long", offersModel.getFrom().getLongitude()));
                 Log.d("TTTT", "onMapReady:lat--> " + offersModel.getFrom().getLatitude());
                 Log.d("TTTT", "onMapReady:long--> " + offersModel.getFrom().getLongitude());
+           */
             }
         });
         /*  */
-        About.setText(offersModel.getFrom().getAbout());
+        About.setText(" " + offersModel.getFrom().getAbout());
         ///
         Accept = findViewById(R.id.Accept);
         Accept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                acceptOffer(offersModel.getUserId(), offersModel.getShopId(), offersModel.getRequestId(), "1");
+                acceptOffer(userModel.getId(), offersModel.getShopId(), offersModel.getRequestId(), "1");
                 progressDialog.show();
             }
         });
@@ -191,7 +205,7 @@ public class ServiceProviderDescription extends AppCompatActivity {
                         StatusModel statusModel = response.body();
                         if (statusModel.getStatus()) {
                             Log.d("TTTT", "onResponse:true ");
-
+                            Accept.setVisibility(View.GONE);
                             if (Hawk.get(Constants.Language).equals("ar")) {
                                 Snackbar.make(parentLayout, "" + statusModel.getMessage_ar(), Snackbar.LENGTH_LONG)
                                         .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
@@ -224,28 +238,28 @@ public class ServiceProviderDescription extends AppCompatActivity {
     }
 
     private void get_home_sliders() {
-        Log.d("TTT", "get_home_sliders: "+offersModel.getFrom().getName());
-        if (offersModel.getFrom().getImages()!=null&&offersModel.getFrom().getImages().size() > 0) {
+        Log.d("TTT", "get_home_sliders: " + offersModel.getFrom().getName());
+        if (offersModel.getFrom().getImages() != null && offersModel.getFrom().getImages().size() > 0) {
             ArrayList<String> Title = new ArrayList<>();
             for (int i = 0; i < offersModel.getFrom().getImages().size(); i++) {
                 T = i + "";
-                       /* if (Title.contains(T)) {
-                            Title.add(T+i);
-                            T+=i;
-                            }else{
-                            Title.add(T);
-
-                        }*/
-
                 url_maps.put("http://www.anyservice-ksa.com/prod_img/" + offersModel.getFrom().getImages().get(i), T);
 
             }
+            Log.d("TTT", "get_home_sliders: " + offersModel.getFrom().getImages().size());
             for (String name : url_maps.keySet()) {
                 CustomSliderView textSliderView = new CustomSliderView(ServiceProviderDescription.this);
                 // initialize a SliderLayout
                 textSliderView
                         .description(url_maps.get(name))
                         .image(name)
+                        .setOnSliderClickListener(new BaseSliderView.OnSliderClickListener() {
+                            @Override
+                            public void onSliderClick(BaseSliderView slider) {
+                                startActivity(new Intent(ServiceProviderDescription.this, SliderAcivity.class));
+
+                            }
+                        })
                         .setScaleType(BaseSliderView.ScaleType.Fit);
                 //add your extra information
                 textSliderView.bundle(new Bundle());
@@ -264,7 +278,7 @@ public class ServiceProviderDescription extends AppCompatActivity {
 
             //setSliderViews(IMGs, Descs);
 
-        }else {
+        } else {
 
         }
     }

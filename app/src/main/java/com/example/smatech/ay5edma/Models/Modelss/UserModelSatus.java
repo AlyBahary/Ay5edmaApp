@@ -22,6 +22,9 @@ public class UserModelSatus {
     @SerializedName("subcategory")
     @Expose
     private CategoryModel subcategory;
+    @SerializedName("subcategory2")
+    @Expose
+    private CategoryModel subcategory2;
     @SerializedName("rejected")
     @Expose
     private Integer rejected;
@@ -44,6 +47,10 @@ public class UserModelSatus {
     @SerializedName("message_ar")
     @Expose
     private String message_ar;
+
+    public CategoryModel getSubcategory2() {
+        return subcategory2;
+    }
 
     public String getMessage() {
         return message;

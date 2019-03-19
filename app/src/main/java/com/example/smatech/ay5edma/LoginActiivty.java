@@ -49,13 +49,15 @@ public class LoginActiivty extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_actiivty);
         Hawk.init(this).build();
-        if (!Hawk.contains(Constants.Set)) {
-            if (Locale.getDefault().getLanguage().equals("English")) {
+        Log.d("TTT", "onCreate: login"+"----"+Locale.getDefault().getLanguage());
+
+        if (!Hawk.contains(Constants.Set)&&!Hawk.contains("ft")) {
+            if (Locale.getDefault().getLanguage().equals("en")) {
                 Hawk.put(Constants.Language, "en");
-                languageChange("en", LoginActiivty.this, "");
+                languageChange("en", LoginActiivty.this, "",Locale.getDefault().getLanguage());
             } else {
                 Hawk.put(Constants.Language, "ar");
-                languageChange("ar", LoginActiivty.this, "");
+                languageChange("ar", LoginActiivty.this, "",Locale.getDefault().getLanguage());
 
             }
         }
@@ -65,7 +67,7 @@ public class LoginActiivty extends AppCompatActivity {
                 .setRationaleDialogTitle("Info")
                 .setSettingsDialogTitle("Warning");
 
-        Permissions.check(this/*context*/, permissions, rationale, options, new PermissionHandler() {
+        Permissions.check(this, permissions, rationale, options, new PermissionHandler() {
             @Override
             public void onGranted() {
                 if (Hawk.contains(Constants.userData) && Hawk.contains(Constants.STUCK)) {
@@ -73,8 +75,6 @@ public class LoginActiivty extends AppCompatActivity {
                         finish();
                         startActivity(new Intent(LoginActiivty.this, ClientHomeActivity.class));
                     } else {
-                        finish();
-                        startActivity(new Intent(LoginActiivty.this, NumberConfirmationActivity.class));
 
                     }
                 } else if (Hawk.contains(Constants.userData)) {
@@ -170,7 +170,7 @@ public class LoginActiivty extends AppCompatActivity {
                 UserModel userModel = statusModel.getUser();
 
                 if (statusModel.getStatus() == true && userModel.getActivate().equals("1")) {
-                    Log.d("TTTT", "onResponse: Response11");
+                    Log.d("TTTT", "onResponse: Response11"+userModel.getId());
                     userModel.setAccepted(statusModel.getAccepted() + "");
                     userModel.setPoints(statusModel.getPoints() + "");
                     userModel.setPeople(statusModel.getPeople() + "");
@@ -187,7 +187,7 @@ public class LoginActiivty extends AppCompatActivity {
                     startActivity(new Intent(LoginActiivty.this, NumberConfirmationActivity.class));
                 } else {
                     {
-                        Log.d("TTTT", "onResponse: Response22");
+                        Log.d("TTTT", "onResponse: Response22"+Hawk.get(Constants.Language));
                         if (Hawk.get(Constants.Language).equals("en")) {
                             Snackbar.make(parentLayout, "" + statusModel.getMessage(), Snackbar.LENGTH_LONG)
                                     .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
@@ -216,7 +216,7 @@ public class LoginActiivty extends AppCompatActivity {
         });
     }
 
-    public static final void languageChange(String L, Activity context, String flag) {
+    public static final void languageChange(String L, Activity context, String flag,String Language) {
         String languageToLoad = L; // your language
         Locale locale = new Locale(languageToLoad);
         Locale.setDefault(locale);
@@ -224,10 +224,11 @@ public class LoginActiivty extends AppCompatActivity {
         config.locale = locale;
         context.getBaseContext().getResources().updateConfiguration(config,
                 context.getBaseContext().getResources().getDisplayMetrics());
-        Intent intent = new Intent(context, ClientHomeActivity.class);
+        Intent intent = new Intent(context, LoginActiivty.class);
         //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         context.finishAffinity();
         context.startActivity(intent);
+        Hawk.put("ft",""+Language);
 
 
     }

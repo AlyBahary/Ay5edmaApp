@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -36,14 +37,14 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class BeServiceProvier extends AppCompatActivity {
-    Spinner Spinner1, Spinner2;
+    Spinner Spinner1, Spinner2, Spinner3;
     Button Agree;
     UserModel userModel;
     View parentLayout;
     List<String> list2, list;
     List<String> ids2, ids;
     String category_id = "", subcategory_id = "", subcategory2_id = "";
-
+    EditText Signup_About;
     ProgressDialog progressDialog;
 
     @Override
@@ -68,6 +69,7 @@ public class BeServiceProvier extends AppCompatActivity {
         getCategries();
         ////
         userModel = Hawk.get(Constants.userData);
+        Signup_About = findViewById(R.id.Signup_About);
 
         Agree = findViewById(R.id.Agree);
         Agree.setOnClickListener(new View.OnClickListener() {
@@ -80,7 +82,9 @@ public class BeServiceProvier extends AppCompatActivity {
                             , "" + userModel.getName()
                             , "" + userModel.getGender()
                             , "" + category_id
-                            , "" + subcategory_id);
+                            , "" + subcategory_id
+                            , subcategory2_id
+                            , Signup_About.getText().toString() + "");
 
                 }
             }
@@ -138,6 +142,23 @@ public class BeServiceProvier extends AppCompatActivity {
 
             }
         });
+        Spinner3 = findViewById(R.id.Spinner3);
+        Spinner3.setAdapter(dataAdapter2);
+        Spinner3.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position == -0) {
+
+                } else {
+                    subcategory2_id = ids2.get(position);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         if (userModel.getCategoryId() != null) {
             if (userModel.getCategoryId().equals("") || userModel.getCategoryId().equals("0")) {
@@ -149,7 +170,10 @@ public class BeServiceProvier extends AppCompatActivity {
                         , "" + userModel.getName()
                         , "" + userModel.getGender()
                         , "" + userModel.getCategoryId()
-                        , "" + userModel.getSubcategoryId());
+                        , "" + userModel.getSubcategoryId()
+                        ,subcategory2_id+""
+                        , "" + Signup_About.getText().toString()
+                );
             }
         }
 
@@ -177,7 +201,7 @@ public class BeServiceProvier extends AppCompatActivity {
                         for (int i = 0; categoryModels.size() > i; i++) {
                             ids.add(categoryModels.get(i).getId());
 
-                            if (Locale.getDefault().getDisplayLanguage().equals("العربية")) {
+                            if (Hawk.get(Constants.Language).equals("ar")) {
                                 list.add(categoryModels.get(i).getNameAr());
                             } else {
                                 list.add(categoryModels.get(i).getName());
@@ -225,7 +249,7 @@ public class BeServiceProvier extends AppCompatActivity {
                         for (int i = 0; subCategoryModels.size() > i; i++) {
                             ids2.add(subCategoryModels.get(i).getId());
 
-                            if (Locale.getDefault().getDisplayLanguage().equals("العربية")) {
+                            if (Hawk.get(Constants.Language).equals("ar")) {
                                 list2.add(subCategoryModels.get(i).getNameAr() + "");
                             } else {
                                 list2.add(subCategoryModels.get(i).getName());
@@ -252,7 +276,10 @@ public class BeServiceProvier extends AppCompatActivity {
 
     }
 
-    private void edit(String mobile, String img, String id, String name, String gender, String catgryid, String subcategory_id) {
+    private void edit(String mobile, String img, String id, String name, String gender, String catgryid
+            , String subcategory_id
+            , String subcategory_id2
+            , String about) {
         progressDialog.show();
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Connectors.connectionServices.BaseURL)
@@ -261,7 +288,7 @@ public class BeServiceProvier extends AppCompatActivity {
         Connectors.connectionServices connectionService =
                 retrofit.create(Connectors.connectionServices.class);
 
-        connectionService.edit(mobile, img, id, name, gender, catgryid, subcategory_id,"","2").enqueue(new Callback<StatusModel>() {
+        connectionService.edit(mobile, img, id, name, gender, catgryid, subcategory_id, subcategory_id2 + "", "", "2", about).enqueue(new Callback<StatusModel>() {
             @Override
             public void onResponse(Call<StatusModel> call, Response<StatusModel> response) {
 
@@ -325,7 +352,7 @@ public class BeServiceProvier extends AppCompatActivity {
                 } else {
                     Log.d("TTTT", "onResponse: Response22");
 
-                    if (Locale.getDefault().getDisplayLanguage().equals("English")) {
+                    if (Hawk.get(Constants.Language).equals("en")) {
                         Snackbar.make(parentLayout, "" + statusModel.getMessage(), Snackbar.LENGTH_LONG)
                                 .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
                                 .show();

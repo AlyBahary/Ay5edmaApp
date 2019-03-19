@@ -57,6 +57,7 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.ViewHold
     UserModel userModel = Hawk.get(Constants.userData);
 
     View parentLayout;
+
     public RequestAdapter(ArrayList<com.example.smatech.ay5edma.Models.Modelss.RequestModel> requestModels, String userType, Context context, Activity a, RequestAdapter.OnItemClick mOnItemClick) {
         this.requestModels = requestModels;
         this.mOnItemClick = mOnItemClick;
@@ -90,44 +91,19 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.ViewHold
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
         com.example.smatech.ay5edma.Models.Modelss.RequestModel itemMode = requestModels.get(i);
 
-        String l = Locale.getDefault().getDisplayLanguage();
-        Log.d("TTT", "onBindViewHolder: "+l);
+        String l = Locale.getDefault().getLanguage();
+        Log.d("TTT", "onBindViewHolder: " + l);
 
         if (Hawk.contains(Constants.Time)) {
+
             if (Hawk.get(Constants.Time).equals("0") && itemMode.getFinished() != null && itemMode.getFinished()) {
-                viewHolder.viewHoolder.setVisibility(View.GONE);
-
+                //viewHolder.viewHoolder.setVisibility(View.GONE);
+                viewHolder.viewHoolder.setClickable(false);
             }
         }
-        if(Hawk.contains(Constants.Set)){
-        if (Hawk.get(Constants.Language).equals("ar")) {
-            if (itemMode.getCategoryNameAr() != null) {
-                viewHolder.Catgry1.setText("" + itemMode.getCategoryNameAr());
-            } else {
-                viewHolder.Catgry1.setText("");
-
-            }
-            if (itemMode.getSubNameAr() != null)
-                viewHolder.Catgry2.setText("" + itemMode.getSubNameAr());
-            else
-                viewHolder.Catgry2.setText("");
-
-        } else {
-            if (itemMode.getCategoryName() != null) {
-                viewHolder.Catgry1.setText("" + itemMode.getCategoryName());
-            } else {
-                viewHolder.Catgry1.setText("");
-
-            }
-            if (itemMode.getSubName() != null)
-                viewHolder.Catgry2.setText("" + itemMode.getSubName());
-            else
-                viewHolder.Catgry2.setText("");
-
-
-        }
-    }else{
-            if(l.equals("العربية")){
+        if (Hawk.contains(Constants.Set)) {
+            Log.d("TTTT", "onBindViewHolder:Language Sets-->"+Hawk.get(Constants.Language));
+            if (Hawk.get(Constants.Language).equals("ar")) {
                 if (itemMode.getCategoryNameAr() != null) {
                     viewHolder.Catgry1.setText("" + itemMode.getCategoryNameAr());
                 } else {
@@ -138,7 +114,36 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.ViewHold
                     viewHolder.Catgry2.setText("" + itemMode.getSubNameAr());
                 else
                     viewHolder.Catgry2.setText("");
-            }else {
+
+            } else {
+                if (itemMode.getCategoryName() != null) {
+                    viewHolder.Catgry1.setText("" + itemMode.getCategoryName());
+                } else {
+                    viewHolder.Catgry1.setText("");
+
+                }
+                if (itemMode.getSubName() != null)
+                    viewHolder.Catgry2.setText("" + itemMode.getSubName());
+                else
+                    viewHolder.Catgry2.setText("");
+
+
+            }
+        } else {
+            Log.d("TTTT", "onBindViewHolder:Language def-->"+l);
+
+            if (l.equals("ar")) {
+                if (itemMode.getCategoryNameAr() != null) {
+                    viewHolder.Catgry1.setText("" + itemMode.getCategoryNameAr());
+                } else {
+                    viewHolder.Catgry1.setText("");
+
+                }
+                if (itemMode.getSubNameAr() != null)
+                    viewHolder.Catgry2.setText("" + itemMode.getSubNameAr());
+                else
+                    viewHolder.Catgry2.setText("");
+            } else {
                 if (itemMode.getCategoryName() != null) {
                     viewHolder.Catgry1.setText("" + itemMode.getCategoryName());
                 } else {
@@ -156,7 +161,7 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.ViewHold
 
         viewHolder.Date.setText("" + itemMode.getUpdated());
 
-        if ((itemMode.getStatus().equals("0")||itemMode.getStatus().equals("0")||itemMode.getStatus().equals("1"))&& (!itemMode.getShopId().equals("0"))) {
+        if ((itemMode.getStatus().equals("0") || itemMode.getStatus().equals("0") || itemMode.getStatus().equals("1")) && (!itemMode.getShopId().equals("0"))) {
             viewHolder.Call.setBackground(ContextCompat.getDrawable(context, R.drawable.orang_button));
             viewHolder.MSG.setBackground(ContextCompat.getDrawable(context, R.drawable.orang_button));
             viewHolder.evaluate.setBackground(ContextCompat.getDrawable(context, R.drawable.orang_button));
@@ -166,12 +171,12 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.ViewHold
                 public void onClick(View v) {
                     EvaluationDaialoge cdd;
                     if (userModel.getId().equals(itemMode.getUserId())) {
-                         cdd = new EvaluationDaialoge(a,""+userModel.getId()
-                                ,""+itemMode.getShop().getId(),itemMode.getId());
+                        cdd = new EvaluationDaialoge(a, "" + userModel.getId()
+                                , "" + itemMode.getShop().getId(), itemMode.getId());
 
                     } else {
-                         cdd = new EvaluationDaialoge(a,""+userModel.getId()
-                                ,""+itemMode.getUserId(),itemMode.getId()+"");
+                        cdd = new EvaluationDaialoge(a, "" + userModel.getId()
+                                , "" + itemMode.getUserId(), itemMode.getId() + "");
 
                     }
                     cdd.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -228,7 +233,7 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.ViewHold
                     @Override
                     public void onClick(View v) {
                         Picasso.with(context).load(R.drawable.hart_yellow).into(viewHolder.fav);
-                        addFav(itemMode.getUserId(),itemMode.getId());
+                        addFav(itemMode.getUserId(), itemMode.getId());
                         itemMode.setFavourite(true);
                         notifyItemChanged(i);
 
@@ -242,7 +247,7 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.ViewHold
                     @Override
                     public void onClick(View v) {
                         Picasso.with(context).load(R.drawable.hart_strok_yellow).into(viewHolder.fav);
-                        addFav(itemMode.getUserId(),itemMode.getId());
+                        addFav(itemMode.getUserId(), itemMode.getId());
                         itemMode.setFavourite(false);
                         notifyItemChanged(i);
 
@@ -264,6 +269,8 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.ViewHold
                 viewHolder.Removable_Section.setVisibility(View.GONE);
             } else if (itemMode.getStatus().equals("2")) {
                 viewHolder.Status.setText("" + context.getString(R.string.Requests_finished));
+            } else if (itemMode.getStatus().equals("0")) {
+                viewHolder.Status.setText("" + context.getString(R.string.Requests_progress));
             }
 
 
@@ -283,7 +290,6 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.ViewHold
 
 
     }
-
 
 
     @Override
@@ -325,7 +331,8 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.ViewHold
     public interface OnItemClick {
         void setOnItemClick(int position);
     }
-    private void addFav(String userID,String ReqID) {
+
+    private void addFav(String userID, String ReqID) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Connectors.connectionServices.BaseURL)
                 .addConverterFactory(GsonConverterFactory
@@ -333,16 +340,16 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.ViewHold
         Connectors.connectionServices connectionService =
                 retrofit.create(Connectors.connectionServices.class);
 
-        connectionService.add_favourite(userID,ReqID).enqueue(new Callback<StatusModel>() {
+        connectionService.add_favourite(userID, ReqID).enqueue(new Callback<StatusModel>() {
             @Override
             public void onResponse(Call<StatusModel> call, Response<StatusModel> response) {
-                StatusModel statusModel=response.body();
-                if(statusModel.getStatus()){
-                    if(Hawk.get(Constants.Language).equals("ar")){
-                        Toast.makeText(context, ""+statusModel.getMessage_ar(), Toast.LENGTH_SHORT).show();
+                StatusModel statusModel = response.body();
+                if (statusModel.getStatus()) {
+                    if (Hawk.get(Constants.Language).equals("ar")) {
+                        Toast.makeText(context, "" + statusModel.getMessage_ar(), Toast.LENGTH_SHORT).show();
 
-                    }else{
-                        Toast.makeText(context, ""+statusModel.getMessage(), Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(context, "" + statusModel.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
             }

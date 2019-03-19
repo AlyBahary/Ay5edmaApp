@@ -2,6 +2,7 @@ package com.example.smatech.ay5edma;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -21,6 +22,8 @@ import com.google.gson.Gson;
 import com.orhanobut.hawk.Hawk;
 import com.squareup.picasso.Picasso;
 
+import java.util.Locale;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -33,7 +36,7 @@ public class ClientRequestDetailsActivity extends AppCompatActivity {
     String requestID,requestBody,flag;
     UserModel fromModel,userModel;
     TextView name,type,occupation,b_d,address,about;
-    LinearLayout Reveiws,Location_layout;
+    LinearLayout Reveiws,Location_layout,occupation_section;
     ImageView Accept,Reject;
     me.zhanghai.android.materialratingbar.MaterialRatingBar stars;
     ProgressDialog progressDialog;
@@ -130,14 +133,15 @@ public class ClientRequestDetailsActivity extends AppCompatActivity {
             Picasso.with(this).load("http://www.anyservice-ksa.com/prod_img/"+fromModel.getImage()).fit().into(profile_image);
         }
         name=findViewById(R.id.name);
-        name.setText(fromModel.getName());
+        name.setText(" "+fromModel.getName());
         stars=findViewById(R.id.Stars);
         stars.setRating(Float.parseFloat(fromModel.getRate()));
         type=findViewById(R.id.type);
+        Log.d("TTT", "onCreate: "+fromModel.getType());
         if(fromModel.getType().equals("0")){
-            type.setText(R.string.male);
+            type.setText(" "+getString(R.string.male));
         }else {
-            type.setText(R.string.female);
+            type.setText(" "+getString(R.string.female));
 
         }
         if(flag==null){
@@ -146,22 +150,41 @@ public class ClientRequestDetailsActivity extends AppCompatActivity {
             Reject.setVisibility(View.GONE);
             Accept.setVisibility(View.GONE);
         }
+        occupation_section=findViewById(R.id.occupation_section);
         occupation=findViewById(R.id.occupation);
-        occupation.setText("");
+        if(fromModel.getSubcategory()!=null&&fromModel.getSubcategory().getName()!=null ){
+            if(Hawk.get(Constants.Language).equals("ar")
+                    &&(!fromModel.getSubcategory().getNameAr().equals("")||fromModel.getSubcategory().getNameAr()!=null)){
+                occupation.setText(" "+fromModel.getSubcategory().getNameAr());
+
+            }else {
+                occupation.setText(" "+fromModel.getSubcategory().getName());
+
+            }
+
+        }else {
+            occupation_section.setVisibility(View.GONE);
+        }
+       // occupation.setText("");
         b_d=findViewById(R.id.b_d);
-        b_d.setText(fromModel.getBirthday());
+        b_d.setText(" "+fromModel.getBirthday());
         address=findViewById(R.id.address);
-        address.setText(mRequest.getAddress());
+       // address.setText(" "+mRequest.getAddress());
+        address.setText(" "+getString(R.string.Show_Location_on_Map));
         address.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(ClientRequestDetailsActivity.this,MapAcvity.class)
+                String uri = String.format(Locale.ENGLISH, "geo:%f,%f", Double.parseDouble(mRequest.getLatitude())
+                        ,Double.parseDouble(mRequest.getLongitude()));
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                startActivity(intent);
+             /*   startActivity(new Intent(ClientRequestDetailsActivity.this,MapAcvity.class)
                         .putExtra("address",mRequest.getAddress())
                         .putExtra("lat",mRequest.getLatitude())
                         .putExtra("long",mRequest.getLongitude()));
                 Log.d("TTTT", "onMapReady:lat--> "+fromModel.getLatitude());
                 Log.d("TTTT", "onMapReady:long--> "+fromModel.getLongitude());
-
+*/
             }
         });
         about=findViewById(R.id.about);
@@ -170,12 +193,16 @@ public class ClientRequestDetailsActivity extends AppCompatActivity {
         Location_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(ClientRequestDetailsActivity.this,MapAcvity.class)
+                String uri = String.format(Locale.ENGLISH, "geo:%f,%f", Double.parseDouble(mRequest.getLatitude())
+                        ,Double.parseDouble(mRequest.getLongitude()));
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                startActivity(intent);
+              /*  startActivity(new Intent(ClientRequestDetailsActivity.this,MapAcvity.class)
                         .putExtra("address",fromModel.getAddress())
                         .putExtra("lat",fromModel.getLatitude())
                         .putExtra("long",fromModel.getLongitude()));
                 Log.d("TTTT", "onMapReady:lat--> "+fromModel.getLatitude());
-                Log.d("TTTT", "onMapReady:long--> "+fromModel.getLongitude());
+                Log.d("TTTT", "onMapReady:long--> "+fromModel.getLongitude());*/
             }
         });
         Reveiws=findViewById(R.id.Reveiws);
@@ -208,8 +235,8 @@ public class ClientRequestDetailsActivity extends AppCompatActivity {
                     Snackbar.make(parentLayout, "" + getString(R.string.offerhadbeensend), Snackbar.LENGTH_LONG).show();
                     Toast.makeText(ClientRequestDetailsActivity.this
                             , ""+getString(R.string.offerhadbeensend), Toast.LENGTH_SHORT).show();
-                    finishAffinity();
-                    startActivity(new Intent(ClientRequestDetailsActivity.this,ClientHomeActivity.class));
+                    finish();
+                    Hawk.put(Constants.reload, "1");
                     startActivity(new Intent(ClientRequestDetailsActivity.this,RequestsActivity.class)
                             .putExtra("stat","1"));
 

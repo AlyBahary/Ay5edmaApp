@@ -23,10 +23,10 @@
             android:orientation="vertical">
 
             <LinearLayout
+                android:id="@+id/changeImage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:id="@+id/changeImage"
                 android:layoutDirection="ltr"
                 android:orientation="vertical">
 
@@ -147,14 +147,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:layout_marginLeft="20dp"
-                android:visibility="gone"
                 android:layout_marginRight="20dp"
                 android:layout_marginTop="15dp"
                 android:background="@drawable/grey_button"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingLeft="5dp"
-                android:paddingRight="5dp">
+                android:paddingRight="5dp"
+                android:visibility="gone">
 
                 <ImageView
                     android:layout_width="25dp"
@@ -216,8 +216,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@null"
-                    android:gravity="start"
                     android:focusable="false"
+                    android:gravity="start"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
                     android:text="1/1/1990"
@@ -290,6 +290,60 @@
                     android:textColorHint="@color/Black"
                     android:textSize="14sp" />
             </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/Secondaryservicelayout2"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/grey_button"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp">
+
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@drawable/help" />
+
+                <Spinner
+                    android:id="@+id/Secondaryservice2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    android:text="@string/Secondary__service"
+                    android:textAlignment="viewStart"
+                    android:textColor="@color/Black"
+                    android:textColorHint="@color/Black"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="30dp"
+                android:id="@+id/uploadImgsLinear"
+                android:orientation="vertical"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/youcanuploadimagesofyourwork"/>
+                <Button
+                    android:layout_width="160dp"
+                    android:id="@+id/uploadImgs"
+                    android:layout_height="40dp"
+                    android:background="@drawable/grey_button"
+                    android:text="@string/chooseImage"/>
+            </LinearLayout>
+
 
 
             <LinearLayout

@@ -99,12 +99,6 @@ public class From {
     @SerializedName("images")
     @Expose
     private String images;
-    @SerializedName("Category")
-    @Expose
-    private Category_ category;
-    @SerializedName("Subcategory")
-    @Expose
-    private Subcategory_ subcategory;
 
     public String getId() {
         return id;
@@ -354,20 +348,5 @@ public class From {
         this.images = images;
     }
 
-    public Category_ getCategory() {
-        return category;
-    }
-
-    public void setCategory(Category_ category) {
-        this.category = category;
-    }
-
-    public Subcategory_ getSubcategory() {
-        return subcategory;
-    }
-
-    public void setSubcategory(Subcategory_ subcategory) {
-        this.subcategory = subcategory;
-    }
 
 }
