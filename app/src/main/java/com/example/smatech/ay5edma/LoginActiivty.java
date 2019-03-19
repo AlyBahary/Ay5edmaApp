@@ -5,9 +5,13 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Paint;
+import android.location.Location;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,6 +26,15 @@ import com.example.smatech.ay5edma.Models.Modelss.UserModel;
 import com.example.smatech.ay5edma.Models.Modelss.UserModelSatus;
 import com.example.smatech.ay5edma.Utils.Connectors;
 import com.example.smatech.ay5edma.Utils.Constants;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.gson.Gson;
 import com.nabinbhandari.android.permissions.PermissionHandler;
 import com.nabinbhandari.android.permissions.Permissions;
@@ -43,21 +56,25 @@ public class LoginActiivty extends AppCompatActivity {
     Button Login;
     View parentLayout;
     ProgressDialog progressDialog;
+    private FusedLocationProviderClient mFusedLocationProviderClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_actiivty);
         Hawk.init(this).build();
-        Log.d("TTT", "onCreate: login"+"----"+Locale.getDefault().getLanguage());
+        //prepare to get location
+        mFusedLocationProviderClient = LocationServices
+                .getFusedLocationProviderClient(LoginActiivty.this);
+        Log.d("TTT", "onCreate: login" + "----" + Locale.getDefault().getLanguage());
 
-        if (!Hawk.contains(Constants.Set)&&!Hawk.contains("ft")) {
+        if (!Hawk.contains(Constants.Set) && !Hawk.contains("ft")) {
             if (Locale.getDefault().getLanguage().equals("en")) {
                 Hawk.put(Constants.Language, "en");
-                languageChange("en", LoginActiivty.this, "",Locale.getDefault().getLanguage());
+                languageChange("en", LoginActiivty.this, "", Locale.getDefault().getLanguage());
             } else {
                 Hawk.put(Constants.Language, "ar");
-                languageChange("ar", LoginActiivty.this, "",Locale.getDefault().getLanguage());
+                languageChange("ar", LoginActiivty.this, "", Locale.getDefault().getLanguage());
 
             }
         }
@@ -132,6 +149,7 @@ public class LoginActiivty extends AppCompatActivity {
         Login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                getCurrentLocation();
                 Hawk.put(Constants.skipe, false);
                 if (Login_Mobile.getText().toString().equals("") || Login_Mobile.getText().toString() == null) {
                     Snackbar.make(parentLayout, "" + getString(R.string.Please_fill_empty_fields), Snackbar.LENGTH_LONG)
@@ -142,7 +160,12 @@ public class LoginActiivty extends AppCompatActivity {
                     Snackbar.make(parentLayout, "" + getString(R.string.Please_fill_empty_fields), Snackbar.LENGTH_LONG)
                             .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
                             .show();
-                } else {
+                }else if(!Hawk.contains(Constants.loginLat)){
+                    Snackbar.make(parentLayout, "" + getString(R.string.Please_open_GPS), Snackbar.LENGTH_LONG)
+                            .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                            .show();
+                }
+                else {
                     login(Login_Mobile.getText().toString(), Login_Password.getText().toString(), "" + Hawk.get(Constants.TOKEN));
                 }
 
@@ -159,7 +182,7 @@ public class LoginActiivty extends AppCompatActivity {
         Connectors.connectionServices connectionService =
                 retrofit.create(Connectors.connectionServices.class);
 
-        connectionService.login(password, mobile, token).enqueue(new Callback<UserModelSatus>() {
+        connectionService.login(password, mobile,Hawk.get(Constants.TOKEN), Hawk.get(Constants.loginLat),Hawk.get(Constants.loginLong)).enqueue(new Callback<UserModelSatus>() {
             @Override
             public void onResponse(Call<UserModelSatus> call, Response<UserModelSatus> response) {
                 Hawk.put(Constants.password, password);
@@ -170,7 +193,7 @@ public class LoginActiivty extends AppCompatActivity {
                 UserModel userModel = statusModel.getUser();
 
                 if (statusModel.getStatus() == true && userModel.getActivate().equals("1")) {
-                    Log.d("TTTT", "onResponse: Response11"+userModel.getId());
+                    Log.d("TTTT", "onResponse: Response11" + userModel.getId());
                     userModel.setAccepted(statusModel.getAccepted() + "");
                     userModel.setPoints(statusModel.getPoints() + "");
                     userModel.setPeople(statusModel.getPeople() + "");
@@ -183,11 +206,11 @@ public class LoginActiivty extends AppCompatActivity {
                     finishAffinity();
                     startActivity(i);
                     Toast.makeText(LoginActiivty.this, "" + userModel.getName(), Toast.LENGTH_SHORT).show();
-                } else if (statusModel.getActivated()!=null&&statusModel.getActivated().equals(false)) {
+                } else if (statusModel.getActivated() != null && statusModel.getActivated().equals(false)) {
                     startActivity(new Intent(LoginActiivty.this, NumberConfirmationActivity.class));
                 } else {
                     {
-                        Log.d("TTTT", "onResponse: Response22"+Hawk.get(Constants.Language));
+                        Log.d("TTTT", "onResponse: Response22" + Hawk.get(Constants.Language));
                         if (Hawk.get(Constants.Language).equals("en")) {
                             Snackbar.make(parentLayout, "" + statusModel.getMessage(), Snackbar.LENGTH_LONG)
                                     .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
@@ -216,7 +239,7 @@ public class LoginActiivty extends AppCompatActivity {
         });
     }
 
-    public static final void languageChange(String L, Activity context, String flag,String Language) {
+    public static final void languageChange(String L, Activity context, String flag, String Language) {
         String languageToLoad = L; // your language
         Locale locale = new Locale(languageToLoad);
         Locale.setDefault(locale);
@@ -228,8 +251,51 @@ public class LoginActiivty extends AppCompatActivity {
         //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         context.finishAffinity();
         context.startActivity(intent);
-        Hawk.put("ft",""+Language);
+        Hawk.put("ft", "" + Language);
 
+
+    }
+
+    private void getCurrentLocation() {
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this
+                , Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        Task<Location> locationResult = mFusedLocationProviderClient.getLastLocation();
+        locationResult.addOnCompleteListener(new OnCompleteListener<Location>() {
+            @Override
+            public void onComplete(@NonNull Task<Location> task) {
+                if (task.isSuccessful()) {
+                    if (task.getResult() == null) {
+                      //  Toast.makeText(LoginActiivty.this, "Please turn on device location ", Toast.LENGTH_SHORT).show();
+                    } else {
+                        // Set the map's camera position to the current location of the device.
+                        Location location = task.getResult();
+                        Log.d("NN", "onComplete: task : " + task.getResult());
+
+
+                        LatLng currentLatLng = new LatLng(location.getLatitude(),
+                                location.getLongitude());
+
+                        Hawk.put(Constants.loginLat, location.getLatitude() + "");
+                        Hawk.put(Constants.loginLong, location.getLongitude() + "");
+
+
+                    }
+
+                }
+
+            }
+        });
 
     }
 

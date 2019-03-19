@@ -146,7 +146,7 @@ public class EditProfileActivity extends AppCompatActivity {
         Connectors.connectionServices connectionService =
                 retrofit.create(Connectors.connectionServices.class);
 
-        connectionService.login(Hawk.get(Constants.password)+"",Hawk.get(Constants.username),Hawk.get(Constants.TOKEN))
+        connectionService.login(Hawk.get(Constants.password)+"",Hawk.get(Constants.username),Hawk.get(Constants.TOKEN), Hawk.get(Constants.loginLat),Hawk.get(Constants.loginLong))
                 .enqueue(new Callback<UserModelSatus>() {
             @Override
             public void onResponse(Call<UserModelSatus> call, Response<UserModelSatus> response) {

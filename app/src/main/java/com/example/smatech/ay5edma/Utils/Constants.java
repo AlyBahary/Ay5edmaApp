@@ -35,6 +35,8 @@ public class Constants {
     public final static String userLong="userLong";
     public final static String userAddress="userAddress";
 
+    public static String loginLat="loginLat";
+    public static String loginLong="loginLong";
 
     ///Constants Use o pass Date
     public final static String name="userDataname";

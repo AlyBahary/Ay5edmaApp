@@ -21,13 +21,20 @@ import retrofit2.http.QueryMap;
 public class Connectors {
     public interface connectionServices {
         public String BaseURL = Constants.mBase_Url;
-
+/*
+Hawk.get(Constants.loginLat);
+Hawk.get(Constants.TOKEN);
+Hawk.get(Constants.loginLong);
+*/
         //login
         @GET(Constants.mLogin)
         Call<UserModelSatus> login(
                 @Query("password") String password
                 , @Query("mobile") String mobile
-                , @Query("token") String token);
+                , @Query("token") String token
+                , @Query("latitude") String latitude
+                , @Query("longitude") String longitude
+        );
 
         //Signnup
         @GET(Constants.mSignup)

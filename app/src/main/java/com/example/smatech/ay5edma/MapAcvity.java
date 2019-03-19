@@ -243,7 +243,7 @@ public class MapAcvity extends FragmentActivity implements OnMapReadyCallback , 
                         Hawk.put(Constants.Addlocationdlat, marker.getPosition().latitude + "");
                         Hawk.put(Constants.Addlocationdlong, marker.getPosition().longitude + "");
 
-                    //marker.showInfoWindow();
+                        //marker.showInfoWindow();
                         CameraUpdate update = CameraUpdateFactory.newLatLngZoom(currentLatLng,
                                 15f);
                         Log.d("NN", "onComplete: camera upadte" + update.toString() + location.getLatitude() + " -- " + location.getLongitude());

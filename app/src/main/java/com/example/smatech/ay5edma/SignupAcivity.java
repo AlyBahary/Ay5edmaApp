@@ -263,6 +263,8 @@ public class SignupAcivity extends AppCompatActivity implements DatePickerDialog
         if (location1 != null) {
             Hawk.put(Constants.userLat, location1.getLatitude());
             Hawk.put(Constants.userLong, location1.getLongitude());
+            Hawk.put(Constants.loginLat, location1.getLatitude() + "");
+            Hawk.put(Constants.loginLong, location1.getLongitude() + "");
 
             new ReverseGeocoding(Double.parseDouble(Hawk.get(Constants.userLat) + "")
                     , Double.parseDouble(Hawk.get(Constants.userLong) + ""), Constants.API_KEY)
