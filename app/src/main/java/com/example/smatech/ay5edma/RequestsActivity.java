@@ -116,13 +116,17 @@ public class RequestsActivity extends AppCompatActivity {
                     if (Hawk.get(Constants.UserType).equals("0") && DM.get(position).getStatus().equals("0")) {
                         Intent intent = new Intent(RequestsActivity.this, OffersAcivity.class);
                         Hawk.put(Constants.mRequestID, DM.get(position).getId());
+                        Hawk.put(Constants.mRequestUserID, DM.get(position).getUserId());
+                        Hawk.put(Constants.mRequestStatus, DM.get(position).getStatus());
                         startActivity(intent);
-                    } else {
+                    } /*else {
                         Intent intent = new Intent(RequestsActivity.this, OffersAcivity.class);
                         Hawk.put(Constants.mRequestID, DM.get(position).getId());
+                        Hawk.put(Constants.mRequestUserID, DM.get(position).getUserId());
+                        Hawk.put(Constants.mRequestStatus, DM.get(position).getStatus());
                         startActivity(intent);
 
-                    }
+                    }*/
 
                 }
             });

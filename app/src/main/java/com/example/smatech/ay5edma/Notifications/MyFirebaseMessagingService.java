@@ -3,13 +3,19 @@ package com.example.smatech.ay5edma.Notifications;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import com.example.smatech.ay5edma.ChatActivity;
+import com.example.smatech.ay5edma.ClientHomeActivity;
+import com.example.smatech.ay5edma.NotificationsActivity;
 import com.example.smatech.ay5edma.R;
 import com.example.smatech.ay5edma.Utils.Constants;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -28,6 +34,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     @Override
     public void onCreate() {
         super.onCreate();
+        if(!Hawk.isBuilt()){
+            Hawk.init(this).build();
+        }
         Log.d(TAG, "onToken: "+token);
         Hawk.put(Constants.TOKEN,token);
     }
@@ -46,6 +55,25 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             showNotification(remoteMessage.getNotification().getTitle(), remoteMessage.getNotification().getBody());
         else
             showNotification(remoteMessage.getData());
+
+      /*  Map<String, String> notificationMessage = remoteMessage.getData();
+        if (notificationMessage.containsKey("targetScreen")){
+            Log.d(TAG, "onMessageReceived: "+notificationMessage.get("chat_id"));
+            Log.d(TAG, "onMessageReceived: "+notificationMessage.get("from_id"));
+            Log.d(TAG, "onMessageReceived: "+notificationMessage.get("to_id"));
+            Intent resultIntent = new Intent(this, ChatActivity.class).putExtra("to_id",notificationMessage.get("to_id"));
+
+            TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+            stackBuilder.addParentStack(ClientHomeActivity.class);
+            stackBuilder.addNextIntent(resultIntent);
+            PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+            notificationBuilder.setContentIntent(resultPendingIntent);
+            notificationBuilder.setAutoCancel(true);
+        }else {
+            Log.d(TAG, "onMessageReceived: notContained");
+
+        }
+*/
     }
 
 
@@ -74,6 +102,39 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 .setContentText(body)
                 .setColor(ContextCompat.getColor(this, R.color.colorPrimary))
                 .setContentInfo("Info");
+        Map<String, String> notificationMessage = data;
+        if (notificationMessage.containsKey("targetScreen")){
+            Intent resultIntent;
+            if(notificationMessage.get("targetScreen").equals("message")) {
+                Log.d(TAG, "onMessageReceived: " + notificationMessage.get("chat_id"));
+                Log.d(TAG, "onMessageReceived: " + notificationMessage.get("from_id"));
+                Log.d(TAG, "onMessageReceived: " + notificationMessage.get("to_id"));
+                 resultIntent = new Intent(this, ChatActivity.class).putExtra("to_id", notificationMessage.get("to_id"));
+            }
+            else {
+                resultIntent = new Intent(this, NotificationsActivity.class);
+
+            }
+            TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+            stackBuilder.addParentStack(ClientHomeActivity.class);
+            stackBuilder.addNextIntent(resultIntent);
+            PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+            notificationBuilder.setContentIntent(resultPendingIntent);
+            notificationBuilder.setAutoCancel(true);
+
+
+        }else {
+            Log.d(TAG, "onMessageReceived: notContained");
+            Intent resultIntent = new Intent(this, ClientHomeActivity.class);
+            TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+            stackBuilder.addParentStack(ClientHomeActivity.class);
+            stackBuilder.addNextIntent(resultIntent);
+            PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+            notificationBuilder.setContentIntent(resultPendingIntent);
+            notificationBuilder.setAutoCancel(true);
+
+        }
+
         notificationManager.notify(new Random().nextInt(), notificationBuilder.build());
     }
 

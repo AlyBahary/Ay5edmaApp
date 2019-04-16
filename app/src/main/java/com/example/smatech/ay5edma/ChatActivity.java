@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -29,6 +30,8 @@ import com.google.gson.Gson;
 import com.orhanobut.hawk.Hawk;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Random;
 
 import retrofit2.Call;
@@ -102,7 +105,7 @@ public class ChatActivity extends AppCompatActivity {
         RV.setLayoutManager(mLayoutManager);
         chatAdapter.notifyDataSetChanged();
         //to edit later
-        getMessages("0", "" + userModel.getId(), to_id);
+        getMessages1("0", "" + userModel.getId(), to_id);
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -145,8 +148,104 @@ public class ChatActivity extends AppCompatActivity {
         if (isFinishing()) {
 
         } else {
-            progressDialog.show();
+           // progressDialog.show();
         }
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Connectors.connectionServices.BaseURL)
+                .addConverterFactory(GsonConverterFactory
+                        .create(new Gson())).build();
+        Connectors.connectionServices connectionService =
+                retrofit.create(Connectors.connectionServices.class);
+
+        connectionService.get_chat_messages(chatID, userID, to_id).enqueue(new Callback<StatusModel>() {
+            @Override
+            public void onResponse(Call<StatusModel> call, Response<StatusModel> response) {
+                //progressDialog.dismiss();
+                StatusModel statusModel = response.body();
+                if (statusModel.getStatus()) {
+                    DM.clear();
+                    DM.addAll(statusModel.getChats());
+                    chatAdapter.notifyDataSetChanged();
+                    if (DM.size() > 0) {
+                        RV.scrollToPosition(DM.size() - 1);
+                    }
+                } else {
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<StatusModel> call, Throwable t) {
+                //progressDialog.dismiss();
+                Snackbar.make(parentLayout, "" + getString(R.string.noInternetConnecion), Snackbar.LENGTH_LONG)
+                        .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                        .show();
+
+            }
+        });
+    }
+
+    private void SendMSG(String Message, String userID, String to_id, String Chatid) {
+        Date currentTime = Calendar.getInstance().getTime();
+
+        DM.add(new com.example.smatech.ay5edma.Models.Modelss.ChatModel(Chatid+""
+                ,""+Message
+                ,""+to_id
+                ,""+userID
+                ,""+currentTime
+                ,"0"));
+        Log.d("TTT", "SendMSG: "+Message);
+        chatAdapter.notifyDataSetChanged();
+
+
+        //send_message
+        if (isFinishing()) {
+
+        } else {
+            //progressDialog.show();
+        }
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Connectors.connectionServices.BaseURL)
+                .addConverterFactory(GsonConverterFactory
+                        .create(new Gson())).build();
+        Connectors.connectionServices connectionService =
+                retrofit.create(Connectors.connectionServices.class);
+
+        connectionService.send_message(Message, userID, to_id, Chatid).enqueue(new Callback<StatusModel>() {
+            @Override
+            public void onResponse(Call<StatusModel> call, Response<StatusModel> response) {
+                //progressDialog.dismiss();
+                Log.d("TTTT", "onResponse: "+response.raw());
+                Log.d("TTTT", "onResponse: "+response.toString());
+                StatusModel statusModel = response.body();
+                if (statusModel.getStatus()) {
+                    /*Intent intent = getIntent();
+                    finish();
+                    startActivity(intent);*/
+                    final int min = 2000;
+                    final int max = 8000;
+                    final int random = new Random().nextInt((max - min) + 1) + min;
+                    myRef.child(userID).setValue(random);
+                    myRef.child(to_id).setValue(random);
+                    message.setText("");
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<StatusModel> call, Throwable t) {
+                //progressDialog.dismiss();
+                Snackbar.make(parentLayout, "" + getString(R.string.noInternetConnecion), Snackbar.LENGTH_LONG)
+                        .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                        .show();
+            }
+        });
+    }
+    //get Messages with progress dialoge
+    private void getMessages1(String chatID, String userID, String to_id) {
+
+             progressDialog.show();
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Connectors.connectionServices.BaseURL)
                 .addConverterFactory(GsonConverterFactory
@@ -182,46 +281,4 @@ public class ChatActivity extends AppCompatActivity {
         });
     }
 
-    private void SendMSG(String Message, String userID, String to_id, String Chatid) {
-        //send_message
-        if (isFinishing()) {
-
-        } else {
-            progressDialog.show();
-        }
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(Connectors.connectionServices.BaseURL)
-                .addConverterFactory(GsonConverterFactory
-                        .create(new Gson())).build();
-        Connectors.connectionServices connectionService =
-                retrofit.create(Connectors.connectionServices.class);
-
-        connectionService.send_message(Message, userID, to_id, Chatid).enqueue(new Callback<StatusModel>() {
-            @Override
-            public void onResponse(Call<StatusModel> call, Response<StatusModel> response) {
-                progressDialog.dismiss();
-                StatusModel statusModel = response.body();
-                if (statusModel.getStatus()) {
-                    /*Intent intent = getIntent();
-                    finish();
-                    startActivity(intent);*/
-                    final int min = 2000;
-                    final int max = 8000;
-                    final int random = new Random().nextInt((max - min) + 1) + min;
-                    myRef.child(userID).setValue(random);
-                    myRef.child(to_id).setValue(random);
-                    message.setText("");
-
-                }
-            }
-
-            @Override
-            public void onFailure(Call<StatusModel> call, Throwable t) {
-                progressDialog.dismiss();
-                Snackbar.make(parentLayout, "" + getString(R.string.noInternetConnecion), Snackbar.LENGTH_LONG)
-                        .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
-                        .show();
-            }
-        });
-    }
 }

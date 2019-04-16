@@ -22,8 +22,10 @@ public class Constants {
     public final static String Arabic="ar";
     public final static String English="en";
     public final static String reload="reload";
+    public final static String reloadReq="reloadReq";
     public final static String Addlocationdlat="Addlocationdlat";
     public final static String Addlocationdlong="Addlocationdlong";
+    public final static String images="images";
 
     ///
 
@@ -40,11 +42,13 @@ public class Constants {
 
     ///Constants Use o pass Date
     public final static String name="userDataname";
-    public final static String pass="userDataname";
+    public final static String pass="userDatapass";
     public final static String sex="userDatasex";
     public final static String BirthDate="BirthDate";
     public final static String mobile="userDatamobile";
     public final static String mRequestID="mRequestID";
+    public final static String mRequestUserID="mRequestUserID";
+    public final static String mRequestStatus="mRequestStatus";
     public final static String mRequestFrom="mRequestFrom";
     public final static String mRequestDesc="mRequestDesc";
     public final static String mOfferModel="mOfferModel";
@@ -72,6 +76,7 @@ public class Constants {
     public final static String mAdd_deposite="api/add_deposite";
     public final static String mGet_notifications="api/get_notifications";
     public final static String mDelete_request="api/delete_request";
+    public final static String mDelete_notification="api/delete_notification";
     public final static String mGet_chat_messages="api/get_chat_messages";
     public final static String send_message="api/send_message";
     public final static String send_offer="api/send_offer";
@@ -85,6 +90,8 @@ public class Constants {
     public final static String change_password="api/change_password";
     public final static String add_review="api/add_review";
     public final static String get_reviews="api/get_reviews";
+    public final static String resend_code="api/resend_code";
+    public final static String re_request="api/re_request";
     public static final String STUCK ="STUCK" ;
     public static String mRequest="mRequest";
 

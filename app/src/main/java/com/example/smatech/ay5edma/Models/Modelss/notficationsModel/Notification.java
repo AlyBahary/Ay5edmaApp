@@ -33,6 +33,9 @@ public class Notification {
     @SerializedName("from")
     @Expose
     private From from;
+    @SerializedName("type")
+    @Expose
+    private String type;
     @SerializedName("request")
     @Expose
     private Request request;
@@ -42,6 +45,10 @@ public class Notification {
     @SerializedName("subcategory")
     @Expose
     private Subcategory___ subcategory;
+
+    public String getType() {
+        return type;
+    }
 
     public String getId() {
         return id;

@@ -19,6 +19,17 @@ public class ChatModel {
     @SerializedName("date")
     @Expose
     private String date;
+@SerializedName("seen")
+    @Expose
+    private String seen;
+
+    public String getSeen() {
+        return seen;
+    }
+
+    public void setSeen(String seen) {
+        this.seen = seen;
+    }
 
     public String getChatId() {
         return chatId;
@@ -58,5 +69,22 @@ public class ChatModel {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public ChatModel(String chatId, String message, String toId, String fromId, String date) {
+        this.chatId = chatId;
+        this.message = message;
+        this.toId = toId;
+        this.fromId = fromId;
+        this.date = date;
+    }
+
+    public ChatModel(String chatId, String message, String toId, String fromId, String date, String seen) {
+        this.chatId = chatId;
+        this.message = message;
+        this.toId = toId;
+        this.fromId = fromId;
+        this.date = date;
+        this.seen = seen;
     }
 }

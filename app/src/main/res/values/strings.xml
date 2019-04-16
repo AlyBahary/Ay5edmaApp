@@ -50,7 +50,7 @@
     <string name="Save">Save</string>
     <string name="Offers">Offers</string>
     <string name="name">Name : &#032;  </string>
-    <string name="Occupation">Occupation :&#032; </string>
+    <string name="Occupation">Job :&#032; </string>
     <string name="Birthdate">Birthdate : &#032;</string>
     <string name="Evaluation">Evaluation :&#032; </string>
     <string name="Location">Location :&#032; </string>
@@ -152,4 +152,18 @@
     <string name="changePassword">Change password</string>
     <string name="Transaction_Date">Transaction Date</string>
     <string name="Show_Location_on_Map">Show location on map</string>
+    <string name="Please_enter_valid_number">Please enter valid number</string>
+    <string name="Are_you_sure_you_want_to_delete">Are you sure you want to delete</string>
+    <string name="yes">Yes</string>
+    <string name="Delete_Request">Delete request</string>
+    <string name="Request_Deleted">Request deleted</string>
+    <string name="new_Password">New password</string>
+    <string name="OldPassword">Old password</string>
+    <string name="password_must_be_more_than_4">Password must be more than 4 character</string>
+    <string name="are_you_sure_you_want_to_delete_this_item">are you sure you want to delete this item ?</string>
+    <string name="no">no</string>
+    <string name="show_images">Show images</string>
+    <string name="offers_count">Offers count : </string>
+    <string name="waiting_for_service_provider">waiting for service provider</string>
+    <string name="new_pass_Again">New password again</string>
 </resources>

@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -70,7 +71,7 @@ public class ClientHomeActivity extends AppCompatActivity
     LinearLayout ProfileLayout, RequestsLayout, Go, nav_home, nav_Notifications, nav_ContactUs, nav_Language,
             nav_Fav, nav_BE_Serv_provider, nav_Setting, aboutUs, nav_BE_Serv_Client, nav_Buy_Poins, changePassword, logOut;
     //
-    LinearLayout reviewLayout;
+    LinearLayout reviewLayout, info_linear;
     String T;
     PagerIndicator pagerIndicator, pagerIndicator1;
     HashMap<String, String> url_maps;
@@ -78,7 +79,8 @@ public class ClientHomeActivity extends AppCompatActivity
     DrawerLayout drawer;
     LinearLayout myPoints, myReje, myAcce;
     ImageView menu;
-    ScrollView client_view, Server_view;
+    ScrollView client_view;
+    NestedScrollView Server_view;
     RecyclerView RV, RV2;
     ArrayList<CategoryModel> DM;
     CatgryAdapter catgryAdapter, catgryAdapterSrearch;
@@ -128,8 +130,8 @@ public class ClientHomeActivity extends AppCompatActivity
         homeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
+                finish();
+                startActivity(new Intent(ClientHomeActivity.this, ClientHomeActivity.class));
             }
         });
         requestLayout = findViewById(R.id.requestLayout);
@@ -279,11 +281,25 @@ public class ClientHomeActivity extends AppCompatActivity
                             .putExtra("userID", userModel.getId()));
                 }
             });
+            info_linear = findViewById(R.id.info_linear);
+            info_linear.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(ClientHomeActivity.this, SettingActiviy.class));
+                }
+            });
             profile_image = findViewById(R.id.profile_image);
             if (!userModel.getImage().equals("")) {
                 Log.d("yyyy", "onCreate: " + userModel.getImage());
                 Picasso.with(this).load("http://www.anyservice-ksa.com/prod_img/" + userModel.getImage()).into(profile_image);
             }
+            profile_image.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(ClientHomeActivity.this, SettingActiviy.class));
+
+                }
+            });
             client_view.setVisibility(View.GONE);
             Server_view.setVisibility(View.VISIBLE);
             myPoints = findViewById(R.id.myPoints);
@@ -331,14 +347,14 @@ public class ClientHomeActivity extends AppCompatActivity
             LinearLayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
             RV2.setLayoutManager(mLayoutManager);
             requestAdapter.notifyDataSetChanged();
-            getRequestes("", "1", "", "" + userModel.getSubcategoryId()
+            getRequestes("", "0", "", "" + userModel.getSubcategoryId()
                     , "" + userModel.getCategoryId(), "" + userModel.getId());
 
 
             name.setText(userModel.getName());
             Stars.setRating(Float.parseFloat(userModel.getRate()));
             rate.setText(userModel.getRate());
-                points.setText(userModel.getPoints());
+            points.setText(userModel.getPoints());
             requestesApproved.setText(userModel.getAccepted());
             requestRej.setText(userModel.getRejected());
             favTo.setText(userModel.getPeople());
@@ -608,6 +624,7 @@ public class ClientHomeActivity extends AppCompatActivity
             nav_BE_Serv_Client.setVisibility(View.VISIBLE);
             nav_BE_Serv_provider.setVisibility(View.GONE);
             nav_Buy_Poins.setVisibility(View.VISIBLE);
+            nav_Fav.setVisibility(View.GONE);
         }
         /* */
         ////////
@@ -773,7 +790,7 @@ public class ClientHomeActivity extends AppCompatActivity
                 .enqueue(new Callback<StatusModel>() {
                     @Override
                     public void onResponse(Call<StatusModel> call, Response<StatusModel> response) {
-                        Log.d("TTT", "Call: "+response.toString());
+                        Log.d("TTT", "Call: " + response.toString());
                         progressDialog.dismiss();
                         StatusModel statusModel = response.body();
                         if (statusModel.getStatus()) {
@@ -788,6 +805,8 @@ public class ClientHomeActivity extends AppCompatActivity
 
                     @Override
                     public void onFailure(Call<StatusModel> call, Throwable t) {
+                        Log.d("TTTT", "onFailure: " + t.getMessage());
+                        Log.d("TTTT", "onFailure: " + call.request().toString());
                         progressDialog.dismiss();
                         Snackbar.make(parentLayout, "" + getString(R.string.noInternetConnecion), Snackbar.LENGTH_LONG)
                                 .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
@@ -810,7 +829,7 @@ public class ClientHomeActivity extends AppCompatActivity
         getRegistrationsConnectionServices.get_Sliders().enqueue(new Callback<StatusModel>() {
             @Override
             public void onResponse(Call<StatusModel> call, Response<StatusModel> response) {
-
+                Log.d("TTT", "onResponse: " +response.toString());
                 StatusModel statusModel = response.body();
                 if (statusModel.getStatus()) {
 
@@ -883,7 +902,7 @@ public class ClientHomeActivity extends AppCompatActivity
         Connectors.connectionServices connectionService =
                 retrofit.create(Connectors.connectionServices.class);
 
-        connectionService.login(password, mobile,Hawk.get(Constants.TOKEN), Hawk.get(Constants.loginLat),Hawk.get(Constants.loginLong)).enqueue(new Callback<UserModelSatus>() {
+        connectionService.login(password, mobile, Hawk.get(Constants.TOKEN), Hawk.get(Constants.loginLat), Hawk.get(Constants.loginLong)).enqueue(new Callback<UserModelSatus>() {
             @Override
             public void onResponse(Call<UserModelSatus> call, Response<UserModelSatus> response) {
                 Hawk.put(Constants.password, password);
@@ -902,13 +921,13 @@ public class ClientHomeActivity extends AppCompatActivity
                     // Log.d("TTTTTT", "onResponse: "+userModel.getAccepted()+userModel.getPoints()+userModel.getPeople()+userModel.getRejected());
                     Hawk.put(Constants.userData, userModel);
                     Hawk.put(Constants.extraauserData1, statusModel.getCategory());
-                    Hawk.put(Constants.extraauserData2, statusModel.getSubcategory());
+                    Hawk.put(Constants.extraauserData2, statusModel.getCategory());
                     name.setText(userModel.getName());
                     Stars.setRating(Float.parseFloat(userModel.getRate()));
-                    if(userModel.getRate().length()==1){
-                        rate.setText(userModel.getRate()+".0");
+                    if (userModel.getRate().length() == 1) {
+                        rate.setText(userModel.getRate() + ".0");
 
-                    }else {
+                    } else {
                         rate.setText(userModel.getRate());
 
                     }
@@ -916,11 +935,13 @@ public class ClientHomeActivity extends AppCompatActivity
                     requestesApproved.setText(userModel.getAccepted());
                     requestRej.setText(userModel.getRejected());
                     favTo.setText(userModel.getPeople());
-                    if (Hawk.get(Constants.Language).equals("ar")) {
-                        occupation.setText(categoryModel.getNameAr());
-                    } else {
-                        occupation.setText(categoryModel.getName());
+                    if (userModel.getRole().equals("2")) {
+                        if (Hawk.get(Constants.Language).equals("ar")) {
+                            occupation.setText(categoryModel.getNameAr());
+                        } else {
+                            occupation.setText(categoryModel.getName());
 
+                        }
                     }
 
 
@@ -1003,12 +1024,16 @@ public class ClientHomeActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         if (Hawk.contains(Constants.reload)) {
+
             if (Hawk.get(Constants.reload).equals("1")) {
                 Hawk.put(Constants.reload, "0");
-                getRequestes("", "1", "", "" + userModel.getSubcategoryId()
+                getRequestes("", "0", "", "" + userModel.getSubcategoryId()
                         , "" + userModel.getCategoryId(), "" + userModel.getId());
 
             }
+        }
+        if (Hawk.contains(Constants.userData)) {
+            login(Hawk.get(Constants.username) + "", Hawk.get(Constants.password) + "", Hawk.get(Constants.TOKEN) + "");
         }
     }
 }

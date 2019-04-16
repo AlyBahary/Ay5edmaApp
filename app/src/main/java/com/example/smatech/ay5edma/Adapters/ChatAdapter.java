@@ -1,9 +1,13 @@
 package com.example.smatech.ay5edma.Adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.v4.view.ViewCompat;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,7 +39,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     private ChatAdapter.OnItemClick mOnItemClick;
     private Context context;
     String x = "";
-    UserModel userModel= Hawk.get(Constants.userData);
+    UserModel userModel = Hawk.get(Constants.userData);
 
     public ChatAdapter(ArrayList<com.example.smatech.ay5edma.Models.Modelss.ChatModel> chatModels, Context context, ChatAdapter.OnItemClick mOnItemClick) {
         this.chatModels = chatModels;
@@ -56,30 +60,39 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
         com.example.smatech.ay5edma.Models.Modelss.ChatModel itemMode = chatModels.get(i);
-       // DateFormat dateFormat = new SimpleDateFormat("hh:mm a");
+        // DateFormat dateFormat = new SimpleDateFormat("hh:mm a");
 
         SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a");
         String currentDateandTime = sdf.format(new Date());
 
-        if (x == ""||x.equals("")) {
+        if (x == "" || x.equals("")) {
             x = currentDateandTime;
             viewHolder.Date.setText(itemMode.getDate());
-        }else {
+        } else {
             viewHolder.Date.setVisibility(View.GONE);
+        }
+        if(itemMode.getSeen().equals("0")){
+            viewHolder.deliverd.setVisibility(View.INVISIBLE);
         }
 
         //  Picasso.with(context).load("1").into(viewHolder.ImageType);
         if (itemMode.getToId().equals(userModel.getId())) {
+            //Log.d("TTTTT", "onBindViewHolder: "+itemMode.getToId()+"==="+userModel.getId()+"----->"+i);
             viewHolder.MsG.setText(itemMode.getMessage() + "");
             viewHolder.MsG.setGravity(Gravity.END);
+            viewHolder.bg_crdView.setCardBackgroundColor(Color.parseColor("#fcb71e"));
 
         } else {
             viewHolder.MsG.setText(itemMode.getMessage() + "");
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            viewHolder.MsG.setGravity(Gravity.START);
+            viewHolder.bg_crdView.setCardBackgroundColor(Color.parseColor("#D5fD9b"));
+            ViewCompat.setLayoutDirection(viewHolder.relaiveLayout, ViewCompat.LAYOUT_DIRECTION_RTL);
+
+        /*    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                 viewHolder.relaiveLayout.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
 
             }
-
+*/
         }
     }
 
@@ -94,6 +107,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         TextView Date, MsG;
         ImageView deliverd;
         CircleImageView Avatar;
+        CardView bg_crdView;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -102,6 +116,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
             MsG = itemView.findViewById(R.id.MsG);
             Avatar = itemView.findViewById(R.id.Avatar);
             deliverd = itemView.findViewById(R.id.deliverd);
+            bg_crdView = itemView.findViewById(R.id.bg_crdView);
             itemView.setOnClickListener(this);
         }
 

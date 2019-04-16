@@ -2,6 +2,7 @@
 package com.example.smatech.ay5edma.Models.offerModel.example;
 
 import java.util.List;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -55,9 +56,7 @@ public class Request {
     @SerializedName("User")
     @Expose
     private User user;
-    @SerializedName("Shop")
-    @Expose
-    private List<Object> shop = null;
+
     @SerializedName("Category")
     @Expose
     private Category category;
@@ -193,13 +192,6 @@ public class Request {
         this.user = user;
     }
 
-    public List<Object> getShop() {
-        return shop;
-    }
-
-    public void setShop(List<Object> shop) {
-        this.shop = shop;
-    }
 
     public Category getCategory() {
         return category;

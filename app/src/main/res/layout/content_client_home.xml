@@ -120,7 +120,7 @@
     </ScrollView>
     <!-- Service Provider view-->
 
-    <ScrollView
+    <android.support.v4.widget.NestedScrollView
         android:id="@+id/Server_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -153,6 +153,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_weight=".9"
+                            android:id="@+id/info_linear"
                             android:gravity="center"
                             android:orientation="vertical"
                             android:paddingLeft="5dp"
@@ -438,7 +439,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/RV2"></android.support.v7.widget.RecyclerView>
         </LinearLayout>
-    </ScrollView>
+    </android.support.v4.widget.NestedScrollView>
     <!--bottom nav-->
     <LinearLayout
         android:layout_width="match_parent"

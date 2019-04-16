@@ -28,6 +28,7 @@
             android:layout_marginLeft="20dp"
             app:cardBackgroundColor="@color/litegreen"
             android:layout_marginRight="20dp"
+            android:id="@+id/bg_crdView"
             android:layout_marginTop="15dp"
             app:cardCornerRadius="7dp"
             app:cardElevation="0dp">

@@ -58,7 +58,7 @@ public class FavAdapter extends RecyclerView.Adapter<FavAdapter.ViewHolder> {
         this.mOnItemClick = mOnItemClick;
         this.context = context;
         this.a = a;
-        progressDialog=new ProgressDialog(context);
+        progressDialog = new ProgressDialog(context);
     }
 
 
@@ -75,7 +75,7 @@ public class FavAdapter extends RecyclerView.Adapter<FavAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
 
         Request itemMode = requestModels.get(i);
-       // Log.d("TTT", "onBindViewHolder: item:  "i);
+        // Log.d("TTT", "onBindViewHolder: item:  "i);
         if (Hawk.get(Constants.Language).equals("ar")) {
             viewHolder.Catgry1.setText("" + itemMode.getCategory().getNameAr());
             viewHolder.Catgry2.setText("" + itemMode.getSubcategory().getNameAr());
@@ -89,7 +89,7 @@ public class FavAdapter extends RecyclerView.Adapter<FavAdapter.ViewHolder> {
         viewHolder.fav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addFav(""+itemMode.getUserId(),""+itemMode.getId());
+                addFav("" + itemMode.getUserId(), "" + itemMode.getId());
                 requestModels.remove(i);
                 notifyItemRemoved(i);
             }
@@ -97,8 +97,10 @@ public class FavAdapter extends RecyclerView.Adapter<FavAdapter.ViewHolder> {
         viewHolder.ReOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendRequest(""+itemMode.getBody(),""+itemMode.getAddress(),""+itemMode.getLatitude()
-                ,""+itemMode.getLongitude(),""+itemMode.getCategoryId(),itemMode.getSubcategoryId());
+               /* sendRequest("" + itemMode.getBody(), "" + itemMode.getAddress(), "" + itemMode.getLatitude()
+                        , "" + itemMode.getLongitude(), "" + itemMode.getCategoryId(), itemMode.getSubcategoryId());
+*/
+                re_request(itemMode.getId());
             }
 
         });
@@ -139,7 +141,7 @@ public class FavAdapter extends RecyclerView.Adapter<FavAdapter.ViewHolder> {
         void setOnItemClick(int position);
     }
 
-    private void sendRequest(final String Description,String Address,String lat,String longt,String catgry,String subctgry) {
+    private void sendRequest(final String Description, String Address, String lat, String longt, String catgry, String subctgry) {
 
         progressDialog.show();
         UserModel userModel = Hawk.get(Constants.userData);
@@ -155,7 +157,7 @@ public class FavAdapter extends RecyclerView.Adapter<FavAdapter.ViewHolder> {
                 , Description + "", userModel.getId()
                 , catgry + ""
                 , Address
-                ,longt + ""
+                , longt + ""
                 , lat + ""
         ).enqueue(new Callback<StatusModel>() {
             @Override
@@ -167,7 +169,7 @@ public class FavAdapter extends RecyclerView.Adapter<FavAdapter.ViewHolder> {
                     Log.d("TTT", "onResponse: true ");
                     Hawk.put((Constants.Addlocationdlong), "");
                     Hawk.put((Constants.Addlocationdlat), "");
-                   a.finish();
+                    a.finish();
                     Toast.makeText(a, "" + context.getString(R.string.Your_Request_Had_been_sent), Toast.LENGTH_SHORT).show();
                     a.startActivity(new Intent(a, RequestsActivity.class).putExtra("stat", "1"));
                 } else {
@@ -221,5 +223,38 @@ public class FavAdapter extends RecyclerView.Adapter<FavAdapter.ViewHolder> {
         });
 
     }
+
+    private void re_request(String id) {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Connectors.connectionServices.BaseURL)
+                .addConverterFactory(GsonConverterFactory
+                        .create(new Gson())).build();
+        Connectors.connectionServices connectionService =
+                retrofit.create(Connectors.connectionServices.class);
+
+        connectionService.re_request(id).enqueue(new Callback<StatusModel>() {
+            @Override
+            public void onResponse(Call<StatusModel> call, Response<StatusModel> response) {
+                StatusModel statusModel = response.body();
+                if (statusModel.getStatus()) {
+                    a.finish();
+                    Toast.makeText(a, "" + context.getString(R.string.Your_Request_Had_been_sent), Toast.LENGTH_SHORT).show();
+                    a.startActivity(new Intent(a, RequestsActivity.class).putExtra("stat", "1"));
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<StatusModel> call, Throwable t) {
+                View parentLayout = a.findViewById(android.R.id.content);
+
+                Snackbar.make(parentLayout, "" + context.getString(R.string.noInternetConnecion), Snackbar.LENGTH_LONG)
+                        .setActionTextColor(context.getResources().getColor(android.R.color.holo_red_light))
+                        .show();
+            }
+        });
+
+    }
+
 
 }

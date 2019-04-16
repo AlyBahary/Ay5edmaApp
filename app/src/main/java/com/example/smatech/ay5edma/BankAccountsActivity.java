@@ -149,6 +149,6 @@ public class BankAccountsActivity extends AppCompatActivity implements DatePicke
 
     @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-        Date.setText(dayOfMonth+"/"+month+"/"+year);
+        Date.setText(dayOfMonth+"/"+(month+1)+"/"+year);
     }
 }

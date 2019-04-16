@@ -17,7 +17,9 @@ import com.example.smatech.ay5edma.Utils.Connectors;
 import com.example.smatech.ay5edma.Utils.Constants;
 import com.google.gson.Gson;
 import com.orhanobut.hawk.Hawk;
+import com.squareup.picasso.Picasso;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -31,12 +33,13 @@ public class ContactUsActivity extends AppCompatActivity {
     EditText MSG;
     Button send;
     View parentLayout;
-
+    CircleImageView profile_image;
     ProgressDialog progressDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact_us);
+        profile_image=findViewById(R.id.profile_image);
         parentLayout = findViewById(android.R.id.content);
         progressDialog=new ProgressDialog(this);
         progressDialog.setMessage(getString(R.string.Loading));
@@ -54,6 +57,9 @@ public class ContactUsActivity extends AppCompatActivity {
         userModel= Hawk.get(Constants.userData);
         name=findViewById(R.id.name);
         name.setText(userModel.getName());
+        if (!userModel.getImage().equals("")) {
+            Picasso.with(this).load("http://www.anyservice-ksa.com/prod_img/" + userModel.getImage()).into(profile_image);
+        }
         MSG=findViewById(R.id.MSG);
         send=findViewById(R.id.send);
         send.setOnClickListener(new View.OnClickListener() {

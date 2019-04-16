@@ -21,15 +21,11 @@ import retrofit2.http.QueryMap;
 public class Connectors {
     public interface connectionServices {
         public String BaseURL = Constants.mBase_Url;
-/*
-Hawk.get(Constants.loginLat);
-Hawk.get(Constants.TOKEN);
-Hawk.get(Constants.loginLong);
-*/
+
         //login
         @GET(Constants.mLogin)
         Call<UserModelSatus> login(
-                @Query("password") String password
+                  @Query("password") String password
                 , @Query("mobile") String mobile
                 , @Query("token") String token
                 , @Query("latitude") String latitude
@@ -55,6 +51,7 @@ Hawk.get(Constants.loginLong);
                 , @Query("about") String about
 
         );
+
         //Signnup
         @GET(Constants.mSignup)
         Call<UserModelSatus> signup(
@@ -72,9 +69,10 @@ Hawk.get(Constants.loginLong);
                 , @Query("latitude") String latitude
                 , @Query("address") String address
                 , @Query("about") String about
-                , @QueryMap Map<String,String> images
+                , @QueryMap Map<String, String> images
 
         );
+
         @GET(Constants.mSignup)
         Call<UserModelSatus> signup(
                 @Query("password") String password
@@ -94,7 +92,8 @@ Hawk.get(Constants.loginLong);
                 , @Query("images") ArrayList<String> images
 
         );
- @GET(Constants.mSignup)
+
+        @GET(Constants.mSignup)
         Call<UserModelSatus> signup(
                 @Query("password") String password
                 , @Query("role") String role
@@ -200,6 +199,13 @@ Hawk.get(Constants.loginLong);
 
         );
 
+        //Get UserData
+        @GET(Constants.mGet_user)
+        Call<com.example.smatech.ay5edma.Models.edituser.Example> get_user1(
+                @Query("id") String id
+
+        );
+
         //Edit UserData
         @GET(Constants.mUser_edit)
         Call<StatusModel> edit(
@@ -216,7 +222,8 @@ Hawk.get(Constants.loginLong);
                 , @Query("about") String about
 
         );
-//Edit UserData
+
+        //Edit UserData
         @GET(Constants.mUser_edit)
         Call<StatusModel> edit(
                 @Query("mobile") String mobile
@@ -230,7 +237,7 @@ Hawk.get(Constants.loginLong);
                 , @Query("birthday") String birthday
                 , @Query("role") String role
                 , @Query("about") String about
-                , @QueryMap Map<String,String> images
+                , @QueryMap Map<String, String> images
         );
 
         //get Offers
@@ -267,7 +274,7 @@ Hawk.get(Constants.loginLong);
         @GET(Constants.mGet_notifications)
         Call<Example> get_notificaions(
                 @Query("user_id") String user_id
-                ,@Query("role") String role
+                , @Query("role") String role
         );
 
         @GET(Constants.validateAccount)
@@ -275,16 +282,27 @@ Hawk.get(Constants.loginLong);
                 @Query("verification") String verification
         );
 
+        @GET(Constants.resend_code)
+        Call<StatusModel> resend_code(
+                @Query("mobile") String mobile
+        );
+
+        @GET(Constants.re_request)
+        Call<StatusModel> re_request(
+                @Query("id") String id
+        );
+
         @GET(Constants.change_password)
         Call<StatusModel> change_password(
                 @Query("new_password") String new_password
-                , @Query("vertificaion") String verification
+                , @Query("verification ") String verification
         );
 
         @GET(Constants.change_password)
         Call<StatusModel> change_password1(
                 @Query("id") String id
                 , @Query("new_password") String new_password
+                , @Query("old") String old_password
         );
 
         @GET(Constants.forget_password)
@@ -295,10 +313,10 @@ Hawk.get(Constants.loginLong);
         @GET(Constants.add_review)
         Call<StatusModel> add_review(
                 @Query("rate") String rate
-                ,@Query("comment") String comment
-                ,@Query("user_id") String user_id
-                ,@Query("from_id") String from_id
-                ,@Query("request_id") String request_id
+                , @Query("comment") String comment
+                , @Query("user_id") String user_id
+                , @Query("from_id") String from_id
+                , @Query("request_id") String request_id
         );
 
         @GET(Constants.mDelete_request)
@@ -306,6 +324,13 @@ Hawk.get(Constants.loginLong);
                 @Query("user_id") String user_id
                 , @Query("id") String id
         );
+
+        @GET(Constants.mDelete_notification)
+        Call<StatusModel> delete_notification(
+                @Query("user_id") String user_id
+                , @Query("id") String id
+        );
+
         @GET(Constants.get_reviews)
         Call<StatusModel> get_reviews(
                 @Query("user_id") String user_id
@@ -346,3 +371,10 @@ Hawk.get(Constants.loginLong);
     }
 
 }
+
+        /*
+        Hawk.get(Constants.loginLat);
+        Hawk.get(Constants.TOKEN);
+        Hawk.get(Constants.loginLong);
+        */
+//login

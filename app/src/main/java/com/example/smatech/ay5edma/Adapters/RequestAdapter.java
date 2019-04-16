@@ -102,7 +102,7 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.ViewHold
             }
         }
         if (Hawk.contains(Constants.Set)) {
-            Log.d("TTTT", "onBindViewHolder:Language Sets-->"+Hawk.get(Constants.Language));
+            Log.d("TTTT", "onBindViewHolder:Language Sets-->" + Hawk.get(Constants.Language));
             if (Hawk.get(Constants.Language).equals("ar")) {
                 if (itemMode.getCategoryNameAr() != null) {
                     viewHolder.Catgry1.setText("" + itemMode.getCategoryNameAr());
@@ -130,7 +130,7 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.ViewHold
 
             }
         } else {
-            Log.d("TTTT", "onBindViewHolder:Language def-->"+l);
+            Log.d("TTTT", "onBindViewHolder:Language def-->" + l);
 
             if (l.equals("ar")) {
                 if (itemMode.getCategoryNameAr() != null) {
@@ -277,12 +277,15 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.ViewHold
         } else {
             if (itemMode.getShop().getName() != null)
                 viewHolder.name.setText("" + itemMode.getShop().getName());
-            else
-                viewHolder.name.setText("");
-
+            else {
+                viewHolder.name.setText("" + itemMode.getOffers_count());
+                viewHolder.offers_text.setText(context.getString(R.string.offers_count));
+            }
         }
         if (userType.equals("3")) {
             viewHolder.fav.setVisibility(View.GONE);
+            viewHolder.offers_text.setText(context.getString(R.string.Client_name));
+
             viewHolder.name.setText(itemMode.getUser().getName());
 
 
@@ -300,7 +303,7 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.ViewHold
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         LinearLayout evaluate, MSG, Call, Removable_Section, viewHoolder;
-        TextView Catgry1, Catgry2, Date, name, Status;
+        TextView Catgry1, Catgry2, Date, name, Status, offers_text;
 
         ImageView fav;
 
@@ -310,6 +313,7 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.ViewHold
             Catgry2 = itemView.findViewById(R.id.catgr2);
             Date = itemView.findViewById(R.id.Date);
             name = itemView.findViewById(R.id.Name);
+            offers_text = itemView.findViewById(R.id.offers_text);
             //
             viewHoolder = itemView.findViewById(R.id.viewHoolder);
             evaluate = itemView.findViewById(R.id.evaluate);

@@ -73,6 +73,13 @@ public class RequestModel {
     @SerializedName("Subcategory")
     @Expose
     private CategoryModel subcategory;
+    @SerializedName("offers_count")
+    @Expose
+    private int offers_count;
+
+    public int getOffers_count() {
+        return offers_count;
+    }
 
     public CategoryModel getCategory() {
         return category;

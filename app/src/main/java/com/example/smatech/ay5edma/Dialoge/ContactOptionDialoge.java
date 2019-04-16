@@ -14,7 +14,9 @@ import android.view.Window;
 import android.widget.LinearLayout;
 
 import com.example.smatech.ay5edma.ChatActivity;
+import com.example.smatech.ay5edma.ClientHomeActivity;
 import com.example.smatech.ay5edma.R;
+import com.example.smatech.ay5edma.RequestsActivity;
 
 public class ContactOptionDialoge extends Dialog {
 
@@ -42,7 +44,9 @@ public class ContactOptionDialoge extends Dialog {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_CALL);
-
+                c.finishAffinity();
+                c.startActivity(new Intent(c, ClientHomeActivity.class));
+                c.startActivity(new Intent(c, RequestsActivity.class));
                 intent.setData(Uri.parse("tel:" + num));
                 if (ActivityCompat.checkSelfPermission(c, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
                     // TODO: Consider calling
@@ -61,6 +65,9 @@ public class ContactOptionDialoge extends Dialog {
         Chat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                c.finishAffinity();
+                c.startActivity(new Intent(c, ClientHomeActivity.class));
+                c.startActivity(new Intent(c, RequestsActivity.class));
                 Intent intent=new Intent(c, ChatActivity.class).putExtra("to_id",to_id);
                 c.startActivity(intent);
             }

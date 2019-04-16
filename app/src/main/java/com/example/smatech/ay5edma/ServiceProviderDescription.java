@@ -150,10 +150,20 @@ public class ServiceProviderDescription extends AppCompatActivity {
         Location_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+/*
                 String uri = String.format(Locale.ENGLISH, "geo:%f,%f", Double.parseDouble(offersModel.getFrom().getLatitude())
                         , Double.parseDouble(offersModel.getFrom().getLongitude()));
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
                 startActivity(intent);
+*/
+
+                Log.d("TTTT", "onClick: "+ offersModel.getFrom().getLatitude()+"-----"+offersModel.getFrom().getLongitude());
+                Uri gmmIntentUri = Uri.parse("google.navigation:q=" + Double.parseDouble(offersModel.getFrom().getLatitude()) +
+                        "," + Double.parseDouble(offersModel.getFrom().getLongitude()));
+                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                mapIntent.setPackage("com.google.android.apps.maps");
+                startActivity(mapIntent);
+
                /* startActivity(new Intent(ServiceProviderDescription.this, MapAcvity.class)
                         .putExtra("address", offersModel.getFrom().getAddress())
                         .putExtra("lat", offersModel.getFrom().getLatitude())
@@ -218,6 +228,7 @@ public class ServiceProviderDescription extends AppCompatActivity {
                             ContactOptionDialoge cdd = new ContactOptionDialoge(ServiceProviderDescription.this,
                                     offersModel.getFrom().getMobile(), offersModel.getFrom().getId());
                             cdd.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                            cdd.setCancelable(false);
                             cdd.show();
 
                         } else {

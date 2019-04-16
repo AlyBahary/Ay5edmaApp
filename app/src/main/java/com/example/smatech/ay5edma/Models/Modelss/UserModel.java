@@ -4,6 +4,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class UserModel {@SerializedName("id")
 @Expose
@@ -122,7 +123,17 @@ private String id;
     @SerializedName("job_ar")
     @Expose
     private Object jobAr;
+    /*@SerializedName("images")
+    @Expose
+    private List<String> images = null;
 
+    public List<String> getImages() {
+        return images;
+    }
+
+    public void setImages(List<String> images) {
+        this.images = images;
+    }*/
 
     public String getSubcategory_id2() {
         return subcategory_id2;

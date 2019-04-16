@@ -107,6 +107,7 @@
                     android:background="@null"
                     android:gravity="start"
                     android:hint="@string/Mobile_number"
+                    android:maxLength="10"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
                     android:textAlignment="viewStart"
@@ -324,34 +325,43 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/uploadImgsLinear"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="30dp"
-                android:id="@+id/uploadImgsLinear"
-                android:orientation="vertical"
-                android:gravity="center">
+                android:gravity="center"
+                android:orientation="vertical">
+
                 <TextView
                     android:layout_width="wrap_content"
-                    android:paddingTop="5dp"
-                    android:paddingBottom="5dp"
                     android:layout_height="wrap_content"
-                    android:text="@string/youcanuploadimagesofyourwork"/>
+                    android:paddingBottom="5dp"
+                    android:paddingTop="5dp"
+                    android:text="@string/youcanuploadimagesofyourwork" />
+
                 <Button
-                    android:layout_width="160dp"
                     android:id="@+id/uploadImgs"
+                    android:layout_width="160dp"
                     android:layout_height="40dp"
                     android:background="@drawable/grey_button"
-                    android:text="@string/chooseImage"/>
-            </LinearLayout>
+                    android:text="@string/chooseImage" />
 
+                <Button
+                    android:id="@+id/showImages"
+                    android:layout_width="160dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/grey_button"
+                    android:text="@string/show_images" />
+            </LinearLayout>
 
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="bottom"
-                android:paddingBottom="20dp"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:paddingBottom="20dp">
 
                 <Button
                     android:id="@+id/Edit"

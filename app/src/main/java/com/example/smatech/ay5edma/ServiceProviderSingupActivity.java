@@ -71,6 +71,7 @@ public class ServiceProviderSingupActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_service_provider_singup);
+        Log.d("TTT", "onCreate: "+ Hawk.get(Constants.name)+"Hawk.get(Constants.name)");
         imagesMap=new HashMap();
         urlStrings = new ArrayList<>();
         progressDialog = new ProgressDialog(this);
@@ -217,9 +218,11 @@ public class ServiceProviderSingupActivity extends AppCompatActivity {
                     signup(Hawk.get(Constants.pass) + ""
                             , "2"
                             , Hawk.get(Constants.mobile) + ""
-                            , Hawk.get(Constants.BirthDate)
+                            , Hawk.get(Constants.BirthDate)+""
                             , Hawk.get(Constants.sex) + ""
-                            , Hawk.get(Constants.name), "" + "", subcategory_id, category_id, subcategory2_id + "", "" + Hawk.get(Constants.userLong)
+                            , Hawk.get(Constants.name)+""
+                            , "" + "", subcategory_id, category_id
+                            , subcategory2_id + "", "" + Hawk.get(Constants.userLong)
                             , "" + Hawk.get(Constants.userLat), Hawk.get(Constants.userAddress) + ""
                             ,""+Signup_About.getText().toString(), urlStrings);
                     progressDialog.show();
@@ -246,7 +249,7 @@ public class ServiceProviderSingupActivity extends AppCompatActivity {
             , String About
             , ArrayList<String> images
     ) {
-        Log.d("TTTT", "esssssst: tsssssssst");
+        Log.d("TTTT", "esssssst: tsssssssst"+Hawk.get(Constants.name)+"Hawk.get(Constants.name)");
 
         if(images.size()>0){
             for(int ii=0;ii<images.size();ii++){
@@ -260,13 +263,14 @@ public class ServiceProviderSingupActivity extends AppCompatActivity {
         Connectors.connectionServices connectionService =
                 retrofit.create(Connectors.connectionServices.class);
 
-        connectionService.signup(password, role, mobile, birthdate, gender, name, image
+        connectionService.signup(password, role, mobile, birthdate, gender, Hawk.get(Constants.name)+"", image
                 , subcategory_id, subcategory2_id, category_id, longitude, latitude, address
                 ,About+"",imagesMap)
                 .enqueue(new Callback<UserModelSatus>() {
             @Override
             public void onResponse(Call<UserModelSatus> call, Response<UserModelSatus> response) {
-                Log.d("TTTT", "onResponse: Response00");
+                progressDialog.dismiss();
+                Log.d("TTTT", "onResponse: Response00"+response.toString());
 
                 Hawk.put(Constants.password, password);
                 Hawk.put(Constants.username, mobile);

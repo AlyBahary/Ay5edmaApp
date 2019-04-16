@@ -130,8 +130,7 @@ public class SpecificCatgryActivity extends AppCompatActivity {
         homeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
+                finish();
             }
         });
         requestLayout = findViewById(R.id.requestLayout);

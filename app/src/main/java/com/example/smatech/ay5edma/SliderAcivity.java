@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.daimajia.slider.library.Animations.DescriptionAnimation;
 import com.daimajia.slider.library.Indicators.PagerIndicator;
@@ -21,7 +22,7 @@ public class SliderAcivity extends AppCompatActivity {
     HashMap<String, String> url_maps;
     PagerIndicator pagerIndicator;
     Offer offersModel;
-
+    ImageView Remove;
     private com.daimajia.slider.library.SliderLayout mDemoSlider;
     String T;
 
@@ -31,7 +32,8 @@ public class SliderAcivity extends AppCompatActivity {
         setContentView(R.layout.activity_slider_acivity);
 
         offersModel = Hawk.get(Constants.mOfferModel);
-
+        Remove=findViewById(R.id.Remove);
+        Remove.setVisibility(View.GONE);
         mDemoSlider = (SliderLayout) findViewById(R.id.slider);
         mDemoSlider.setOnClickListener(new View.OnClickListener() {
             @Override

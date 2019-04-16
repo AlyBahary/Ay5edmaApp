@@ -88,16 +88,15 @@ public class LoginActiivty extends AppCompatActivity {
             @Override
             public void onGranted() {
                 if (Hawk.contains(Constants.userData) && Hawk.contains(Constants.STUCK)) {
-                    if (Hawk.get(Constants.STUCK).equals("0")) {
+                    if (Hawk.get(Constants.STUCK).equals("0") || true) {
                         finish();
                         startActivity(new Intent(LoginActiivty.this, ClientHomeActivity.class));
-                    } else {
-
                     }
                 } else if (Hawk.contains(Constants.userData)) {
                     finish();
                     startActivity(new Intent(LoginActiivty.this, ClientHomeActivity.class));
                 }
+                getCurrentLocation();
                 // do your task.
                 //Toast.makeText(RegistrtionTypeActivity.this, "Thank you :)", Toast.LENGTH_SHORT).show();
             }
@@ -156,21 +155,26 @@ public class LoginActiivty extends AppCompatActivity {
                             .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
                             .show();
 
-                } else if (Login_Password.getText().toString().equals("") || Login_Mobile.getText().toString() == null) {
+                }/*else if(Login_Mobile.getText().toString().trim().length()!=10){
+                    Snackbar.make(parentLayout, "" + getString(R.string.Please_enter_valid_number), Snackbar.LENGTH_LONG)
+                            .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                            .show();
+                }*/ else if (Login_Password.getText().toString().equals("") || Login_Mobile.getText().toString() == null) {
                     Snackbar.make(parentLayout, "" + getString(R.string.Please_fill_empty_fields), Snackbar.LENGTH_LONG)
                             .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
                             .show();
-                }else if(!Hawk.contains(Constants.loginLat)){
+                } else if (!Hawk.contains(Constants.loginLat)) {
                     Snackbar.make(parentLayout, "" + getString(R.string.Please_open_GPS), Snackbar.LENGTH_LONG)
                             .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
                             .show();
-                }
-                else {
+                } else {
                     login(Login_Mobile.getText().toString(), Login_Password.getText().toString(), "" + Hawk.get(Constants.TOKEN));
                 }
 
             }
         });
+        //getCurrentLocation();
+
     }
 
     private void login(String mobile, String password, String token) {
@@ -182,12 +186,13 @@ public class LoginActiivty extends AppCompatActivity {
         Connectors.connectionServices connectionService =
                 retrofit.create(Connectors.connectionServices.class);
 
-        connectionService.login(password, mobile,Hawk.get(Constants.TOKEN), Hawk.get(Constants.loginLat),Hawk.get(Constants.loginLong)).enqueue(new Callback<UserModelSatus>() {
+        connectionService.login(password, mobile, Hawk.get(Constants.TOKEN), Hawk.get(Constants.loginLat), Hawk.get(Constants.loginLong)).enqueue(new Callback<UserModelSatus>() {
             @Override
             public void onResponse(Call<UserModelSatus> call, Response<UserModelSatus> response) {
                 Hawk.put(Constants.password, password);
                 Hawk.put(Constants.username, mobile);
-                Log.d("TTTT", "onResponse: Response00");
+                Log.d("TTTT", Hawk.get(Constants.TOKEN));
+                Log.d("TTTT", "onResponse: Response00"+response.toString());
                 progressDialog.dismiss();
                 UserModelSatus statusModel = response.body();
                 UserModel userModel = statusModel.getUser();
@@ -201,7 +206,7 @@ public class LoginActiivty extends AppCompatActivity {
                     // Log.d("TTTTTT", "onResponse: "+userModel.getAccepted()+userModel.getPoints()+userModel.getPeople()+userModel.getRejected());
                     Hawk.put(Constants.userData, userModel);
                     Hawk.put(Constants.extraauserData1, statusModel.getCategory());
-                    Hawk.put(Constants.extraauserData2, statusModel.getSubcategory());
+                    Hawk.put(Constants.extraauserData2, statusModel.getCategory());
                     Intent i = new Intent(LoginActiivty.this, ClientHomeActivity.class);
                     finishAffinity();
                     startActivity(i);
@@ -276,7 +281,7 @@ public class LoginActiivty extends AppCompatActivity {
             public void onComplete(@NonNull Task<Location> task) {
                 if (task.isSuccessful()) {
                     if (task.getResult() == null) {
-                      //  Toast.makeText(LoginActiivty.this, "Please turn on device location ", Toast.LENGTH_SHORT).show();
+                        //  Toast.makeText(LoginActiivty.this, "Please turn on device location ", Toast.LENGTH_SHORT).show();
                     } else {
                         // Set the map's camera position to the current location of the device.
                         Location location = task.getResult();

@@ -1,9 +1,11 @@
 package com.example.smatech.ay5edma;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -33,11 +35,14 @@ public class ForgetPasswordAcivity extends AppCompatActivity {
     EditText pass;
     PinView firstPinView;
     LinearLayout pass_layout;
+    ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forget_password_acivity);
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage(getString(R.string.Loading));
         parentLayout = findViewById(android.R.id.content);
         pass_layout = findViewById(R.id.pass_layout);
         Forge_Pass_Mobile = findViewById(R.id.Forge_Pass_Mobile);
@@ -53,7 +58,7 @@ public class ForgetPasswordAcivity extends AppCompatActivity {
                                 .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
                                 .show();
                     } else {
-                        changePass(pass.getText().toString() + "", firstPinView.getText().toString() + "");
+                       // changePass(pass.getText().toString() + "", firstPinView.getText().toString() + "");
                     }
                 } else {
                     if (Forge_Pass_Mobile.getText().toString().equals("")) {
@@ -69,7 +74,9 @@ public class ForgetPasswordAcivity extends AppCompatActivity {
         });
     }
 
+/*
     private void changePass(String num, String pin) {
+        progressDialog.show();
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Connectors.connectionServices.BaseURL)
                 .addConverterFactory(GsonConverterFactory
@@ -80,6 +87,8 @@ public class ForgetPasswordAcivity extends AppCompatActivity {
         connectionService.change_password(num, pin).enqueue(new Callback<StatusModel>() {
             @Override
             public void onResponse(Call<StatusModel> call, Response<StatusModel> response) {
+                progressDialog.dismiss();
+                Log.d("TTT", "onResponse: "+response.toString());
                 StatusModel statusModel = response.body();
                 if (statusModel.getStatus()) {
                     Hawk.put(Constants.password, num);
@@ -111,6 +120,7 @@ public class ForgetPasswordAcivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<StatusModel> call, Throwable t) {
+                progressDialog.dismiss();
                 Snackbar.make(parentLayout, "" + getString(R.string.noInternetConnecion), Snackbar.LENGTH_LONG)
                         .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
                         .show();
@@ -118,8 +128,11 @@ public class ForgetPasswordAcivity extends AppCompatActivity {
             }
         });
     }
+*/
+
 
     private void sendMSG(String num) {
+        progressDialog.show();
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Connectors.connectionServices.BaseURL)
                 .addConverterFactory(GsonConverterFactory
@@ -130,13 +143,14 @@ public class ForgetPasswordAcivity extends AppCompatActivity {
         connectionService.forgetPass(num).enqueue(new Callback<StatusModel>() {
             @Override
             public void onResponse(Call<StatusModel> call, Response<StatusModel> response) {
+                progressDialog.dismiss();
                 StatusModel statusModel = response.body();
                 if (statusModel.getStatus()) {
-                    pass_layout.setVisibility(View.VISIBLE);
-                    firstPinView.setVisibility(View.VISIBLE);
-                    Send.setText(getString(R.string.changePass));
-                   /* startActivity(new Intent(ForgetPasswordAcivity.this,NumberConfirmationActivity.class)
-                            .putExtra("mob","num"));*/
+                    //pass_layout.setVisibility(View.VISIBLE);
+                    //firstPinView.setVisibility(View.VISIBLE);
+                    //Send.setText(getString(R.string.changePass));
+                    startActivity(new Intent(ForgetPasswordAcivity.this, NumberConfirmationForPasswordActivity.class)
+                            .putExtra("mob", "" + num));
                 } else {
                     if (Hawk.get(Constants.Language).equals("en")) {
 
@@ -153,6 +167,7 @@ public class ForgetPasswordAcivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<StatusModel> call, Throwable t) {
+                progressDialog.dismiss();
                 Snackbar.make(parentLayout, "" + getString(R.string.noInternetConnecion), Snackbar.LENGTH_LONG)
                         .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
                         .show();

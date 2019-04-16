@@ -1,6 +1,8 @@
 package com.example.smatech.ay5edma;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -112,6 +114,15 @@ public class NotificationsActivity extends AppCompatActivity implements Recycler
         notificationsAdapter = new NotificationsAdapter(DM, this, new NotificationsAdapter.OnItemClick() {
             @Override
             public void setOnItemClick(int position) {
+                if(DM.get(position).getType().equals("send_offer")){
+                    startActivity(new Intent(NotificationsActivity.this,OffersAcivity.class));
+                    Hawk.put(Constants.mRequestID,DM.get(position).getRequestId());
+                }else if(DM.get(position).getType().equals("update_offer")){
+                    startActivity(new Intent(NotificationsActivity.this,RequestsActivity.class));
+                }else {
+                    startActivity(new Intent(NotificationsActivity.this,ChatActivity.class)
+                            .putExtra("to_id",DM.get(position).getFromId()));
+                }
                 /*Intent intent=new Intent(NotificationsActivity.this,ServiceProviderDescription.class);
                 startActivity(intent);*/
 
@@ -125,7 +136,7 @@ public class NotificationsActivity extends AppCompatActivity implements Recycler
         new ItemTouchHelper(itemTouchHelperR).attachToRecyclerView(RV);
         new ItemTouchHelper(itemTouchHelperL).attachToRecyclerView(RV);
         notificationsAdapter.notifyDataSetChanged();
-        getNotificaions(userModel.getId(),userModel.getRole());
+        getNotificaions(userModel.getId(), userModel.getRole());
 
 
     }
@@ -135,24 +146,55 @@ public class NotificationsActivity extends AppCompatActivity implements Recycler
         if (viewHolder instanceof NotificationsAdapter.ViewHolder) {
             final Notification Item = DM.get(viewHolder.getAdapterPosition());
             final int deleteIndex = viewHolder.getAdapterPosition();
-            notificationsAdapter.removeItem(deleteIndex);
-            View parentLayout = findViewById(android.R.id.content);
-            DeleteNotficaion("" + Item.getUserId(), "" + Item.getId());
-           /* Snackbar.make(parentLayout, "" + getString(R.string.Item_Deleted), Snackbar.LENGTH_LONG)
-                    *//*  .setAction(""+getString(R.string.Undo), new View.OnClickListener() {
-                          @Override
-                          public void onClick(View view) {
-                              notificationsAdapter.restoreItem(Item,deleteIndex);
-                          }
-                      })*//*
-                    .setActionTextColor(getResources().getColor(android.R.color.holo_orange_dark))
+
+            new AlertDialog.Builder(NotificationsActivity.this)
+                    .setTitle("")
+                    .setMessage(""+getString(R.string.are_you_sure_you_want_to_delete_this_item))
+
+                    // Specifying a listener allows you to take an action before dismissing the dialog.
+                    // The dialog is automatically dismissed when a dialog button is clicked.
+                    .setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Continue with delete operation
+                            Log.d("TTTT", "onClick: "+DM.size());
+                            notificationsAdapter.removeItem(deleteIndex);
+                            DeleteNotficaion("" + Item.getUserId(), "" + Item.getId());
+                            //DM.remove(deleteIndex);
+                            Log.d("TTTT", "onClick: "+DM.size());
+                        }
+                    })
+
+                    // A null listener allows the button to dismiss the dialog and take no further action.
+                    .setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            notificationsAdapter.notifyDataSetChanged();
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
                     .show();
-*/
+            /*
+
+            notificationsAdapter.restoreItem(Item,deleteIndex);
+            View parentLayout = findViewById(android.R.id.content);
+            Snackbar.make(parentLayout, "" + getString(R.string.Are_you_sure_you_want_to_delete), Snackbar.LENGTH_LONG)
+                    .setAction("" + getString(R.string.yes), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            //notificationsAdapter.restoreItem(Item,deleteIndex);
+                            notificationsAdapter.removeItem(deleteIndex);
+                            DeleteNotficaion("" + Item.getUserId(), "" + Item.getId());
+
+                        }
+                    })
+                    .setActionTextColor(getResources().getColor(android.R.color.holo_orange_dark))
+                    .show();*/
+
         }
 
     }
 
-    private void getNotificaions(String userID,String role) {
+    private void getNotificaions(String userID, String role) {
         progressDialog.show();
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Connectors.connectionServices.BaseURL)
@@ -161,10 +203,10 @@ public class NotificationsActivity extends AppCompatActivity implements Recycler
         Connectors.connectionServices connectionService =
                 retrofit.create(Connectors.connectionServices.class);
 
-        connectionService.get_notificaions(userID,role).enqueue(new Callback<Example>() {
+        connectionService.get_notificaions(userID, role).enqueue(new Callback<Example>() {
             @Override
             public void onResponse(Call<Example> call, Response<Example> response) {
-                Log.d("TTTTT", "onResponse: "+response.raw());
+                Log.d("TTTTT", "onResponse: " + response.raw());
                 progressDialog.dismiss();
                 Example statusModel = response.body();
                 if (statusModel.getStatus()) {
@@ -176,9 +218,9 @@ public class NotificationsActivity extends AppCompatActivity implements Recycler
             @Override
             public void onFailure(Call<Example> call, Throwable t) {
                 progressDialog.dismiss();
-                Log.d("TTTT", "onFailure: "+t.getMessage());
+                Log.d("TTTT", "onFailure: " + t.getMessage());
 
-                Snackbar.make(parentLayout, "" + getString(R.string.noInternetConnecion)+"12", Snackbar.LENGTH_LONG)
+                Snackbar.make(parentLayout, "" + getString(R.string.noInternetConnecion) + "12", Snackbar.LENGTH_LONG)
                         .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
                         .show();
             }
@@ -194,9 +236,10 @@ public class NotificationsActivity extends AppCompatActivity implements Recycler
         Connectors.connectionServices connectionService =
                 retrofit.create(Connectors.connectionServices.class);
 
-        connectionService.delete_request(userID, ID).enqueue(new Callback<StatusModel>() {
+        connectionService.delete_notification(userID, ID).enqueue(new Callback<StatusModel>() {
             @Override
             public void onResponse(Call<StatusModel> call, Response<StatusModel> response) {
+                Log.d("TTT", "onResponse: "+response.toString());
                 StatusModel statusModel = response.body();
                 if (statusModel.getStatus()) {
                     Snackbar.make(parentLayout, "" + getString(R.string.Item_Deleted), Snackbar.LENGTH_LONG)
@@ -210,8 +253,8 @@ public class NotificationsActivity extends AppCompatActivity implements Recycler
 
             @Override
             public void onFailure(Call<StatusModel> call, Throwable t) {
-                Log.d("TTT", "onFailure:1 "+t.getMessage());
-                Snackbar.make(parentLayout, "" + getString(R.string.noInternetConnecion)+"000", Snackbar.LENGTH_LONG)
+                Log.d("TTT", "onFailure:1 " + t.getMessage());
+                Snackbar.make(parentLayout, "" + getString(R.string.noInternetConnecion) + "000", Snackbar.LENGTH_LONG)
                         .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
                         .show();
             }

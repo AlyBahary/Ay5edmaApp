@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Ay 5edma</string>
+    <string name="app_name">أي خدمة</string>
     <string name="name">الاسم :&#032; </string>
     <string name="Occupation">المهنة : &#032;</string>
     <string name="Birthdate">"تاريخ الميلاد : &#032;"</string>
@@ -101,8 +101,8 @@
     <string name="SR">ريال سعودي</string>
     <string name="Bank_name">اسم البنك</string>
     <string name="people_Add_you_to_fav">اشخاص اضافوك للمفضلة</string>
-    <string name="Requestes_Rejected">مرفوض</string>
-    <string name="Requests_Accepted">مقبول</string>
+    <string name="Requestes_Rejected">الطلبات المرفوضة</string>
+    <string name="Requests_Accepted">الطلبات المقبولة</string>
     <string name="My_Points">نفاطي</string>
     <string name="Evaluation_rate">معدل التقييم</string>
     <string name="birthdate_">تاريخ الميلاد</string>
@@ -111,15 +111,15 @@
     <string name="Main__Service">الخدمة الرئيسية</string>
     <string name="Secondary__service">"الخدمة الفرعية "</string>
     <string name="offerhadbeensend">تم ارسال العرض</string>
-    <string name="Loading">برجاء الانتظار..</string>
+    <string name="Loading">الرجاء الانتظار..</string>
     <string name="open">فتح</string>
     <string name="Requests_progress">الطلب قيد التنفيذ</string>
     <string name="Please_open_GPS">من فضلك افتح تحديد الموقع</string>
     <string name="try_another_word">حاول بكلمة اخرى</string>
     <string name="Couldnt_find">لم يجد شئ</string>
-    <string name="you_have_to_login_to_use_all_app">برجاء تسجيل الدخول اولاً</string>
+    <string name="you_have_to_login_to_use_all_app">الرجاء تسجيل الدخول اولاً</string>
     <string name="Informaion_Updated">تم تعديل البيانات</string>
-    <string name="You_Have_to_signup_to_make_request">برجاء تسجيل الدخول لارسال الطلب</string>
+    <string name="You_Have_to_signup_to_make_request">الرجاء تسجيل الدخول لارسال الطلب</string>
     <string name="Please_Add_Description">من فضلك اضف وصف</string>
     <string name="Retry">اعادة المحاولة</string>
     <string name="Some_thing_went_wrong_Please_try_again">حدث شئ خاطئ من فضلك اعد المحاولة</string>
@@ -129,10 +129,10 @@
     <string name="Please_Agree_terms_Conditions">من فضلك قم بالموافقة على الشروط و الاحكام</string>
     <string name="Please_fill_empty_fields">من فضلك املئ الحقول</string>
     <string name="Be_Service_Provider">التحويل الى مزود خدمة</string>
-    <string name="youcanuploadimagesofyourwork">يمكنك اضافة بعض الصو من اعمالك</string>
+    <string name="youcanuploadimagesofyourwork">يمكنك اضافة بعض الصور من اعمالك</string>
     <string name="chooseImage">اختر الصور</string>
     <string name="ImageUploaded">"تم اضافة الصور "</string>
-    <string name="noInternetConnecion">برجاء التحقق من الانترنت</string>
+    <string name="noInternetConnecion">الرجاء التحقق من الانترنت</string>
     <string name="message_had_been_send">تم ارسال الرسالة</string>
     <string name="somethingwentwrong">حدث شئ خاطئ</string>
     <string name="changePass">تغير كلمة المرور</string>
@@ -147,4 +147,16 @@
     <string name="changePassword">تعديل كلمة المرور</string>
     <string name="Transaction_Date">تاريخ التحويل</string>
     <string name="Show_Location_on_Map">أظهر العنوان على الخريطة</string>
+    <string name="Please_enter_valid_number">من فضلك اضف رقم صحيح</string>
+    <string name="Are_you_sure_you_want_to_delete">هل انت متأكد من انك تريد الحذف</string>
+    <string name="yes">نعم</string>
+    <string name="Delete_Request">حذف الطلب</string>
+    <string name="Request_Deleted">تم حذف الطلب</string>
+    <string name="new_Password">كلمة المرور الجديدة</string>
+    <string name="OldPassword">كلمة المرور القديمة </string>
+    <string name="password_must_be_more_than_4">يجب ان يكون الرقم السري اكثر من 4 ارقام</string>
+    <string name="are_you_sure_you_want_to_delete_this_item">هل انت متأكد من انك تريد حذف هذا العنصر ؟</string>
+    <string name="no">لا</string>
+    <string name="show_images">" عرض الصور"</string>
+    <string name="offers_count"> عدد العروض :</string>
 </resources>

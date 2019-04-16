@@ -115,7 +115,7 @@ public class ClientRequestDetailsActivity extends AppCompatActivity {
         Accept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Log.d("TTTTTTTT", "onClick: "+userModel.getLongitude());
                 sendOffer(fromModel.getId(),userModel.getId(),requestID);
             }
         });
@@ -174,10 +174,17 @@ public class ClientRequestDetailsActivity extends AppCompatActivity {
         address.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String uri = String.format(Locale.ENGLISH, "geo:%f,%f", Double.parseDouble(mRequest.getLatitude())
+           /*     String uri = String.format(Locale.ENGLISH, "geo:%f,%f", Double.parseDouble(mRequest.getLatitude())
                         ,Double.parseDouble(mRequest.getLongitude()));
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
                 startActivity(intent);
+*/
+                Uri gmmIntentUri = Uri.parse("google.navigation:q=" + Double.parseDouble(mRequest.getLatitude()) +
+                        "," + Double.parseDouble(mRequest.getLongitude()));
+                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                mapIntent.setPackage("com.google.android.apps.maps");
+                startActivity(mapIntent);
+
              /*   startActivity(new Intent(ClientRequestDetailsActivity.this,MapAcvity.class)
                         .putExtra("address",mRequest.getAddress())
                         .putExtra("lat",mRequest.getLatitude())
@@ -229,6 +236,7 @@ public class ClientRequestDetailsActivity extends AppCompatActivity {
         connectionService.sendOffer(userId,shopId,requestId).enqueue(new Callback<StatusModel>() {
             @Override
             public void onResponse(Call<StatusModel> call, Response<StatusModel> response) {
+                Log.d("TTT", "Call: "+response.toString());
                 progressDialog.dismiss();
                 StatusModel statusModel=response.body();
                 if(statusModel.getStatus()){
@@ -241,7 +249,17 @@ public class ClientRequestDetailsActivity extends AppCompatActivity {
                             .putExtra("stat","1"));
 
                 }else{
-
+                    {
+                        if (Hawk.get(Constants.Language).equals("en")) {
+                            Snackbar.make(parentLayout, "" + statusModel.getMessage(), Snackbar.LENGTH_LONG)
+                                    .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                                    .show();
+                        } else {
+                            Snackbar.make(parentLayout, "" + statusModel.getMessage_ar(), Snackbar.LENGTH_LONG)
+                                    .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                                    .show();
+                        }
+                    }
                 }
 
             }

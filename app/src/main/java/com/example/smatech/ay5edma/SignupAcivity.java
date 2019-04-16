@@ -184,12 +184,15 @@ public class SignupAcivity extends AppCompatActivity implements DatePickerDialog
                     Snackbar.make(parentLayout, "" + getString(R.string.Please_fill_empty_fields), Snackbar.LENGTH_LONG)
                             .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
                             .show();
+                } else if (Signup_Password.getText().toString().length() < 5) {
+                    Snackbar.make(parentLayout, "" + getString(R.string.password_must_be_more_than_4), Snackbar.LENGTH_LONG)
+                            .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                            .show();
                 } else if (Signup_BD.getText().toString().equals("") || Signup_BD.getText().toString() == null) {
                     Snackbar.make(parentLayout, "" + getString(R.string.Please_fill_empty_fields), Snackbar.LENGTH_LONG)
                             .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
                             .show();
-                }
-                if (Signup_name.getText().toString().equals("") || Signup_name.getText().toString() == null) {
+                } else if (Signup_name.getText().toString().equals("") || Signup_name.getText().toString() == null) {
                     Snackbar.make(parentLayout, "" + getString(R.string.Please_fill_empty_fields), Snackbar.LENGTH_LONG)
                             .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
                             .show();
@@ -199,6 +202,10 @@ public class SignupAcivity extends AppCompatActivity implements DatePickerDialog
                             .show();
                 } else if (Signup_Mobile.getText().toString().equals("") || Signup_Mobile.getText().toString() == null) {
                     Snackbar.make(parentLayout, "" + getString(R.string.Please_fill_empty_fields), Snackbar.LENGTH_LONG)
+                            .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
+                            .show();
+                } else if (Signup_Mobile.getText().toString().trim().length() != 10) {
+                    Snackbar.make(parentLayout, "" + getString(R.string.Please_enter_valid_number), Snackbar.LENGTH_LONG)
                             .setActionTextColor(getResources().getColor(android.R.color.holo_red_light))
                             .show();
                 } else if (Sex.equals("0")) {
@@ -298,12 +305,15 @@ public class SignupAcivity extends AppCompatActivity implements DatePickerDialog
                                 //  signup(password, "1", mobile, "", Sex, name, "", "");
                             } else {
                                 progressDialog.dismiss();
+
                                 Hawk.put(Constants.name, name);
                                 Hawk.put(Constants.pass, password);
                                 Hawk.put(Constants.mobile, mobile);
                                 Hawk.put(Constants.sex, Sex);
                                 Hawk.put(Constants.BirthDate, Signup_BD.getText().toString());
-
+                                Log.d("TTTT", "onResponse: " + name);
+                                Log.d("TTTT", "onResponse:name " + Hawk.get(Constants.name)+"----pass---"+Hawk.get(Constants.pass));
+                                Log.d("TTTT", "onResponse:sex " + Hawk.get(Constants.sex)+"----BirthDate---"+Hawk.get(Constants.BirthDate));
                                 Intent i = new Intent(SignupAcivity.this, ServiceProviderSingupActivity.class);
                                 startActivity(i);
 
@@ -366,8 +376,8 @@ public class SignupAcivity extends AppCompatActivity implements DatePickerDialog
                 progressDialog.dismiss();
                 UserModelSatus statusModel = response.body();
                 if (statusModel.getStatus() == true) {
-                    Log.d("TTTTT", "onResponse: locaion"+statusModel.getUser().getLatitude());
-                    Log.d("TTTTT", "onResponse: locaion"+statusModel.getUser().getLongitude());
+                    Log.d("TTTTT", "onResponse: locaion" + statusModel.getUser().getLatitude());
+                    Log.d("TTTTT", "onResponse: locaion" + statusModel.getUser().getLongitude());
                     UserModel userModel = statusModel.getUser();
                     userModel.setAccepted(statusModel.getAccepted() + "");
                     userModel.setPoints(statusModel.getPoints() + "");
@@ -410,7 +420,7 @@ public class SignupAcivity extends AppCompatActivity implements DatePickerDialog
 
     @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-        Signup_BD.setText(dayOfMonth + "/" + month + "/" + year);
+        Signup_BD.setText(dayOfMonth + "/" + (month + 1) + "/" + year);
 
     }
 
